@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "llama-utils"
+version = "0.1.0"
+description = ""
+authors = ["Mostafa Farrag <moah.farag@gmail.com>"]
+readme = "README.md"
+keywords = ["llm", "generativeai", "chatbot", "rag", "natural language processing"]
+
+packages = [
+    { include = "llama_utils", from = "src"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+llama-index = "^0.11.19"
+
+[tool.poetry.group.analysis.dependencies]
+jupyter="*"
+
+[tool.poetry.group.testing.dependencies]
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+pytest-xdist = "^3.6.1"
+xdoctest = {extras = ["colors"], version = "^1.1.0"}
+typeguard = "^4.3.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^7.1.1"
+coverage = {extras = ["toml"], version = "^7.6.1"}
+safety = "^3.2.7"
+mypy = "^1.11.2"
+pre-commit = "^3.8.0"
+black = "^24.8.0"
+flake8-bandit = "^4.1.1"
+flake8-bugbear = "^24.8.19"
+flake8-docstrings = "^1.6.0"
+flake8-rst-docstrings = "^0.3.0"
+pep8-naming = "^0.14.1"
+darglint = "^1.8.1"
+reorder-python-imports = "^3.8.2"
+pre-commit-hooks = "^4.3.0"
+pre-commit-commit-msg-hooks = "^0.1.0"
+flake8-pyproject = "^1.2.3"
+
+
+[tool.flake8]
+ignore = ["E722", "E501", "E261", "F405", "F403"]
+per-file-ignores = [
+    '__init__.py:F401',
+]
+max-line-length = 120
+count = true
+
+
+[tool.pytest.ini_options]
+#addopts = "--cov=image_process --cov-report=term-missing"
+testpaths = "tests"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
