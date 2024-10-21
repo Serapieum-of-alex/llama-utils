@@ -104,14 +104,14 @@ repos:
       - id: check-summary-punctuation
         name: "[bash -   format] check-summary-punctuation"
 
-#   - repo: local
-#     hooks:
-#       - id: pytest-check
-#         name: pytest-check
-#         entry: pytest -vvv --cov=src/llama_utils --cov-report term-missing
-#         language: system
-#         pass_filenames: false
-#         always_run: true
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest -vvv --cov=src/llama_utils --cov-report term-missing
+        language: system
+        pass_filenames: false
+        always_run: true
 
   - repo: local
     hooks:
