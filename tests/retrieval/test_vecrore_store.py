@@ -1,3 +1,5 @@
+import os
+import pytest
 from llama_utils.retrieval.vector_store import VectorStore
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
@@ -25,9 +27,23 @@ def test_create_storage_context():
 
 class TestVectorStore:
 
-    def test_constructor(self):
+    @pytest.fixture
+    def test_constructor(self) -> VectorStore:
         vector_store = VectorStore()
         assert vector_store is not None, "VectorStore not created."
         assert (
             isinstance(vector_store.store, StorageContext) is not None
         ), "Storage context not created."
+        return vector_store
+
+    def test_save_store(self, test_constructor: VectorStore):
+        path = "tests/data/store"
+        test_constructor.save_store(path)
+        assert os.path.exists(path), "Store not saved."
+        assert os.listdir(path) == [
+            "default__vector_store.json",
+            "docstore.json",
+            "graph_store.json",
+            "image__vector_store.json",
+            "index_store.json",
+        ]

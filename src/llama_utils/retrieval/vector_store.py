@@ -23,3 +23,6 @@ class VectorStore:
     @property
     def store(self) -> StorageContext:
         return self._store
+
+    def save_store(self, store_dir: str):
+        self.store.persist(persist_dir=store_dir)
