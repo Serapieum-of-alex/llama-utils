@@ -47,3 +47,8 @@ class TestVectorStore:
             "image__vector_store.json",
             "index_store.json",
         ]
+
+    def test_load_store(self, test_constructor: VectorStore):
+        path = "tests/data/load_store"
+        test_constructor.load_store(path)
+        assert isinstance(test_constructor.store, StorageContext)

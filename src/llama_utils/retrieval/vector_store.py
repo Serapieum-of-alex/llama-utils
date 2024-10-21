@@ -26,3 +26,6 @@ class VectorStore:
 
     def save_store(self, store_dir: str):
         self.store.persist(persist_dir=store_dir)
+
+    def load_store(self, store_dir: str):
+        self._store = StorageContext.from_defaults(persist_dir=store_dir)
