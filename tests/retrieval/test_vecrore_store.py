@@ -1,5 +1,6 @@
 import os
 import pytest
+from llama_index.core.schema import Document, TextNode
 from llama_utils.retrieval.vector_store import VectorStore
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
@@ -52,3 +53,14 @@ class TestVectorStore:
         path = "tests/data/load_store"
         test_constructor.load_store(path)
         assert isinstance(test_constructor.store, StorageContext)
+
+    def test_add_docs(
+        self, test_constructor: VectorStore, document: Document, text_node: TextNode
+    ):
+
+        test_constructor.add_docs([document, text_node])
+        print(test_constructor.store.docstore.get_document("d1"))
+        assert len(test_constructor.store.docstore.docs) == 2
+        docstore = test_constructor.store.docstore
+        assert docstore.get_document("d1") == document
+        assert docstore.get_document("d2") == text_node

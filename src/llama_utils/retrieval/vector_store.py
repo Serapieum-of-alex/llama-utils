@@ -1,9 +1,11 @@
 """A module for managing vector storage and retrieval."""
 
+from typing import Sequence, Union
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
+from llama_index.core.schema import Document, TextNode
 
 
 class VectorStore:
@@ -63,3 +65,17 @@ class VectorStore:
         None
         """
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
+
+    def add_docs(self, docs: Sequence[Union[Document, TextNode]]):
+        """Add node to the store.
+
+        Parameters
+        ----------
+        docs: Sequence[TextNode/Document]
+            The node/documents to add to the store.
+
+        Returns
+        -------
+        None
+        """
+        self.store.docstore.add_documents(docs)
