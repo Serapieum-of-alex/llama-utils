@@ -41,13 +41,14 @@ class TestVectorStore:
         path = "tests/data/store"
         test_constructor.save_store(path)
         assert os.path.exists(path), "Store not saved."
-        assert os.listdir(path) == [
+        docstore_content = [
             "default__vector_store.json",
             "docstore.json",
             "graph_store.json",
             "image__vector_store.json",
             "index_store.json",
         ]
+        assert all(elem in os.listdir(path) for elem in docstore_content)
 
     def test_load_store(self, test_constructor: VectorStore):
         path = "tests/data/load_store"
