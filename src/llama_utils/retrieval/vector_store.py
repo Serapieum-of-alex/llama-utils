@@ -1,11 +1,13 @@
 """A module for managing vector storage and retrieval."""
 
-from typing import Sequence, Union
+import os
+from typing import Sequence, Union, List
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
 from llama_index.core.schema import Document, TextNode
+from llama_index.core import SimpleDirectoryReader
 
 
 class VectorStore:
@@ -66,7 +68,7 @@ class VectorStore:
         """
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
 
-    def add_docs(self, docs: Sequence[Union[Document, TextNode]]):
+    def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
         """Add node to the store.
 
         Parameters
@@ -79,3 +81,47 @@ class VectorStore:
         None
         """
         self.store.docstore.add_documents(docs)
+
+    @staticmethod
+    def read_documents(
+        path: str,
+        show_progres: bool = False,
+        num_workers: int = None,
+        recursive: bool = False,
+        **kwargs,
+    ) -> List[Union[Document, TextNode]]:
+        """Read documents from a directory.
+
+        Parameters
+        ----------
+        path: str
+            path to the directory containing the documents.
+        show_progres: bool, optional, default is False.
+            True to show progress bar.
+        num_workers: int, optional, default is None.
+            The number of workers to use for loading the data.
+        recursive: bool, optional, default is False.
+            True to read from subdirectories.
+
+        Returns
+        -------
+        Sequence[Union[Document, TextNode]]
+            The documents/nodes read from the store.
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Directory not found: {path}")
+
+        reader = SimpleDirectoryReader(
+            path, filename_as_id=True, recursive=recursive, **kwargs
+        )
+        documents = reader.load_data(
+            show_progress=show_progres, num_workers=num_workers, **kwargs
+        )
+
+        for doc in documents:
+            # exclude the file name from the llm metadata in order to avoid affecting the llm by weird file names
+            doc.excluded_llm_metadata_keys = ["file_name"]
+            # exclude the file name from the embeddings metadata in order to avoid affecting the llm by weird file names
+            doc.excluded_embed_metadata_keys = ["file_name"]
+
+        return documents

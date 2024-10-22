@@ -59,9 +59,17 @@ class TestVectorStore:
         self, test_constructor: VectorStore, document: Document, text_node: TextNode
     ):
 
-        test_constructor.add_docs([document, text_node])
+        test_constructor.add_documents([document, text_node])
         print(test_constructor.store.docstore.get_document("d1"))
         assert len(test_constructor.store.docstore.docs) == 2
         docstore = test_constructor.store.docstore
         assert docstore.get_document("d1") == document
         assert docstore.get_document("d2") == text_node
+
+
+def test_read_documents(data_path: str):
+    docs = VectorStore.read_documents(data_path)
+    assert len(docs) == 4
+    doc = docs[0]
+    assert doc.excluded_embed_metadata_keys == ["file_name"]
+    assert doc.excluded_embed_metadata_keys == ["file_name"]

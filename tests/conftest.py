@@ -10,3 +10,8 @@ def document() -> Document:
 @pytest.fixture()
 def text_node() -> TextNode:
     return TextNode(text="my test text node", id_="d2", metadata={"node": "info"})
+
+
+@pytest.fixture()
+def data_path() -> str:
+    return "tests/data/files"
