@@ -104,6 +104,9 @@ class VectorStore:
     def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
         """Add node to the store.
 
+            The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
+            node's text content.
+
         Parameters
         ----------
         docs: Sequence[TextNode/Document]
