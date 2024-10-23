@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 import pytest
+import pandas as pd
 from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
@@ -10,6 +10,8 @@ from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.graph_stores import SimpleGraphStore
 from llama_index.core import StorageContext
+
+from llama_utils.retrieval.vector_store import VectorStore, read_metadata_index
 
 
 def test_create_storage_context():
@@ -139,3 +141,9 @@ def test_extract_info(mock_pipeline_run, document: Document, text_node: TextNode
     )
     assert mock_pipeline_run.call_count == 1
     assert nodes == mock_pipeline_run.return_value
+
+
+def test_read_metadata_index():
+    index = read_metadata_index()
+    assert isinstance(index, pd.DataFrame)
+    assert all(index.columns == ["doc_id", "hash"])

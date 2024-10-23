@@ -1,7 +1,9 @@
 """A module for managing vector storage and retrieval."""
 
 import os
+from pathlib import Path
 from typing import Sequence, Union, List, Dict
+import pandas as pd
 from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
@@ -18,6 +20,7 @@ from llama_index.core.extractors import (
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
 from llama_utils.utils.helper_functions import generate_content_hash, is_sha256
+from . import __path__
 
 Config()
 
@@ -28,6 +31,7 @@ EXTRACTORS = dict(
     summary=SummaryExtractor,
     keyword=KeywordExtractor,
 )
+ID_MAPPING_FILE = "metadata_index.csv"
 
 
 class VectorStore:
@@ -212,11 +216,15 @@ class VectorStore:
         )
         return nodes
 
-    @staticmethod
-    def create_metadata_index(documents: Document):
-        """Create a metadata-based index mapping file names to doc_ids."""
-        index = {}
-        for doc in documents:
-            file_name = os.path.basename(doc.metadata["file_path"])
-            index[file_name] = doc.doc_id
-        return index
+
+def read_metadata_index() -> pd.DataFrame:
+    """Read the ID mapping from a JSON file."""
+    file_path = os.path.join(Path(__path__[0]).parent, ID_MAPPING_FILE)
+    data = pd.read_csv(file_path, index_col=0)
+    return data
+
+
+def save_metadata_index(data: pd.DataFrame):
+    """Save the ID mapping to a JSON file."""
+    file_path = os.path.join(Path(__path__[0]).parent, ID_MAPPING_FILE)
+    data.to_csv(file_path, index=True)
