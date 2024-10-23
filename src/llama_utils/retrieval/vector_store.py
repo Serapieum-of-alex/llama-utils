@@ -1,14 +1,13 @@
 """A module for managing vector storage and retrieval."""
 
 import os
-from pathlib import Path
 from typing import Sequence, Union, List, Dict
 import pandas as pd
 from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
-from llama_index.core.schema import Document, TextNode
+from llama_index.core.schema import Document, TextNode, BaseNode
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import TokenTextSplitter
 from llama_index.core.extractors import (
@@ -20,7 +19,6 @@ from llama_index.core.extractors import (
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
 from llama_utils.utils.helper_functions import generate_content_hash, is_sha256
-from . import __path__
 
 Config()
 
@@ -49,10 +47,14 @@ class VectorStore:
         # Initialize with the desired vector storage backend (e.g., Qdrant, FAISS)
         if storage_backend is None:
             self._store = self._create_simple_storage_context()
+            self._metadata_index = self._create_metadata_index()
         elif isinstance(storage_backend, str):
             self.load_store(storage_backend)
         elif isinstance(storage_backend, StorageContext):
             self._store = storage_backend
+            self._metadata_index = create_metadata_index_existing_docs(
+                self._store.docstore.docs
+            )
         else:
             raise ValueError(
                 f"Invalid storage backend: {storage_backend}. Must be a string or StorageContext."
@@ -66,6 +68,12 @@ class VectorStore:
             vector_store=SimpleVectorStore(),
             index_store=SimpleIndexStore(),
         )
+
+    @staticmethod
+    def _create_metadata_index():
+        """Create a metadata-based index."""
+        """Create a metadata-based index."""
+        return pd.DataFrame(columns=["file_name", "doc_id"])
 
     @property
     def store(self) -> StorageContext:
@@ -90,6 +98,8 @@ class VectorStore:
         None
         """
         self.store.persist(persist_dir=store_dir)
+        file_path = os.path.join(store_dir, ID_MAPPING_FILE)
+        save_metadata_index(self.metadata_index, file_path)
 
     def load_store(self, store_dir: str):
         """Load the store from a directory.
@@ -104,11 +114,12 @@ class VectorStore:
         None
         """
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
+        self._metadata_index = read_metadata_index(path=store_dir)
 
     @property
     def metadata_index(self) -> pd.DataFrame:
         """Get the metadata index."""
-        return read_metadata_index()
+        return self._metadata_index
 
     def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
         """Add node to the store.
@@ -125,6 +136,7 @@ class VectorStore:
         -------
         None
         """
+        new_entries = []
         # Create a metadata-based index
         for doc in docs:
             # change the id to a sha256 hash if it is not already
@@ -133,6 +145,18 @@ class VectorStore:
 
             if not self.docstore.document_exists(doc.node_id):
                 self.docstore.add_documents([doc])
+                # Update the metadata index with file name as key and doc_id as value
+                file_name = os.path.basename(doc.metadata["file_path"])
+                new_entries.append({"file_name": file_name, "doc_id": doc.node_id})
+            else:
+                print(f"Document with ID {doc.node_id} already exists. Skipping.")
+
+        # Convert new entries to a DataFrame and append to the existing metadata DataFrame
+        if new_entries:
+            new_entries_df = pd.DataFrame(new_entries)
+            self._metadata_index = pd.concat(
+                [self._metadata_index, new_entries_df], ignore_index=True
+            )
 
     @staticmethod
     def read_documents(
@@ -222,14 +246,26 @@ class VectorStore:
         return nodes
 
 
-def read_metadata_index() -> pd.DataFrame:
+def read_metadata_index(path: str) -> pd.DataFrame:
     """Read the ID mapping from a JSON file."""
-    file_path = os.path.join(Path(__path__[0]).parent, ID_MAPPING_FILE)
+    file_path = os.path.join(path, ID_MAPPING_FILE)
     data = pd.read_csv(file_path, index_col=0)
     return data
 
 
-def save_metadata_index(data: pd.DataFrame):
+def save_metadata_index(data: pd.DataFrame, path: str):
     """Save the ID mapping to a JSON file."""
-    file_path = os.path.join(Path(__path__[0]).parent, ID_MAPPING_FILE)
-    data.to_csv(file_path, index=True)
+    data.to_csv(path, index=True)
+
+
+def create_metadata_index_existing_docs(docs: Dict[str, BaseNode]):
+    metadata_index = {}
+    i = 0
+    for key, val in docs.items():
+        metadata_index[i] = {
+            "file_name": val.metadata["file_name"],
+            "doc_id": generate_content_hash(val.text),
+        }
+        i += 1
+    df = pd.DataFrame.from_dict(metadata_index, orient="index")
+    return df

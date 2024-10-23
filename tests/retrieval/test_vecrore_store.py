@@ -5,7 +5,6 @@ from typing import List
 from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
-from llama_utils.retrieval.vector_store import VectorStore
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
@@ -41,6 +40,7 @@ class TestVectorStore:
         assert (
             isinstance(vector_store.store, StorageContext) is not None
         ), "Storage context not created."
+        assert isinstance(vector_store.metadata_index, pd.DataFrame)
         return vector_store
 
     def test_constructor_storage_path(self, storage_path: str):
@@ -48,6 +48,7 @@ class TestVectorStore:
         store = vector_store._store
         assert isinstance(store, StorageContext)
         assert isinstance(store.docstore, SimpleDocumentStore)
+        assert isinstance(vector_store.metadata_index, pd.DataFrame)
         assert len(store.docstore.docs) == 4
 
     def test_constructor_storage_context(
@@ -57,6 +58,7 @@ class TestVectorStore:
         store = vector_store._store
         assert isinstance(store, StorageContext)
         assert isinstance(store.docstore, SimpleDocumentStore)
+        assert isinstance(vector_store.metadata_index, pd.DataFrame)
         assert len(store.docstore.docs) == 4
 
     def test_constructor_raise_error(self):
@@ -82,31 +84,25 @@ class TestVectorStore:
         test_constructor_no_storage.load_store(path)
         assert isinstance(test_constructor_no_storage.store, StorageContext)
 
-    def test_add_docs(
+    def test_add_documents(
         self,
         test_constructor_no_storage: VectorStore,
         document: Document,
         text_node: TextNode,
+        hash_document: str,
+        hash_text_node: str,
     ):
-
         test_constructor_no_storage.add_documents([document, text_node])
         assert len(test_constructor_no_storage.store.docstore.docs) == 2
         docstore = test_constructor_no_storage.store.docstore
-        assert (
-            docstore.get_document(
-                "8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3"
-            )
-            == document
-        )
-        assert (
-            docstore.get_document(
-                "dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4"
-            )
-            == text_node
-        )
+        assert docstore.get_document(hash_document) == document
+        assert docstore.get_document(hash_text_node) == text_node
+        df = test_constructor_no_storage.metadata_index
+        assert df.shape[0] == 2
+        assert df.loc[0, "doc_id"] == hash_document
+        assert df.loc[1, "doc_id"] == hash_text_node
 
 
-@pytest.fixture
 def test_read_documents(data_path: str):
     docs = VectorStore.read_documents(data_path)
     assert len(docs) == 4
@@ -142,11 +138,3 @@ def test_extract_info(mock_pipeline_run, document: Document, text_node: TextNode
     )
     assert mock_pipeline_run.call_count == 1
     assert nodes == mock_pipeline_run.return_value
-
-
-def test_read_metadata_index():
-    index = read_metadata_index()
-    assert isinstance(index, pd.DataFrame)
-    assert all(index.columns == ["doc_id", "hash"])
-    df = VectorStore().metadata_index
-    assert isinstance(df, pd.DataFrame)
