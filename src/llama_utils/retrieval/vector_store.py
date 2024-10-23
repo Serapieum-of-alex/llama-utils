@@ -1,13 +1,32 @@
 """A module for managing vector storage and retrieval."""
 
 import os
-from typing import Sequence, Union, List
+from typing import Sequence, Union, List, Dict
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
 from llama_index.core.schema import Document, TextNode
 from llama_index.core import SimpleDirectoryReader
+from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core.extractors import (
+    TitleExtractor,
+    QuestionsAnsweredExtractor,
+    KeywordExtractor,
+    SummaryExtractor,
+)
+from llama_index.core.ingestion import IngestionPipeline
+from llama_utils.config import Config
+
+Config()
+
+EXTRACTORS = dict(
+    text_splitter=TokenTextSplitter,
+    title=TitleExtractor,
+    question_answer=QuestionsAnsweredExtractor,
+    summary=SummaryExtractor,
+    keyword=KeywordExtractor,
+)
 
 
 class VectorStore:
@@ -125,3 +144,41 @@ class VectorStore:
             doc.excluded_embed_metadata_keys = ["file_name"]
 
         return documents
+
+    @staticmethod
+    def extract_info(documents: List[Document], info: Dict[str, Dict[str, int]] = None):
+        """Extract Info
+
+        Parameters
+        ----------
+        documents: List[Document]
+            List of documents.
+        info: Union[List[str], str], optional, default is None
+            The information to extract from the documents.
+
+            >>> info = {
+            >>>     "text_splitter": {"separator" : " ", "chunk_size":512, "chunk_overlap":128},
+            >>>     "title": {"nodes": 5} ,
+            >>>     "question_answer": {"questions": 3},
+            >>>     "summary": {"summaries": ["prev", "self"]},
+            >>>     "keyword": {"keywords": 10},
+            >>>     "entity": {"prediction_threshold": 0.5}
+            >>> }
+
+        Returns
+        -------
+        List[Union[Document, TextNode]]
+            The extracted nodes.
+        """
+        extractors = [
+            EXTRACTORS[key](**val) for key, val in info.items() if key in EXTRACTORS
+        ]
+        pipeline = IngestionPipeline(transformations=extractors)
+
+        nodes = pipeline.run(
+            documents=documents,
+            in_place=True,
+            show_progress=True,
+            # num_workers=4
+        )
+        return nodes

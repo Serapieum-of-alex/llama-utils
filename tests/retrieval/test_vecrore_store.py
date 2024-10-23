@@ -1,5 +1,6 @@
 import os
 import pytest
+from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
 from llama_utils.retrieval.vector_store import VectorStore
 from llama_index.core.storage.docstore import SimpleDocumentStore
@@ -73,3 +74,31 @@ def test_read_documents(data_path: str):
     doc = docs[0]
     assert doc.excluded_embed_metadata_keys == ["file_name"]
     assert doc.excluded_embed_metadata_keys == ["file_name"]
+
+
+@patch("llama_index.core.ingestion.IngestionPipeline.run")
+def test_extract_info(mock_pipeline_run, document: Document, text_node: TextNode):
+    documents = [document, text_node]
+
+    # Set up the mock for the pipeline instance
+    mock_pipeline_run.return_value = MagicMock(return_value="mocked_nodes")
+
+    info = {
+        "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+        "title": {"nodes": 5},
+        "question_answer": {"questions": 3},
+        "summary": {"summaries": ["prev", "self"]},
+        "keyword": {"keywords": 10},
+        "entity": {"prediction_threshold": 0.5},
+    }
+    nodes = VectorStore.extract_info(documents, info)
+
+    # Check if the pipeline.run method was called with expected arguments
+    mock_pipeline_run.assert_called_once_with(
+        documents=documents,
+        in_place=True,
+        show_progress=True,
+        # num_workers=4 (optional if you have it)
+    )
+    assert mock_pipeline_run.call_count == 1
+    assert nodes == mock_pipeline_run.return_value
