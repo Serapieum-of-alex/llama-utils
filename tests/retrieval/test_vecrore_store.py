@@ -1,6 +1,7 @@
 import os
 import pytest
 import pandas as pd
+from typing import List
 from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
@@ -147,3 +148,5 @@ def test_read_metadata_index():
     index = read_metadata_index()
     assert isinstance(index, pd.DataFrame)
     assert all(index.columns == ["doc_id", "hash"])
+    df = VectorStore().metadata_index
+    assert isinstance(df, pd.DataFrame)

@@ -105,6 +105,11 @@ class VectorStore:
         """
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
 
+    @property
+    def metadata_index(self) -> pd.DataFrame:
+        """Get the metadata index."""
+        return read_metadata_index()
+
     def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
         """Add node to the store.
 
