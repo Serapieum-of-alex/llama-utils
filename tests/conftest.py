@@ -1,5 +1,6 @@
 import pytest
 from llama_index.core.schema import Document, TextNode
+from llama_index.core import StorageContext
 
 
 @pytest.fixture()
@@ -15,3 +16,13 @@ def text_node() -> TextNode:
 @pytest.fixture()
 def data_path() -> str:
     return "tests/data/files"
+
+
+@pytest.fixture()
+def storage_path() -> str:
+    return "tests/data/docstore"
+
+
+@pytest.fixture()
+def storage_docstore(storage_path: str) -> StorageContext:
+    return StorageContext.from_defaults(persist_dir="tests/data/docstore")

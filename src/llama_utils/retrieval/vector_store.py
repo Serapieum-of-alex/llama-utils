@@ -33,7 +33,7 @@ EXTRACTORS = dict(
 class VectorStore:
     """A class to manage vector storage and retrieval."""
 
-    def __init__(self, storage_backend: str = None):
+    def __init__(self, storage_backend: Union[str, StorageContext] = None):
         """Initialize the VectorStore.
 
         Parameters
@@ -45,6 +45,14 @@ class VectorStore:
         # Initialize with the desired vector storage backend (e.g., Qdrant, FAISS)
         if storage_backend is None:
             self._store = self._create_simple_storage_context()
+        elif isinstance(storage_backend, str):
+            self.load_store(storage_backend)
+        elif isinstance(storage_backend, StorageContext):
+            self._store = storage_backend
+        else:
+            raise ValueError(
+                f"Invalid storage backend: {storage_backend}. Must be a string or StorageContext."
+            )
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:

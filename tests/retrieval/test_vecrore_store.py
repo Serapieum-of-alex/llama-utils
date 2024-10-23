@@ -32,7 +32,7 @@ def test_create_storage_context():
 class TestVectorStore:
 
     @pytest.fixture
-    def test_constructor(self) -> VectorStore:
+    def test_constructor_no_storage(self) -> VectorStore:
         vector_store = VectorStore()
         assert vector_store is not None, "VectorStore not created."
         assert (
@@ -40,9 +40,29 @@ class TestVectorStore:
         ), "Storage context not created."
         return vector_store
 
-    def test_save_store(self, test_constructor: VectorStore):
+    def test_constructor_storage_path(self, storage_path: str):
+        vector_store = VectorStore(storage_path)
+        store = vector_store._store
+        assert isinstance(store, StorageContext)
+        assert isinstance(store.docstore, SimpleDocumentStore)
+        assert len(store.docstore.docs) == 4
+
+    def test_constructor_storage_context(
+        self, storage_docstore: StorageContext
+    ) -> VectorStore:
+        vector_store = VectorStore(storage_docstore)
+        store = vector_store._store
+        assert isinstance(store, StorageContext)
+        assert isinstance(store.docstore, SimpleDocumentStore)
+        assert len(store.docstore.docs) == 4
+
+    def test_constructor_raise_error(self):
+        with pytest.raises(ValueError):
+            VectorStore(5)
+
+    def test_save_store(self, test_constructor_no_storage: VectorStore):
         path = "tests/data/store"
-        test_constructor.save_store(path)
+        test_constructor_no_storage.save_store(path)
         assert os.path.exists(path), "Store not saved."
         docstore_content = [
             "default__vector_store.json",
@@ -53,19 +73,23 @@ class TestVectorStore:
         ]
         assert all(elem in os.listdir(path) for elem in docstore_content)
 
-    def test_load_store(self, test_constructor: VectorStore):
+    def test_load_store(self, test_constructor_no_storage: VectorStore):
+        # empty store
         path = "tests/data/load_store"
-        test_constructor.load_store(path)
-        assert isinstance(test_constructor.store, StorageContext)
+        test_constructor_no_storage.load_store(path)
+        assert isinstance(test_constructor_no_storage.store, StorageContext)
 
     def test_add_docs(
-        self, test_constructor: VectorStore, document: Document, text_node: TextNode
+        self,
+        test_constructor_no_storage: VectorStore,
+        document: Document,
+        text_node: TextNode,
     ):
 
-        test_constructor.add_documents([document, text_node])
-        print(test_constructor.store.docstore.get_document("d1"))
-        assert len(test_constructor.store.docstore.docs) == 2
-        docstore = test_constructor.store.docstore
+        test_constructor_no_storage.add_documents([document, text_node])
+        print(test_constructor_no_storage.store.docstore.get_document("d1"))
+        assert len(test_constructor_no_storage.store.docstore.docs) == 2
+        docstore = test_constructor_no_storage.store.docstore
         assert docstore.get_document("d1") == document
         assert docstore.get_document("d2") == text_node
 
