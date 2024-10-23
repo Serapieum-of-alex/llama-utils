@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import pytest
+from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
 from llama_utils.retrieval.vector_store import VectorStore
@@ -75,8 +76,7 @@ def test_read_documents(data_path: str):
     doc = docs[0]
     assert doc.excluded_embed_metadata_keys == ["file_name"]
     assert doc.excluded_embed_metadata_keys == ["file_name"]
-    # check that the doc path is used as doc_id
-    assert Path(f"{data_path}/text_1.txt").absolute() == Path(docs[0].doc_id).absolute()
+    assert docs[0].doc_id == generate_content_hash(docs[0].text)
 
 
 @patch("llama_index.core.ingestion.IngestionPipeline.run")

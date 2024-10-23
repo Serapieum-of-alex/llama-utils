@@ -17,6 +17,7 @@ from llama_index.core.extractors import (
 )
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
+from llama_utils.utils.helper_functions import generate_content_hash
 
 Config()
 
@@ -130,9 +131,7 @@ class VectorStore:
         if not os.path.exists(path):
             raise FileNotFoundError(f"Directory not found: {path}")
 
-        reader = SimpleDirectoryReader(
-            path, filename_as_id=True, recursive=recursive, **kwargs
-        )
+        reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
         documents = reader.load_data(
             show_progress=show_progres, num_workers=num_workers, **kwargs
         )
@@ -142,6 +141,9 @@ class VectorStore:
             doc.excluded_llm_metadata_keys = ["file_name"]
             # exclude the file name from the embeddings metadata in order to avoid affecting the llm by weird file names
             doc.excluded_embed_metadata_keys = ["file_name"]
+            # Generate a hash based on the document's text content
+            content_hash = generate_content_hash(doc.text)
+            doc.doc_id = content_hash  # Assign the hash as the doc_id
 
         return documents
 
