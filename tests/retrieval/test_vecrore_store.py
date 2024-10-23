@@ -87,13 +87,23 @@ class TestVectorStore:
     ):
 
         test_constructor_no_storage.add_documents([document, text_node])
-        print(test_constructor_no_storage.store.docstore.get_document("d1"))
         assert len(test_constructor_no_storage.store.docstore.docs) == 2
         docstore = test_constructor_no_storage.store.docstore
-        assert docstore.get_document("d1") == document
-        assert docstore.get_document("d2") == text_node
+        assert (
+            docstore.get_document(
+                "8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3"
+            )
+            == document
+        )
+        assert (
+            docstore.get_document(
+                "dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4"
+            )
+            == text_node
+        )
 
 
+@pytest.fixture
 def test_read_documents(data_path: str):
     docs = VectorStore.read_documents(data_path)
     assert len(docs) == 4

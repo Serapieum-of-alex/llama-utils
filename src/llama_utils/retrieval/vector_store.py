@@ -2,7 +2,7 @@
 
 import os
 from typing import Sequence, Union, List, Dict
-from llama_index.core.storage.docstore import SimpleDocumentStore
+from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
@@ -17,7 +17,7 @@ from llama_index.core.extractors import (
 )
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
-from llama_utils.utils.helper_functions import generate_content_hash
+from llama_utils.utils.helper_functions import generate_content_hash, is_sha256
 
 Config()
 
@@ -68,6 +68,11 @@ class VectorStore:
         """Get the storage context."""
         return self._store
 
+    @property
+    def docstore(self) -> BaseDocumentStore:
+        """Get the document store."""
+        return self.store.docstore
+
     def save_store(self, store_dir: str):
         """Save the store to a directory.
 
@@ -108,7 +113,14 @@ class VectorStore:
         -------
         None
         """
-        self.store.docstore.add_documents(docs)
+        # Create a metadata-based index
+        for doc in docs:
+            # change the id to a sha256 hash if it is not already
+            if not is_sha256(doc.node_id):
+                doc.node_id = generate_content_hash(doc.text)
+
+            if not self.docstore.document_exists(doc.node_id):
+                self.docstore.add_documents([doc])
 
     @staticmethod
     def read_documents(
@@ -119,6 +131,9 @@ class VectorStore:
         **kwargs,
     ) -> List[Union[Document, TextNode]]:
         """Read documents from a directory.
+
+        the `read_documents` method reads documents from a directory and returns a list of documents.
+        the `doc_id` is sha256 hash number generated based on the document's text content.
 
         Parameters
         ----------
@@ -151,7 +166,8 @@ class VectorStore:
             doc.excluded_embed_metadata_keys = ["file_name"]
             # Generate a hash based on the document's text content
             content_hash = generate_content_hash(doc.text)
-            doc.doc_id = content_hash  # Assign the hash as the doc_id
+            # Assign the hash as the doc_id
+            doc.doc_id = content_hash
 
         return documents
 
@@ -192,3 +208,12 @@ class VectorStore:
             # num_workers=4
         )
         return nodes
+
+    @staticmethod
+    def create_metadata_index(documents: Document):
+        """Create a metadata-based index mapping file names to doc_ids."""
+        index = {}
+        for doc in documents:
+            file_name = os.path.basename(doc.metadata["file_path"])
+            index[file_name] = doc.doc_id
+        return index
