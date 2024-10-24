@@ -217,12 +217,15 @@ class VectorStore:
         return documents
 
     @staticmethod
-    def extract_info(documents: List[Document], info: Dict[str, Dict[str, int]] = None):
+    def extract_info(
+        documents: List[Union[Document, BaseNode]],
+        info: Dict[str, Dict[str, int]] = None,
+    ) -> List[TextNode]:
         """Extract Info
 
         Parameters
         ----------
-        documents: List[Document]
+        documents: List[Union[Document, BaseNode]]
             List of documents.
         info: Union[List[str], str], optional, default is None
             The information to extract from the documents.
@@ -238,9 +241,21 @@ class VectorStore:
 
         Returns
         -------
-        List[Union[Document, TextNode]]
+        List[TextNode]
             The extracted nodes.
+            title:
+                the extracted title will be stored in the metadata under the key "document_title".
+            question_answer:
+                the extracted questions will be stored in the metadata under the key "questions_this_excerpt_can_answer".
+            summary:
+                the extracted summaries will be stored in the metadata under the key "summary".
+            keyword:
+                the extracted keywords will be stored in the metadata under the key "keywords".
+            entity:
+                the extracted entities will be stored in the metadata under the key "entities".
         """
+        info = EXTRACTORS.copy() if info is None else info
+
         extractors = [
             EXTRACTORS[key](**val) for key, val in info.items() if key in EXTRACTORS
         ]
