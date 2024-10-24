@@ -1,12 +1,14 @@
 """A module for managing vector storage and retrieval."""
 
 import os
+from pathlib import Path
 from typing import Sequence, Union, List, Dict
-from llama_index.core.storage.docstore import SimpleDocumentStore
+import pandas as pd
+from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core import StorageContext
-from llama_index.core.schema import Document, TextNode
+from llama_index.core.schema import Document, TextNode, BaseNode
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import TokenTextSplitter
 from llama_index.core.extractors import (
@@ -17,7 +19,8 @@ from llama_index.core.extractors import (
 )
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
-from llama_utils.utils.helper_functions import generate_content_hash
+from llama_utils.utils.helper_functions import generate_content_hash, is_sha256
+from llama_utils.utils.errors import StorageNotFoundError
 
 Config()
 
@@ -28,12 +31,13 @@ EXTRACTORS = dict(
     summary=SummaryExtractor,
     keyword=KeywordExtractor,
 )
+ID_MAPPING_FILE = "metadata_index.csv"
 
 
 class VectorStore:
     """A class to manage vector storage and retrieval."""
 
-    def __init__(self, storage_backend: str = None):
+    def __init__(self, storage_backend: Union[str, StorageContext] = None):
         """Initialize the VectorStore.
 
         Parameters
@@ -45,6 +49,18 @@ class VectorStore:
         # Initialize with the desired vector storage backend (e.g., Qdrant, FAISS)
         if storage_backend is None:
             self._store = self._create_simple_storage_context()
+            self._metadata_index = self._create_metadata_index()
+        elif isinstance(storage_backend, str):
+            self.load_store(storage_backend)
+        elif isinstance(storage_backend, StorageContext):
+            self._store = storage_backend
+            self._metadata_index = create_metadata_index_existing_docs(
+                self._store.docstore.docs
+            )
+        else:
+            raise ValueError(
+                f"Invalid storage backend: {storage_backend}. Must be a string or StorageContext."
+            )
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:
@@ -55,10 +71,21 @@ class VectorStore:
             index_store=SimpleIndexStore(),
         )
 
+    @staticmethod
+    def _create_metadata_index():
+        """Create a metadata-based index."""
+        """Create a metadata-based index."""
+        return pd.DataFrame(columns=["file_name", "doc_id"])
+
     @property
     def store(self) -> StorageContext:
         """Get the storage context."""
         return self._store
+
+    @property
+    def docstore(self) -> BaseDocumentStore:
+        """Get the document store."""
+        return self.store.docstore
 
     def save_store(self, store_dir: str):
         """Save the store to a directory.
@@ -73,6 +100,8 @@ class VectorStore:
         None
         """
         self.store.persist(persist_dir=store_dir)
+        file_path = os.path.join(store_dir, ID_MAPPING_FILE)
+        save_metadata_index(self.metadata_index, file_path)
 
     def load_store(self, store_dir: str):
         """Load the store from a directory.
@@ -86,10 +115,22 @@ class VectorStore:
         -------
         None
         """
+        if not Path(store_dir).exists():
+            StorageNotFoundError(f"Store not found at {store_dir}")
+
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
+        self._metadata_index = read_metadata_index(path=store_dir)
+
+    @property
+    def metadata_index(self) -> pd.DataFrame:
+        """Get the metadata index."""
+        return self._metadata_index
 
     def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
         """Add node to the store.
+
+            The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
+            node's text content.
 
         Parameters
         ----------
@@ -100,7 +141,31 @@ class VectorStore:
         -------
         None
         """
-        self.store.docstore.add_documents(docs)
+        new_entries = []
+        file_names = []
+        # Create a metadata-based index
+        for doc in docs:
+            # change the id to a sha256 hash if it is not already
+            if not is_sha256(doc.node_id):
+                doc.node_id = generate_content_hash(doc.text)
+
+            if not self.docstore.document_exists(doc.node_id):
+                self.docstore.add_documents([doc])
+                # Update the metadata index with file name as key and doc_id as value
+                file_name = os.path.basename(doc.metadata["file_path"])
+                if file_name in file_names:
+                    file_name = f"{file_name}_{len(file_names)}"
+                new_entries.append({"file_name": file_name, "doc_id": doc.node_id})
+                file_names.append(file_name)
+            else:
+                print(f"Document with ID {doc.node_id} already exists. Skipping.")
+
+        # Convert new entries to a DataFrame and append to the existing metadata DataFrame
+        if new_entries:
+            new_entries_df = pd.DataFrame(new_entries)
+            self._metadata_index = pd.concat(
+                [self._metadata_index, new_entries_df], ignore_index=True
+            )
 
     @staticmethod
     def read_documents(
@@ -111,6 +176,9 @@ class VectorStore:
         **kwargs,
     ) -> List[Union[Document, TextNode]]:
         """Read documents from a directory.
+
+        the `read_documents` method reads documents from a directory and returns a list of documents.
+        the `doc_id` is sha256 hash number generated based on the document's text content.
 
         Parameters
         ----------
@@ -143,17 +211,50 @@ class VectorStore:
             doc.excluded_embed_metadata_keys = ["file_name"]
             # Generate a hash based on the document's text content
             content_hash = generate_content_hash(doc.text)
-            doc.doc_id = content_hash  # Assign the hash as the doc_id
+            # Assign the hash as the doc_id
+            doc.doc_id = content_hash
 
         return documents
 
+    def get_nodes_by_file_name(
+        self, file_name: str, exact_match: bool = False
+    ) -> List[BaseNode]:
+        """Get nodes by file name.
+
+        Parameters
+        ----------
+        file_name: str
+            The file name to search for.
+        exact_match: bool, optional, default is False
+            True to search for an exact match, False to search for a partial match.
+
+        Returns
+        -------
+        List[TextNode]
+            The nodes with the specified file name.
+        """
+        if exact_match:
+            doc_ids = self.metadata_index.loc[
+                self.metadata_index["file_name"] == file_name, "doc_id"
+            ].values
+        else:
+            doc_ids = self.metadata_index.loc[
+                self.metadata_index["file_name"].str.contains(file_name, regex=True),
+                "doc_id",
+            ].values
+        docs = self.docstore.get_nodes(doc_ids)
+        return docs
+
     @staticmethod
-    def extract_info(documents: List[Document], info: Dict[str, Dict[str, int]] = None):
+    def extract_info(
+        documents: List[Union[Document, BaseNode]],
+        info: Dict[str, Dict[str, int]] = None,
+    ) -> List[TextNode]:
         """Extract Info
 
         Parameters
         ----------
-        documents: List[Document]
+        documents: List[Union[Document, BaseNode]]
             List of documents.
         info: Union[List[str], str], optional, default is None
             The information to extract from the documents.
@@ -169,9 +270,21 @@ class VectorStore:
 
         Returns
         -------
-        List[Union[Document, TextNode]]
+        List[TextNode]
             The extracted nodes.
+            title:
+                the extracted title will be stored in the metadata under the key "document_title".
+            question_answer:
+                the extracted questions will be stored in the metadata under the key "questions_this_excerpt_can_answer".
+            summary:
+                the extracted summaries will be stored in the metadata under the key "summary".
+            keyword:
+                the extracted keywords will be stored in the metadata under the key "keywords".
+            entity:
+                the extracted entities will be stored in the metadata under the key "entities".
         """
+        info = EXTRACTORS.copy() if info is None else info
+
         extractors = [
             EXTRACTORS[key](**val) for key, val in info.items() if key in EXTRACTORS
         ]
@@ -184,3 +297,28 @@ class VectorStore:
             # num_workers=4
         )
         return nodes
+
+
+def read_metadata_index(path: str) -> pd.DataFrame:
+    """Read the ID mapping from a JSON file."""
+    file_path = os.path.join(path, ID_MAPPING_FILE)
+    data = pd.read_csv(file_path, index_col=0)
+    return data
+
+
+def save_metadata_index(data: pd.DataFrame, path: str):
+    """Save the ID mapping to a JSON file."""
+    data.to_csv(path, index=True)
+
+
+def create_metadata_index_existing_docs(docs: Dict[str, BaseNode]):
+    metadata_index = {}
+    i = 0
+    for key, val in docs.items():
+        metadata_index[i] = {
+            "file_name": val.metadata["file_name"],
+            "doc_id": generate_content_hash(val.text),
+        }
+        i += 1
+    df = pd.DataFrame.from_dict(metadata_index, orient="index")
+    return df
