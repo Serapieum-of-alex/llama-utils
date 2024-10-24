@@ -1,7 +1,6 @@
 import os
 import pytest
 import pandas as pd
-from typing import List
 from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
@@ -11,7 +10,7 @@ from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.graph_stores import SimpleGraphStore
 from llama_index.core import StorageContext
 
-from llama_utils.retrieval.vector_store import VectorStore, read_metadata_index
+from llama_utils.retrieval.vector_store import VectorStore
 
 
 def test_create_storage_context():
@@ -51,9 +50,7 @@ class TestVectorStore:
         assert isinstance(vector_store.metadata_index, pd.DataFrame)
         assert len(store.docstore.docs) == 4
 
-    def test_constructor_storage_context(
-        self, storage_docstore: StorageContext
-    ) -> VectorStore:
+    def test_constructor_storage_context(self, storage_docstore: StorageContext):
         vector_store = VectorStore(storage_docstore)
         store = vector_store._store
         assert isinstance(store, StorageContext)
@@ -101,6 +98,27 @@ class TestVectorStore:
         assert df.shape[0] == 2
         assert df.loc[0, "doc_id"] == hash_document
         assert df.loc[1, "doc_id"] == hash_text_node
+
+    def test_different_nodes_same_document(
+        self,
+        test_constructor_no_storage: VectorStore,
+        text_node_2: TextNode,
+        text_node: TextNode,
+        hash_document: str,
+        hash_text_node: str,
+    ):
+        """
+        Different nodes with the same document id should be added to the store.
+
+        The test check if the file_name is added in the metadata index with an incremented index.
+        <FILE-NAME>-1, <FILE-NAME>-2, ...
+        """
+        test_constructor_no_storage.add_documents([text_node, text_node_2])
+        assert len(test_constructor_no_storage.store.docstore.docs) == 2
+        docstore = test_constructor_no_storage.store.docstore
+        assert docstore.get_document(hash_text_node) == text_node
+        df = test_constructor_no_storage.metadata_index
+        assert df.loc[:, "file_name"].to_list() == ["node-path", "node-path_1"]
 
 
 def test_read_documents(data_path: str):

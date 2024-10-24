@@ -22,6 +22,15 @@ def text_node() -> TextNode:
 
 
 @pytest.fixture()
+def text_node_2() -> TextNode:
+    return TextNode(
+        text="my test text node 2",
+        id_="d2",
+        metadata={"node": "info", "file_path": "node-path"},
+    )
+
+
+@pytest.fixture()
 def hash_document() -> str:
     return "8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3"
 
