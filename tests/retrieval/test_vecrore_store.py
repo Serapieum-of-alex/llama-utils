@@ -104,7 +104,6 @@ class TestVectorStore:
         test_constructor_no_storage: VectorStore,
         text_node_2: TextNode,
         text_node: TextNode,
-        hash_document: str,
         hash_text_node: str,
     ):
         """
@@ -119,6 +118,20 @@ class TestVectorStore:
         assert docstore.get_document(hash_text_node) == text_node
         df = test_constructor_no_storage.metadata_index
         assert df.loc[:, "file_name"].to_list() == ["node-path", "node-path_1"]
+
+    def test_get_nodes_by_file_name(
+        self,
+        test_constructor_no_storage: VectorStore,
+        text_node_2: TextNode,
+        text_node: TextNode,
+    ):
+        test_constructor_no_storage.add_documents([text_node, text_node_2])
+        nodes = test_constructor_no_storage.get_nodes_by_file_name("node-")
+        assert nodes == [text_node, text_node_2]
+        nodes = test_constructor_no_storage.get_nodes_by_file_name(
+            "node-path", exact_match=True
+        )
+        assert nodes == [text_node]
 
 
 def test_read_documents(data_path: str):

@@ -216,6 +216,35 @@ class VectorStore:
 
         return documents
 
+    def get_nodes_by_file_name(
+        self, file_name: str, exact_match: bool = False
+    ) -> List[BaseNode]:
+        """Get nodes by file name.
+
+        Parameters
+        ----------
+        file_name: str
+            The file name to search for.
+        exact_match: bool, optional, default is False
+            True to search for an exact match, False to search for a partial match.
+
+        Returns
+        -------
+        List[TextNode]
+            The nodes with the specified file name.
+        """
+        if exact_match:
+            doc_ids = self.metadata_index.loc[
+                self.metadata_index["file_name"] == file_name, "doc_id"
+            ].values
+        else:
+            doc_ids = self.metadata_index.loc[
+                self.metadata_index["file_name"].str.contains(file_name, regex=True),
+                "doc_id",
+            ].values
+        docs = self.docstore.get_nodes(doc_ids)
+        return docs
+
     @staticmethod
     def extract_info(
         documents: List[Union[Document, BaseNode]],
