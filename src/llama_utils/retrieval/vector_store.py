@@ -18,11 +18,11 @@ from llama_index.core.extractors import (
     SummaryExtractor,
 )
 from llama_index.core.ingestion import IngestionPipeline
-from llama_utils.config import Config
+from llama_utils.utils.config_loader import ConfigLoader
 from llama_utils.utils.helper_functions import generate_content_hash
 from llama_utils.utils.errors import StorageNotFoundError
 
-Config()
+ConfigLoader()
 
 EXTRACTORS = dict(
     text_splitter=TokenTextSplitter,

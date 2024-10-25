@@ -6,7 +6,8 @@ from llama_index.core.node_parser import SentenceSplitter
 TEXT_SPLITTER = SentenceSplitter(chunk_size=1024, chunk_overlap=20)
 
 
-class Config:
+class ConfigLoader:
+    """A class or function to load configuration files (e.g., YAML, JSON)."""
 
     def __init__(
         self,
