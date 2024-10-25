@@ -99,6 +99,26 @@ class TestVectorStore:
         assert df.loc[0, "doc_id"] == hash_document
         assert df.loc[1, "doc_id"] == hash_text_node
 
+    def test_add_duplicated_documents(
+        self,
+        capsys,
+        test_constructor_no_storage: VectorStore,
+        document: Document,
+        text_node: TextNode,
+        hash_document: str,
+        hash_text_node: str,
+    ):
+        test_constructor_no_storage.add_documents([document, text_node])
+        test_constructor_no_storage.add_documents([document, text_node])
+        # capture the printed text
+        captured = capsys.readouterr()
+        assert len(test_constructor_no_storage.store.docstore.docs) == 2
+        assert captured.out == (
+            "Document with ID 8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3 "
+            "already exists. Skipping.\nDocument with ID "
+            "dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4 already exists. Skipping.\n"
+        )
+
     def test_different_nodes_same_document(
         self,
         test_constructor_no_storage: VectorStore,

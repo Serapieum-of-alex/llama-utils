@@ -19,7 +19,7 @@ from llama_index.core.extractors import (
 )
 from llama_index.core.ingestion import IngestionPipeline
 from llama_utils.config import Config
-from llama_utils.utils.helper_functions import generate_content_hash, is_sha256
+from llama_utils.utils.helper_functions import generate_content_hash
 from llama_utils.utils.errors import StorageNotFoundError
 
 Config()
@@ -126,16 +126,26 @@ class VectorStore:
         """Get the metadata index."""
         return self._metadata_index
 
-    def add_documents(self, docs: Sequence[Union[Document, TextNode]]):
+    def add_documents(
+        self,
+        docs: Sequence[Union[Document, TextNode]],
+        generate_id: bool = True,
+        update: bool = False,
+    ):
         """Add node to the store.
 
             The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
-            node's text content.
+            node's text content. if the `update` parameter is True and the nodes already exist the existing node will
+            be updated.
 
         Parameters
         ----------
         docs: Sequence[TextNode/Document]
             The node/documents to add to the store.
+        generate_id: bool, optional, default is False.
+            True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes
+        update: bool, optional, default is True.
+            True to update the document in the docstore if it already exist.
 
         Returns
         -------
@@ -146,11 +156,12 @@ class VectorStore:
         # Create a metadata-based index
         for doc in docs:
             # change the id to a sha256 hash if it is not already
-            if not is_sha256(doc.node_id):
+            # if not is_sha256(doc.node_id):
+            if generate_id:
                 doc.node_id = generate_content_hash(doc.text)
 
-            if not self.docstore.document_exists(doc.node_id):
-                self.docstore.add_documents([doc])
+            if not self.docstore.document_exists(doc.node_id) or update:
+                self.docstore.add_documents([doc], allow_update=update)
                 # Update the metadata index with file name as key and doc_id as value
                 file_name = os.path.basename(doc.metadata["file_path"])
                 if file_name in file_names:
