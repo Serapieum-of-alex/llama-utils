@@ -69,7 +69,7 @@ class TestVectorStore:
 
     def test_save_store(self, test_constructor_no_storage: Storage):
         path = "tests/data/Storage"
-        test_constructor_no_storage.save_store(path)
+        test_constructor_no_storage.save(path)
         assert os.path.exists(path), "Storage not saved."
         docstore_content = [
             "default__vector_store.json",

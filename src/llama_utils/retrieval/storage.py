@@ -96,7 +96,7 @@ class Storage:
     def index_store(self) -> BaseIndexStore:
         return self.store.index_store
 
-    def save_store(self, store_dir: str):
+    def save(self, store_dir: str):
         """Save the store to a directory.
 
         Parameters
