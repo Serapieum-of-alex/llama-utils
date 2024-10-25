@@ -1,6 +1,7 @@
 import os
 import pytest
 import pandas as pd
+
 from llama_utils.utils.helper_functions import generate_content_hash
 from unittest.mock import patch, MagicMock
 from llama_index.core.schema import Document, TextNode
@@ -10,20 +11,19 @@ from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.core.graph_stores import SimpleGraphStore
 from llama_index.core import StorageContext
 
-from llama_utils.retrieval.vector_store import VectorStore
+from llama_utils.retrieval.storage import Storage
 
 
 def test_create_storage_context():
-    # vector_store = VectorStore()
-    storage_context = VectorStore._create_simple_storage_context()
+    storage_context = Storage._create_simple_storage_context()
     assert isinstance(storage_context, StorageContext), "Storage context not created."
     assert list(storage_context.vector_stores.keys()) == ["default", "image"]
     assert (
         storage_context.vector_stores["default"] is not None
-    ), "Default vector store not created."
+    ), "Default vector Storage not created."
     assert (
         storage_context.vector_stores["image"] is not None
-    ), "Image vector store not created."
+    ), "Image vector Storage not created."
     assert isinstance(storage_context.docstore, SimpleDocumentStore)
     assert isinstance(storage_context.index_store, SimpleIndexStore)
     assert isinstance(storage_context.vector_store, SimpleVectorStore)
@@ -33,39 +33,44 @@ def test_create_storage_context():
 class TestVectorStore:
 
     @pytest.fixture
-    def test_constructor_no_storage(self) -> VectorStore:
-        vector_store = VectorStore()
-        assert vector_store is not None, "VectorStore not created."
+    def test_constructor_no_storage(self) -> Storage:
+        store = Storage()
+        assert store is not None, "Storage not created."
         assert (
-            isinstance(vector_store.store, StorageContext) is not None
+            isinstance(store.store, StorageContext) is not None
         ), "Storage context not created."
-        assert isinstance(vector_store.metadata_index, pd.DataFrame)
-        return vector_store
+        assert isinstance(store.metadata_index, pd.DataFrame)
+        return store
+
+    def test_properties(self, test_constructor_no_storage: Storage):
+        isinstance(test_constructor_no_storage.docstore, SimpleDocumentStore)
+        isinstance(test_constructor_no_storage.vector_store, SimpleVectorStore)
+        isinstance(test_constructor_no_storage.index_store, SimpleIndexStore)
 
     def test_constructor_storage_path(self, storage_path: str):
-        vector_store = VectorStore(storage_path)
-        store = vector_store._store
-        assert isinstance(store, StorageContext)
-        assert isinstance(store.docstore, SimpleDocumentStore)
-        assert isinstance(vector_store.metadata_index, pd.DataFrame)
-        assert len(store.docstore.docs) == 4
+        store = Storage(storage_path)
+        storage = store._store
+        assert isinstance(storage, StorageContext)
+        assert isinstance(storage.docstore, SimpleDocumentStore)
+        assert isinstance(store.metadata_index, pd.DataFrame)
+        assert len(storage.docstore.docs) == 4
 
     def test_constructor_storage_context(self, storage_docstore: StorageContext):
-        vector_store = VectorStore(storage_docstore)
-        store = vector_store._store
-        assert isinstance(store, StorageContext)
-        assert isinstance(store.docstore, SimpleDocumentStore)
-        assert isinstance(vector_store.metadata_index, pd.DataFrame)
-        assert len(store.docstore.docs) == 4
+        store = Storage(storage_docstore)
+        storage = store._store
+        assert isinstance(storage, StorageContext)
+        assert isinstance(storage.docstore, SimpleDocumentStore)
+        assert isinstance(store.metadata_index, pd.DataFrame)
+        assert len(storage.docstore.docs) == 4
 
     def test_constructor_raise_error(self):
         with pytest.raises(ValueError):
-            VectorStore(5)
+            Storage(5)
 
-    def test_save_store(self, test_constructor_no_storage: VectorStore):
-        path = "tests/data/store"
+    def test_save_store(self, test_constructor_no_storage: Storage):
+        path = "tests/data/Storage"
         test_constructor_no_storage.save_store(path)
-        assert os.path.exists(path), "Store not saved."
+        assert os.path.exists(path), "Storage not saved."
         docstore_content = [
             "default__vector_store.json",
             "docstore.json",
@@ -75,15 +80,15 @@ class TestVectorStore:
         ]
         assert all(elem in os.listdir(path) for elem in docstore_content)
 
-    def test_load_store(self, test_constructor_no_storage: VectorStore):
-        # empty store
+    def test_load_store(self, test_constructor_no_storage: Storage):
+        # empty Storage
         path = "tests/data/load_store"
         test_constructor_no_storage.load_store(path)
         assert isinstance(test_constructor_no_storage.store, StorageContext)
 
     def test_add_documents(
         self,
-        test_constructor_no_storage: VectorStore,
+        test_constructor_no_storage: Storage,
         document: Document,
         text_node: TextNode,
         hash_document: str,
@@ -102,7 +107,7 @@ class TestVectorStore:
     def test_add_duplicated_documents(
         self,
         capsys,
-        test_constructor_no_storage: VectorStore,
+        test_constructor_no_storage: Storage,
         document: Document,
         text_node: TextNode,
         hash_document: str,
@@ -121,13 +126,13 @@ class TestVectorStore:
 
     def test_different_nodes_same_document(
         self,
-        test_constructor_no_storage: VectorStore,
+        test_constructor_no_storage: Storage,
         text_node_2: TextNode,
         text_node: TextNode,
         hash_text_node: str,
     ):
         """
-        Different nodes with the same document id should be added to the store.
+        Different nodes with the same document id should be added to the Storage.
 
         The test check if the file_name is added in the metadata index with an incremented index.
         <FILE-NAME>-1, <FILE-NAME>-2, ...
@@ -141,7 +146,7 @@ class TestVectorStore:
 
     def test_get_nodes_by_file_name(
         self,
-        test_constructor_no_storage: VectorStore,
+        test_constructor_no_storage: Storage,
         text_node_2: TextNode,
         text_node: TextNode,
     ):
@@ -155,7 +160,7 @@ class TestVectorStore:
 
 
 def test_read_documents(data_path: str):
-    docs = VectorStore.read_documents(data_path)
+    docs = Storage.read_documents(data_path)
     assert len(docs) == 4
     doc = docs[0]
     assert doc.excluded_embed_metadata_keys == ["file_name"]
@@ -178,7 +183,7 @@ def test_extract_info(mock_pipeline_run, document: Document, text_node: TextNode
         "keyword": {"keywords": 10},
         "entity": {"prediction_threshold": 0.5},
     }
-    nodes = VectorStore.extract_info(documents, info)
+    nodes = Storage.extract_info(documents, info)
 
     # Check if the pipeline.run method was called with expected arguments
     mock_pipeline_run.assert_called_once_with(

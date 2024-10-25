@@ -1,4 +1,4 @@
-"""A module for managing vector storage and retrieval."""
+"""A module for managing vector Storage and retrieval."""
 
 import os
 from pathlib import Path
@@ -7,6 +7,7 @@ import pandas as pd
 from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
+from llama_index.core.storage.index_store.types import BaseIndexStore
 from llama_index.core import StorageContext
 from llama_index.core.schema import Document, TextNode, BaseNode
 from llama_index.core import SimpleDirectoryReader
@@ -34,19 +35,19 @@ EXTRACTORS = dict(
 ID_MAPPING_FILE = "metadata_index.csv"
 
 
-class VectorStore:
-    """A class to manage vector storage and retrieval."""
+class Storage:
+    """A class to manage vector Storage and retrieval."""
 
     def __init__(self, storage_backend: Union[str, StorageContext] = None):
-        """Initialize the VectorStore.
+        """Initialize the Storage.
 
         Parameters
         ----------
         storage_backend: str, optional, default=None
-            The desired vector storage backend (e.g., Qdrant, FAISS). If none is provided, a simple storage context
+            The desired vector Storage backend (e.g., Qdrant, FAISS). If none is provided, a simple Storage context
             will be created.
         """
-        # Initialize with the desired vector storage backend (e.g., Qdrant, FAISS)
+        # Initialize with the desired vector Storage backend (e.g., Qdrant, FAISS)
         if storage_backend is None:
             self._store = self._create_simple_storage_context()
             self._metadata_index = self._create_metadata_index()
@@ -59,12 +60,12 @@ class VectorStore:
             )
         else:
             raise ValueError(
-                f"Invalid storage backend: {storage_backend}. Must be a string or StorageContext."
+                f"Invalid Storage backend: {storage_backend}. Must be a string or StorageContext."
             )
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:
-        """Create a simple storage context."""
+        """Create a simple Storage context."""
         return StorageContext.from_defaults(
             docstore=SimpleDocumentStore(),
             vector_store=SimpleVectorStore(),
@@ -79,13 +80,21 @@ class VectorStore:
 
     @property
     def store(self) -> StorageContext:
-        """Get the storage context."""
+        """Get the Storage context."""
         return self._store
 
     @property
     def docstore(self) -> BaseDocumentStore:
         """Get the document store."""
         return self.store.docstore
+
+    @property
+    def vector_store(self):
+        return self.store.vector_store
+
+    @property
+    def index_store(self) -> BaseIndexStore:
+        return self.store.index_store
 
     def save_store(self, store_dir: str):
         """Save the store to a directory.
@@ -116,7 +125,7 @@ class VectorStore:
         None
         """
         if not Path(store_dir).exists():
-            StorageNotFoundError(f"Store not found at {store_dir}")
+            StorageNotFoundError(f"Storage not found at {store_dir}")
 
         self._store = StorageContext.from_defaults(persist_dir=store_dir)
         self._metadata_index = read_metadata_index(path=store_dir)
@@ -156,7 +165,6 @@ class VectorStore:
         # Create a metadata-based index
         for doc in docs:
             # change the id to a sha256 hash if it is not already
-            # if not is_sha256(doc.node_id):
             if generate_id:
                 doc.node_id = generate_content_hash(doc.text)
 
