@@ -83,7 +83,7 @@ class TestVectorStore:
     def test_load_store(self, test_constructor_no_storage: Storage):
         # empty Storage
         path = "tests/data/load_store"
-        test_constructor_no_storage.load_store(path)
+        test_constructor_no_storage.load(path)
         assert isinstance(test_constructor_no_storage.store, StorageContext)
 
     def test_add_documents(

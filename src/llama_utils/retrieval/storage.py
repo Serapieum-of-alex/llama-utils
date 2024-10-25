@@ -52,7 +52,7 @@ class Storage:
             self._store = self._create_simple_storage_context()
             self._metadata_index = self._create_metadata_index()
         elif isinstance(storage_backend, str):
-            self.load_store(storage_backend)
+            self.load(storage_backend)
         elif isinstance(storage_backend, StorageContext):
             self._store = storage_backend
             self._metadata_index = create_metadata_index_existing_docs(
@@ -112,7 +112,7 @@ class Storage:
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
         save_metadata_index(self.metadata_index, file_path)
 
-    def load_store(self, store_dir: str):
+    def load(self, store_dir: str):
         """Load the store from a directory.
 
         Parameters
