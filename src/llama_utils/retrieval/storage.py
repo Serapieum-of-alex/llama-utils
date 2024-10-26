@@ -38,7 +38,11 @@ ID_MAPPING_FILE = "metadata_index.csv"
 class Storage:
     """A class to manage vector Storage and retrieval."""
 
-    def __init__(self, storage_backend: Union[str, StorageContext] = None):
+    def __init__(
+        self,
+        storage_backend: Union[str, StorageContext] = None,
+        metadata_index: pd.DataFrame = None,
+    ):
         """Initialize the Storage.
 
         Parameters
@@ -47,14 +51,15 @@ class Storage:
             The desired vector Storage backend (e.g., Qdrant, FAISS). If none is provided, a simple Storage context
             will be created.
         """
-        # Initialize with the desired vector Storage backend (e.g., Qdrant, FAISS)
-        if storage_backend is None:
-            self._store = self._create_simple_storage_context()
-            self._metadata_index = self._create_metadata_index()
-        elif isinstance(storage_backend, str):
-            self.load(storage_backend)
-        elif isinstance(storage_backend, StorageContext):
-            self._store = storage_backend
+        if not isinstance(storage_backend, StorageContext):
+            raise ValueError(
+                "Storage class should be instantiated using StorageContext object, given: {storage_backend}"
+            )
+
+        self._store = storage_backend
+        if isinstance(metadata_index, pd.DataFrame):
+            self._metadata_index = metadata_index
+        elif metadata_index is None:
             self._metadata_index = create_metadata_index_existing_docs(
                 self._store.docstore.docs
             )
@@ -62,6 +67,13 @@ class Storage:
             raise ValueError(
                 f"Invalid Storage backend: {storage_backend}. Must be a string or StorageContext."
             )
+
+    @classmethod
+    def create(cls) -> "Storage":
+        """Create a new instance of the Storage class."""
+        storage = cls._create_simple_storage_context()
+        metadata_index = cls._create_metadata_index()
+        return cls(storage, metadata_index)
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:
@@ -112,7 +124,8 @@ class Storage:
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
         save_metadata_index(self.metadata_index, file_path)
 
-    def load(self, store_dir: str):
+    @classmethod
+    def load(cls, store_dir: str) -> "Storage":
         """Load the store from a directory.
 
         Parameters
@@ -126,9 +139,9 @@ class Storage:
         """
         if not Path(store_dir).exists():
             StorageNotFoundError(f"Storage not found at {store_dir}")
-
-        self._store = StorageContext.from_defaults(persist_dir=store_dir)
-        self._metadata_index = read_metadata_index(path=store_dir)
+        storage = StorageContext.from_defaults(persist_dir=store_dir)
+        metadata_index = read_metadata_index(path=store_dir)
+        return cls(storage, metadata_index)
 
     @property
     def metadata_index(self) -> pd.DataFrame:
