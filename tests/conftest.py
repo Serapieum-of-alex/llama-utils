@@ -53,3 +53,8 @@ def storage_path() -> str:
 @pytest.fixture()
 def storage_docstore(storage_path: str) -> StorageContext:
     return StorageContext.from_defaults(persist_dir="tests/data/docstore")
+
+
+@pytest.fixture()
+def paul_grahm_essay_storage():
+    return "tests/data/paul-graham-essay-storage"
