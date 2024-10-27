@@ -1,6 +1,6 @@
 from typing import List
 from llama_index.core.indices.base import BaseIndex
-from llama_index.core import StorageContext
+from llama_utils.retrieval.storage import Storage
 from llama_index.core import load_indices_from_storage
 from llama_utils.utils.config_loader import ConfigLoader
 
@@ -15,9 +15,9 @@ class IndexManager:
         self._ids = ids
 
     @classmethod
-    def create_from_storage(cls, storage_dir: str) -> "IndexManager":
+    def create_from_storage(cls, storage: Storage) -> "IndexManager":
         """Reads indexes from storage."""
-        storage = StorageContext.from_defaults(persist_dir=storage_dir)
+        storage = storage.store
         index_instructs = storage.index_store.index_structs()
         index_ids = [index_i.index_id for index_i in index_instructs]
         indexes = load_indices_from_storage(storage)
