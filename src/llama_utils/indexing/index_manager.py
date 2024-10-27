@@ -15,7 +15,7 @@ class IndexManager:
         self._ids = ids
 
     @classmethod
-    def create_from_storage(cls, storage: Storage) -> "IndexManager":
+    def load_from_storage(cls, storage: Storage) -> "IndexManager":
         """Reads indexes from storage."""
         storage = storage.store
         index_instructs = storage.index_store.index_structs()

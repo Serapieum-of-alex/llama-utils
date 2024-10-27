@@ -4,7 +4,7 @@ from llama_utils.retrieval.storage import Storage
 
 def test_create_from_empty_storage(storage_path: str):
     storage = Storage.load(storage_path)
-    index_manager = IndexManager.create_from_storage(storage)
+    index_manager = IndexManager.load_from_storage(storage)
     assert isinstance(index_manager, IndexManager)
     assert len(index_manager.indexes) == 0
     assert index_manager.indexes == []
@@ -12,7 +12,7 @@ def test_create_from_empty_storage(storage_path: str):
 
 def test_create_from_storage(paul_grahm_essay_storage: str):
     storage = Storage.load(paul_grahm_essay_storage)
-    index_manager = IndexManager.create_from_storage(storage)
+    index_manager = IndexManager.load_from_storage(storage)
     assert isinstance(index_manager, IndexManager)
     assert len(index_manager.indexes) == 2
     assert index_manager.ids == [
