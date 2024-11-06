@@ -26,8 +26,8 @@ class ConfigLoader:
         ----------
         model_id : str, optional
             The model ID, by default "llama3"
-        model_dir : str, optional
-            The model directory, by default r"C:\MyComputer\llm\models"
+        model_dir : str, optional, default is None
+            The model directory.
         embedding_model : str, optional
         """
         if model_dir is None:
