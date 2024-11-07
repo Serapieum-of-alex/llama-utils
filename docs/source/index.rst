@@ -11,6 +11,9 @@ Welcome to unicloud's documentation!
    :caption: Contents:
 
    installation
+   index_manager
+   storage
+   utils
 
 
 
