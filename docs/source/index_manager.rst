@@ -1,9 +1,9 @@
-#######
-Storage
-#######
+############
+IndexManager
+############
 
 .. automodule:: indexing.index_manager
-   :members: IndexManager
+   :members: None
    :undoc-members:
    :show-inheritance:
    :special-members: __init__
