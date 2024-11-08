@@ -1,10 +1,8 @@
-import os
 from typing import Any
 from llama_index.core import Settings
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_utils.utils.models import get_ollama_llm, get_hugging_face_embedding
 from llama_index.core.node_parser import SentenceSplitter
-from llama_utils import __path__
+
 
 TEXT_SPLITTER = SentenceSplitter(chunk_size=1024, chunk_overlap=20)
 
@@ -14,9 +12,6 @@ class ConfigLoader:
 
     def __init__(
         self,
-        model_id: str = "llama3",
-        model_dir: str = None,
-        embedding_model: str = "BAAI/bge-base-en-v1.5",
         llm: Any = None,
         embedding: Any = None,
     ):
@@ -24,26 +19,22 @@ class ConfigLoader:
 
         Parameters
         ----------
-        model_id : str, optional
-            The model ID, by default "llama3"
-        model_dir : str, optional, default is None
-            The model directory.
-        embedding_model : str, optional
+        llm: Any, optional, default is llama3
+            llm model to use.
+        embedding: Any, optional, default is BAAI/bge-base-en-v1.5
+            Embedding model to use.
         """
-        if model_dir is None:
-            model_dir = os.path.join(__path__[0], "models")
-            if not os.path.exists(model_dir):
-                os.makedirs(model_dir)
         if llm is None:
-            self._llm = Ollama(model=model_id, request_timeout=360.0)
+            llm = get_ollama_llm()
         if embedding is None:
-            self._embedding = HuggingFaceEmbedding(
-                model_name=embedding_model, cache_folder=model_dir
-            )
-        Settings.embed_model = self._embedding
-        Settings.llm = self._llm
+            embedding = get_hugging_face_embedding()
+
+        Settings.embed_model = embedding
+        Settings.llm = llm
         Settings.text_splitter = TEXT_SPLITTER
         self._settings = Settings
+        self._embedding = embedding
+        self._llm = llm
 
     @property
     def settings(self):
