@@ -154,7 +154,7 @@ class Storage:
         generate_id: bool = True,
         update: bool = False,
     ):
-        """Add node to the store.
+        """Add node/documents to the store.
 
             The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
             node's text content. if the `update` parameter is True and the nodes already exist the existing node will
