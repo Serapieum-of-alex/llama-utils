@@ -16,6 +16,8 @@ llama-index = "^0.11.19"
 llama-index-llms-ollama = "^0.3.4"
 llama-index-embeddings-huggingface = "^0.3.1"
 pandas = "^2.2.3"
+#python-dotenv = "^1.0.1"
+#opencv-python = "^4.10.0.84"
 llama-index-llms-azure-openai = "^0.2.2"
 llama-index-embeddings-azure-openai = "^0.2.5"
 
