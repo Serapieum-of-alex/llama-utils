@@ -13,10 +13,11 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.12"
 llama-index = "^0.11.19"
- #llama-index-readers-web = "^0.2.4"
 llama-index-llms-ollama = "^0.3.4"
 llama-index-embeddings-huggingface = "^0.3.1"
 pandas = "^2.2.3"
+llama-index-llms-azure-openai = "^0.2.2"
+llama-index-embeddings-azure-openai = "^0.2.5"
 
 [tool.poetry.group.analysis.dependencies]
 jupyter="*"
@@ -31,20 +32,21 @@ typeguard = "^4.3.0"
 [tool.poetry.dev-dependencies]
 flake8 = "^7.1.1"
 coverage = {extras = ["toml"], version = "^7.6.1"}
-safety = "^3.2.7"
+safety = "^3.2.9"
 mypy = "^1.11.2"
-pre-commit = "^3.8.0"
+pre-commit = "^4.0.1"
 black = "^24.8.0"
 flake8-bandit = "^4.1.1"
-flake8-bugbear = "^24.8.19"
+flake8-bugbear = "^24.10.31"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.3.0"
 pep8-naming = "^0.14.1"
 darglint = "^1.8.1"
 reorder-python-imports = "^3.8.2"
-pre-commit-hooks = "^4.3.0"
+pre-commit-hooks = "^5.0.0"
 pre-commit-commit-msg-hooks = "^0.1.0"
 flake8-pyproject = "^1.2.3"
+pydata-sphinx-theme = "^0.16.0"
 
 
 [tool.flake8]
