@@ -3,7 +3,6 @@ from warnings import warn
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
-from llama_utils import __path__
 
 
 def azure_open_ai(model_id: str = "gpt-4o", engine: str = "4o"):
@@ -60,10 +59,5 @@ def get_hugging_face_embedding(
     HuggingFaceEmbedding
         The hugging face embedding model.
     """
-    if cache_folder is None:
-        cache_folder = os.path.join(__path__[0], "models")
-        if not os.path.exists(cache_folder):
-            os.makedirs(cache_folder)
-
     embedding = HuggingFaceEmbedding(model_name=model_name, cache_folder=cache_folder)
     return embedding
