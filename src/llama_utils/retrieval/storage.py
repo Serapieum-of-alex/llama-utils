@@ -265,8 +265,44 @@ class Storage:
         -------
         Sequence[Union[Document, TextNode]]
             The documents/nodes read from the store.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the directory is not found.
+
+        Examples
+        --------
+        You can read documents from a directory as follows:
+        >>> data_path = "examples/data/essay"
+        >>> docs = Storage.read_documents(data_path)
+        >>> print(docs) # DOCTEST: +SKIP
+        [
+            Document(
+                id_='a25111e2e59f81bb7a0e3efb48255**',
+                embedding=None,
+                metadata={
+                    'file_path': 'examples/data/essay/paul-graham-essay.txt',
+                    'file_name': 'paul-graham-essay.txt',
+                    'file_type': 'text/plain',
+                    'file_size': 75395,
+                    'creation_date': '2024-10-25',
+                    'last_modified_date': '2024-09-16'
+                },
+                excluded_embed_metadata_keys=['file_name'],
+                excluded_llm_metadata_keys=['file_name'],
+                relationships={},
+                text='What I Worked On\n\nFebruary 2021\n\nBefore college the two main things ****',
+                mimetype='text/plain',
+                start_char_idx=None,
+                end_char_idx=None,
+                text_template='{metadata_str}\n\n{content}',
+                metadata_template='{key}: {value}',
+                metadata_seperator='\n'
+            )
+        ]
         """
-        if not os.path.exists(path):
+        if not Path(path).exists():
             raise FileNotFoundError(f"Directory not found: {path}")
 
         reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
