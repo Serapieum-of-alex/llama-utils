@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import Sequence, Union, List, Dict
 import pandas as pd
+from pandas import DataFrame
 from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
@@ -38,23 +39,30 @@ class Storage:
 
     def __init__(
         self,
-        storage_backend: Union[str, StorageContext] = None,
-        metadata_index: pd.DataFrame = None,
+        storage_context: StorageContext = None,
+        metadata_index: DataFrame = None,
     ):
         """Initialize the Storage.
 
         Parameters
         ----------
-        storage_backend: str, optional, default=None
+        storage_context: str, optional, default=None
             The desired vector Storage backend (e.g., Qdrant, FAISS). If none is provided, a simple Storage context
             will be created.
+
+        metadata_index: DataFrame, optional, default=None
+            The metadata index for the documents.
+            ,file_name,doc_id
+            0,paul_graham_essay.txt,cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7
+            1,paul_graham_essay.txt,0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf
+            2,paul_graham_essay.txt,d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f
         """
-        if not isinstance(storage_backend, StorageContext):
+        if not isinstance(storage_context, StorageContext):
             raise ValueError(
-                "Storage class should be instantiated using StorageContext object, given: {storage_backend}"
+                f"Storage class should be instantiated using StorageContext object, given: {storage_context}"
             )
 
-        self._store = storage_backend
+        self._store = storage_context
         if isinstance(metadata_index, pd.DataFrame):
             self._metadata_index = metadata_index
         elif metadata_index is None:
@@ -63,12 +71,12 @@ class Storage:
             )
         else:
             raise ValueError(
-                f"Invalid Storage backend: {storage_backend}. Must be a string or StorageContext."
+                f"Invalid Storage backend: {storage_context}. Must be a string or StorageContext."
             )
 
     @classmethod
     def create(cls) -> "Storage":
-        """Create a new instance of the Storage class."""
+        """Create a new in-memory Storage."""
         storage = cls._create_simple_storage_context()
         metadata_index = cls._create_metadata_index()
         return cls(storage, metadata_index)
@@ -85,7 +93,6 @@ class Storage:
     @staticmethod
     def _create_metadata_index():
         """Create a metadata-based index."""
-        """Create a metadata-based index."""
         return pd.DataFrame(columns=["file_name", "doc_id"])
 
     @property
@@ -100,23 +107,21 @@ class Storage:
 
     @property
     def vector_store(self):
+        """Get the vector store."""
         return self.store.vector_store
 
     @property
     def index_store(self) -> BaseIndexStore:
+        """Get the index store."""
         return self.store.index_store
 
     def save(self, store_dir: str):
-        """Save the store to a directory.
+        """Save the storage to a directory.
 
         Parameters
         ----------
         store_dir: str
             The directory to save the store.
-
-        Returns
-        -------
-        None
         """
         self.store.persist(persist_dir=store_dir)
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
@@ -133,13 +138,48 @@ class Storage:
 
         Returns
         -------
-        None
+        Storage:
+            The loaded storage.
+
+        Raises
+        ------
+        StorageNotFoundError
+            If the storage is not found at the specified directory.
+
+        Examples
+        --------
+        You can load a storage from a directory as follows:
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> print(store) # doctest: +SKIP
+        <BLANKLINE>
+                    Documents: 53
+                    Indexes: 2
+        <BLANKLINE>
+        >>> metadata = store.metadata_index
+        >>> print(metadata) # doctest: +SKIP
+                        file_name                                             doc_id
+        0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        1   paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+        2   paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        3   paul_graham_essay.txt  120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5...
+        >>> docstore = store.docstore # doctest: +SKIP
+        <llama_index.core.storage.docstore.simple_docstore.SimpleDocumentStore at 0x20444d31be0>
+        >>> vector_store = store.vector_store
+        >>> print(type(vector_store))
+        'llama_index.core.vector_stores.simple.SimpleVectorStore'>
         """
         if not Path(store_dir).exists():
             StorageNotFoundError(f"Storage not found at {store_dir}")
         storage = StorageContext.from_defaults(persist_dir=store_dir)
         metadata_index = read_metadata_index(path=store_dir)
         return cls(storage, metadata_index)
+
+    def __str__(self):
+        message = f"""
+        Documents: {len(self.docstore.docs)}
+        Indexes: {len(self.index_store.index_structs())}
+        """
+        return message
 
     @property
     def metadata_index(self) -> pd.DataFrame:
