@@ -44,11 +44,13 @@ class Storage:
     ):
         """Initialize the Storage.
 
+        The constructor method takes a llama_index.core.StorageContext object that is a native llamaIndex object
+        and and a metadata table (pandas.DataFrame-optional) as input.
+
         Parameters
         ----------
-        storage_context: str, optional, default=None
-            The desired vector Storage backend (e.g., Qdrant, FAISS). If none is provided, a simple Storage context
-            will be created.
+        storage_context: str, optional, default is None.
+            the StorageContext object that is created by LlamaIndex (a native llamaIndex object).
 
         metadata_index: DataFrame, optional, default=None
             The metadata index for the documents.
@@ -76,7 +78,18 @@ class Storage:
 
     @classmethod
     def create(cls) -> "Storage":
-        """Create a new in-memory Storage."""
+        """Create a new in-memory Storage.
+
+        Examples
+        --------
+        You can create a new storage (in-memory) using the `create` method as follows:
+        >>> store = Storage.create()
+        >>> print(store)
+        <BLANKLINE>
+                    Documents: 0
+                    Indexes: 0
+        <BLANKLINE>
+        """
         storage = cls._create_simple_storage_context()
         metadata_index = cls._create_metadata_index()
         return cls(storage, metadata_index)
