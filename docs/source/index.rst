@@ -10,10 +10,10 @@ Welcome to unicloud's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   installation
-   index_manager
-   storage
-   utils
+   Installation <installation.rst>
+   Index Manager <index_manager.rst>
+   Storage <storage.rst>
+   Utils <utils.rst>
 
 
 
