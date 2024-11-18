@@ -2,7 +2,7 @@
 Storage
 #######
 
-.. automodule:: retrieval.storage
+.. automodule:: llama_utils.retrieval.storage
    :members: Storage
    :undoc-members:
    :show-inheritance:

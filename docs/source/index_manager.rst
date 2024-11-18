@@ -2,7 +2,7 @@
 IndexManager
 ############
 
-.. automodule:: indexing.index_manager
+.. automodule:: llama_utils.indexing.index_manager
    :members: None
    :undoc-members:
    :show-inheritance:
