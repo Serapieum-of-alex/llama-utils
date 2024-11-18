@@ -80,6 +80,11 @@ class Storage:
     def create(cls) -> "Storage":
         """Create a new in-memory Storage.
 
+        Returns
+        -------
+        Storage:
+            The storage Context.
+
         Examples
         --------
         You can create a new storage (in-memory) using the `create` method as follows:
@@ -96,7 +101,13 @@ class Storage:
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:
-        """Create a simple Storage context."""
+        """Create a simple Storage context.
+
+        Returns
+        -------
+        StorageContext:
+            A storage context with docstore, vectore store, and index store.
+        """
         return StorageContext.from_defaults(
             docstore=SimpleDocumentStore(),
             vector_store=SimpleVectorStore(),
@@ -135,6 +146,21 @@ class Storage:
         ----------
         store_dir: str
             The directory to save the store.
+
+        Examples
+        --------
+        You can save a storage to a directory as follows:
+
+        >>> store = Storage.create()
+        >>> store.save("examples/paul-graham-essay-storage-example")
+
+        The following files will be created in the specified directory:
+        - metadata_index.csv
+        - docstore.json
+        - default__vector_store.json
+        - index_store.json
+        - graph_store.json
+        - image__vector_store.json
         """
         self.store.persist(persist_dir=store_dir)
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
@@ -182,7 +208,7 @@ class Storage:
         'llama_index.core.vector_stores.simple.SimpleVectorStore'>
         """
         if not Path(store_dir).exists():
-            StorageNotFoundError(f"Storage not found at {store_dir}")
+            raise StorageNotFoundError(f"Storage not found at {store_dir}")
         storage = StorageContext.from_defaults(persist_dir=store_dir)
         metadata_index = read_metadata_index(path=store_dir)
         return cls(storage, metadata_index)
