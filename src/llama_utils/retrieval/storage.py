@@ -233,9 +233,9 @@ class Storage:
     ):
         """Add node/documents to the store.
 
-            The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
-            node's text content. if the `update` parameter is True and the nodes already exist the existing node will
-            be updated.
+        The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
+        node's text content. if the `update` parameter is True and the nodes already exist the existing node will
+        be updated.
 
         Parameters
         ----------
@@ -394,7 +394,7 @@ class Storage:
     def extract_info(
         documents: List[Union[Document, BaseNode]],
         info: Dict[str, Dict[str, int]] = None,
-    ) -> List[TextNode]:
+    ) -> Sequence[BaseNode]:
         """Extract Info
 
         Parameters
@@ -417,6 +417,7 @@ class Storage:
         -------
         List[TextNode]
             The extracted nodes.
+
             title:
                 the extracted title will be stored in the metadata under the key "document_title".
             question_answer:
