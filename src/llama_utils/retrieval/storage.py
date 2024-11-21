@@ -35,7 +35,11 @@ ID_MAPPING_FILE = "metadata_index.csv"
 
 
 class Storage:
-    """A class to manage vector Storage and retrieval."""
+    """A class to manage vector Storage and retrieval.
+
+    The Storage class is used to manage the storage and retrieval of documents. It provides methods to add documents to the
+    store, read documents from a directory, and extract information from the documents.
+    """
 
     def __init__(
         self,
@@ -232,7 +236,7 @@ class Storage:
         generate_id: bool = True,
         update: bool = False,
     ):
-        """Add node/documents to the store.
+        r"""Add node/documents to the store.
 
         The `add_documents` method adds a node to the store. The node's id is a sha256 hash generated based on the
         node's text content. if the `update` parameter is True and the nodes already exist the existing node will
@@ -243,7 +247,7 @@ class Storage:
         docs: Sequence[TextNode/Document]
             The node/documents to add to the store.
         generate_id: bool, optional, default is False.
-            True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes
+            True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes.
         update: bool, optional, default is True.
             True to update the document in the docstore if it already exist.
 
@@ -267,12 +271,15 @@ class Storage:
                         Documents: 1
                         Indexes: 0
             <BLANKLINE>
+
             >>> metadata = store.metadata_index
             >>> print(metadata)
                             file_name                                             doc_id
             0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+
             >>> docstore = store.docstore
             >>> print(docstore.docs)
+
             {
                 'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
                     Document(
@@ -289,7 +296,7 @@ class Storage:
                         excluded_embed_metadata_keys=['file_name'],
                         excluded_llm_metadata_keys=['file_name'],
                         relationships={},
-                        text='\r\n\r\nWhat I Worked On\r\n\r\nFebruary 2021\r\n\r\nBefore college the two ...',
+                        text='What I Worked On February 2021 Before college the two ...',
                         mimetype='text/plain',
                         start_char_idx=None,
                         end_char_idx=None,
@@ -478,6 +485,77 @@ class Storage:
                 the extracted keywords will be stored in the metadata under the key "keywords".
             entity:
                 the extracted entities will be stored in the metadata under the key "entities".
+
+        Examples
+        --------
+        - You can extract information from a list of documents as follows:
+
+            >>> from llama_utils.utils.config_loader import ConfigLoader
+            >>> config_loader = ConfigLoader()
+            >>> data_path = "examples/data/essay"
+            >>> docs = Storage.read_documents(data_path)
+            >>> extractors_info = {
+            >>>     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+            >>>     "title": {"nodes": 5},
+            >>>     "question_answer": {"questions": 1},
+            >>>     "summary": {"summaries": ["prev", "self"]},
+            >>>     "keyword": {"keywords": 3},
+            >>>     "entity": {"prediction_threshold": 0.5},
+            >>> }
+
+            >>> extracted_docs = Storage.extract_info(docs, extractors_info) # doctest: +SKIP
+            Parsing nodes: 100%|██████████| 1/1 [00:00<00:00,  4.52it/s]
+            100%|██████████| 5/5 [00:15<00:00,  3.19s/it]
+            100%|██████████| 53/53 [03:46<00:00,  4.27s/it]
+             26%|██▋       | 14/53 [00:48<02:08,  3.29s/it]
+            100%|██████████| 53/53 [00:47<00:00,  1.13it/s]
+            >>> len(extracted_docs)
+            53
+            >>> print(extracted_docs[0])
+            Node ID: 9b4fca22-7f1f-4876-bb71-d4b29500daa3
+            Text: What I Worked On    February 2021    Before college the two main
+            things I worked on, outside of school, were writing and programming. I
+            didn't write essays. I wrote what beginning writers were supposed to
+            write then, and probably still are: short stories. My stories were
+            awful. They had hardly any plot, just characters with strong feelings,
+            whic...
+            >>> print(extracted_docs[0].extra_info)
+            {
+                'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
+                'file_name': 'paul-graham-essay.txt',
+                'file_type': 'text/plain',
+                'file_size': 75395,
+                'creation_date': '2024-10-25',
+                'last_modified_date': '2024-09-16',
+                'document_title':
+                    'After reviewing the potential titles and themes mentioned in the context, I would suggest the
+                    following comprehensive title:\n\n"A Personal Odyssey of Writing, Programming, and Artificial
+                    Intelligence: Early Computing Experiences, Influences, and Journeys"\n\nThis title captures the
+                    main themes and entities discussed in the passage, including:\n\n* The author\'s early writing
+                    and programming experiences\n*Their influences and adventures with computers, AI, and specific
+                    machines (e.g.,IBM 1401, TRS-80, Heathkit kit)\n* Their personal journeys of self-discovery,
+                    growth, and exploration through their experiences with writing, programming, and AI\n\nThis title
+                    provides a comprehensive overview of the document\'s content, highlighting the author\'s unique
+                    perspectives on early computing, AI, and personal development.',
+                'questions_this_excerpt_can_answer':
+                    "Based on the provided context, here's a question that this context can specifically
+                    answer:\n\nWhat was Paul Graham's experience with the IBM 1401 computer in 9th grade, and
+                    how did it affect his understanding of programming?\n\nThis question is unlikely to be found
+                    elsewhere because it is highly specific to the context and deals with personal experiences rather
+                    than general knowledge.",
+                'section_summary':
+                    'Here is a summary of the key topics and entities in the section:\n\n**Key Topics:**\n\n1.
+                    Paul Graham\'s early experiences with writing and programming.\n2. His work on the IBM 1401
+                    computer in 9th grade (around age 13-14).\n3. The process of writing programs using Fortran
+                    language and punch cards.\n4. The limitations of the IBM 1401, such as no input options other than
+                    punched cards.\n5. The impact of microcomputers on programming.\n\n**Entities:**\n\n1. Paul Graham -
+                    author of the passage.\n2. IBM 1401 computer - a machine used for "data processing" in school.\n3.
+                    Fortran language - programming language used to write programs.\n4. Punch cards - physical medium
+                    for storing and loading program data.\n5. Rich Draves - friend who also worked on the IBM 1401 with
+                    Paul Graham.\n\nLet me know if you have any further questions!',
+                'excerpt_keywords':
+                    'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401, Microcomputers'
+            }
         """
         info = EXTRACTORS.copy() if info is None else info
 
