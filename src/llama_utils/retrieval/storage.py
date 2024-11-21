@@ -88,12 +88,13 @@ class Storage:
         Examples
         --------
         You can create a new storage (in-memory) using the `create` method as follows:
-        >>> store = Storage.create()
-        >>> print(store)
-        <BLANKLINE>
-                    Documents: 0
-                    Indexes: 0
-        <BLANKLINE>
+
+            >>> store = Storage.create()
+            >>> print(store)
+            <BLANKLINE>
+                        Documents: 0
+                        Indexes: 0
+            <BLANKLINE>
         """
         storage = cls._create_simple_storage_context()
         metadata_index = cls._create_metadata_index()
@@ -249,6 +250,54 @@ class Storage:
         Returns
         -------
         None
+
+        Examples
+        --------
+        - First create the storage object:
+
+            >>> store = Storage.create()
+
+        - You can add documents to the store as follows:
+
+            >>> data_path = "examples/data/essay"
+            >>> docs = Storage.read_documents(data_path)
+            >>> store.add_documents(docs)
+            >>> print(store) # doctest: +SKIP
+            <BLANKLINE>
+                        Documents: 1
+                        Indexes: 0
+            <BLANKLINE>
+            >>> metadata = store.metadata_index
+            >>> print(metadata)
+                            file_name                                             doc_id
+            0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+            >>> docstore = store.docstore
+            >>> print(docstore.docs)
+            {
+                'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
+                    Document(
+                        id_='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
+                        embedding=None,
+                        metadata={
+                            'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
+                            'file_name': 'paul-graham-essay.txt',
+                            'file_type': 'text/plain',
+                            'file_size': 75395,
+                            'creation_date': '2024-10-25',
+                            'last_modified_date': '2024-09-16'
+                        },
+                        excluded_embed_metadata_keys=['file_name'],
+                        excluded_llm_metadata_keys=['file_name'],
+                        relationships={},
+                        text='\r\n\r\nWhat I Worked On\r\n\r\nFebruary 2021\r\n\r\nBefore college the two ...',
+                        mimetype='text/plain',
+                        start_char_idx=None,
+                        end_char_idx=None,
+                        text_template='{metadata_str}\n\n{content}',
+                        metadata_template='{key}: {value}',
+                        metadata_seperator='\n'
+                    )
+            }
         """
         new_entries = []
         file_names = []
@@ -313,33 +362,34 @@ class Storage:
         Examples
         --------
         You can read documents from a directory as follows:
-        >>> data_path = "examples/data/essay"
-        >>> docs = Storage.read_documents(data_path)
-        >>> print(docs) # DOCTEST: +SKIP
-        [
-            Document(
-                id_='a25111e2e59f81bb7a0e3efb48255**',
-                embedding=None,
-                metadata={
-                    'file_path': 'examples/data/essay/paul-graham-essay.txt',
-                    'file_name': 'paul-graham-essay.txt',
-                    'file_type': 'text/plain',
-                    'file_size': 75395,
-                    'creation_date': '2024-10-25',
-                    'last_modified_date': '2024-09-16'
-                },
-                excluded_embed_metadata_keys=['file_name'],
-                excluded_llm_metadata_keys=['file_name'],
-                relationships={},
-                text='What I Worked On\n\nFebruary 2021\n\nBefore college the two main things ****',
-                mimetype='text/plain',
-                start_char_idx=None,
-                end_char_idx=None,
-                text_template='{metadata_str}\n\n{content}',
-                metadata_template='{key}: {value}',
-                metadata_seperator='\n'
-            )
-        ]
+
+            >>> data_path = "examples/data/essay"
+            >>> docs = Storage.read_documents(data_path)
+            >>> print(docs) # DOCTEST: +SKIP
+            [
+                Document(
+                    id_='a25111e2e59f81bb7a0e3efb48255**',
+                    embedding=None,
+                    metadata={
+                        'file_path': 'examples/data/essay/paul-graham-essay.txt',
+                        'file_name': 'paul-graham-essay.txt',
+                        'file_type': 'text/plain',
+                        'file_size': 75395,
+                        'creation_date': '2024-10-25',
+                        'last_modified_date': '2024-09-16'
+                    },
+                    excluded_embed_metadata_keys=['file_name'],
+                    excluded_llm_metadata_keys=['file_name'],
+                    relationships={},
+                    text='What I Worked On\n\nFebruary 2021\n\nBefore college the two main things ****',
+                    mimetype='text/plain',
+                    start_char_idx=None,
+                    end_char_idx=None,
+                    text_template='{metadata_str}\n\n{content}',
+                    metadata_template='{key}: {value}',
+                    metadata_seperator='\n'
+                )
+            ]
         """
         if not Path(path).exists():
             raise FileNotFoundError(f"Directory not found: {path}")
@@ -440,7 +490,6 @@ class Storage:
             documents=documents,
             in_place=True,
             show_progress=True,
-            # num_workers=4
         )
         return nodes
 
