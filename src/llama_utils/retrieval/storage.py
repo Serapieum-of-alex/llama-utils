@@ -453,46 +453,73 @@ class Storage:
         documents: List[Union[Document, BaseNode]],
         info: Dict[str, Dict[str, int]] = None,
     ) -> Sequence[BaseNode]:
-        """Extract Info
+        """Extract information from a list of documents using predefined extractors.
 
         Parameters
         ----------
-        documents: List[Union[Document, BaseNode]]
-            List of documents.
-        info: Union[List[str], str], optional, default is None
-            The information to extract from the documents.
+        documents : List[Union[Document, BaseNode]]
+            List of documents or nodes to process. Each document should be an instance of `Document` or `BaseNode`.
+        info : Dict[str, Dict[str, Any]], optional
+            A dictionary defining the information extraction configuration. If not provided, default extractors will be used.
 
-            >>> info = {
-            >>>     "text_splitter": {"separator" : " ", "chunk_size":512, "chunk_overlap":128},
-            >>>     "title": {"nodes": 5} ,
-            >>>     "question_answer": {"questions": 3},
-            >>>     "summary": {"summaries": ["prev", "self"]},
-            >>>     "keyword": {"keywords": 10},
-            >>>     "entity": {"prediction_threshold": 0.5}
-            >>> }
+            Example format for `info`:
+            {
+                "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+                "title": {"nodes": 5},
+                "question_answer": {"questions": 3},
+                "summary": {"summaries": ["prev", "self"]},
+                "keyword": {"keywords": 10},
+                "entity": {"prediction_threshold": 0.5}
+            }
 
         Returns
         -------
-        List[TextNode]
-            The extracted nodes.
-
-            title:
-                the extracted title will be stored in the metadata under the key "document_title".
-            question_answer:
-                the extracted questions will be stored in the metadata under the key "questions_this_excerpt_can_answer".
-            summary:
-                the extracted summaries will be stored in the metadata under the key "summary".
-            keyword:
-                the extracted keywords will be stored in the metadata under the key "keywords".
-            entity:
-                the extracted entities will be stored in the metadata under the key "entities".
+        Sequence[BaseNode]
+            A sequence of processed nodes with extracted metadata. Extracted data is stored in the node's `metadata`
+            field under the following keys:
+            - "document_title": Extracted title.
+            - "questions_this_excerpt_can_answer": Extracted questions.
+            - "summary": Extracted summaries.
+            - "keywords": Extracted keywords.
+            - "entities": Extracted entities.
 
         Examples
         --------
-        - You can extract information from a list of documents as follows:
+        First create a config loader object:
 
             >>> from llama_utils.utils.config_loader import ConfigLoader
             >>> config_loader = ConfigLoader()
+
+        You can extract information from a single document as follows:
+            >>> docs = [Document(text="Sample text", metadata={})]
+            >>> extractors_info = {
+            ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+            ...     "title": {"nodes": 5},
+            ...     "summary": {"summaries": ["prev", "self"]}
+            ... }
+            >>> extracted_nodes = Storage.extract_info(docs, extractors_info)
+            Parsing nodes: 100%|██████████| 1/1 [00:00<00:00, 1000.31it/s]
+            100%|██████████| 1/1 [00:05<00:00,  5.82s/it]
+            100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
+            >>> len(extracted_nodes)
+            1
+            >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
+            {
+                "document_title": "Sample Title",
+                "summary": ["Summary 1", "Summary 2"]
+            }
+
+            {
+                'document_title': "I'm excited to help! Unfortunately, there doesn't seem to be any text provided.
+                    Please go ahead and share the sample text, and I'll do my best to give you a comprehensive title
+                    that summarizes all the unique entities, titles, or themes found in it.",
+                'section_summary': "I apologize, but since there is no provided text, I have nothing to summarize.
+                    Please provide the sample text, and I'll be happy to help you summarize the key topics and
+                    entities!"
+            }
+
+        You can extract information from a list of documents as follows:
+
             >>> data_path = "examples/data/essay"
             >>> docs = Storage.read_documents(data_path)
             >>> extractors_info = {
@@ -528,34 +555,32 @@ class Storage:
                 'file_size': 75395,
                 'creation_date': '2024-10-25',
                 'last_modified_date': '2024-09-16',
-                'document_title':
-                    'After reviewing the potential titles and themes mentioned in the context, I would suggest the
-                    following comprehensive title:\n\n"A Personal Odyssey of Writing, Programming, and Artificial
-                    Intelligence: Early Computing Experiences, Influences, and Journeys"\n\nThis title captures the
-                    main themes and entities discussed in the passage, including:\n\n* The author\'s early writing
-                    and programming experiences\n*Their influences and adventures with computers, AI, and specific
-                    machines (e.g.,IBM 1401, TRS-80, Heathkit kit)\n* Their personal journeys of self-discovery,
-                    growth, and exploration through their experiences with writing, programming, and AI\n\nThis title
-                    provides a comprehensive overview of the document\'s content, highlighting the author\'s unique
-                    perspectives on early computing, AI, and personal development.',
-                'questions_this_excerpt_can_answer':
-                    "Based on the provided context, here's a question that this context can specifically
-                    answer:\n\nWhat was Paul Graham's experience with the IBM 1401 computer in 9th grade, and
-                    how did it affect his understanding of programming?\n\nThis question is unlikely to be found
-                    elsewhere because it is highly specific to the context and deals with personal experiences rather
-                    than general knowledge.",
-                'section_summary':
-                    'Here is a summary of the key topics and entities in the section:\n\n**Key Topics:**\n\n1.
-                    Paul Graham\'s early experiences with writing and programming.\n2. His work on the IBM 1401
-                    computer in 9th grade (around age 13-14).\n3. The process of writing programs using Fortran
-                    language and punch cards.\n4. The limitations of the IBM 1401, such as no input options other than
-                    punched cards.\n5. The impact of microcomputers on programming.\n\n**Entities:**\n\n1. Paul Graham -
-                    author of the passage.\n2. IBM 1401 computer - a machine used for "data processing" in school.\n3.
-                    Fortran language - programming language used to write programs.\n4. Punch cards - physical medium
-                    for storing and loading program data.\n5. Rich Draves - friend who also worked on the IBM 1401 with
-                    Paul Graham.\n\nLet me know if you have any further questions!',
-                'excerpt_keywords':
-                    'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401, Microcomputers'
+                'document_title': 'After reviewing the potential titles and themes mentioned in the context,
+                    I would suggest the following comprehensive title:\n\n"A Personal Odyssey of Writing,
+                    Programming, and Artificial Intelligence: Early Computing Experiences, Influences,
+                    and Journeys"\n\nThis title captures the main themes and entities discussed in the passage,
+                    including:\n\n* The author\'s early writing and programming experiences\n*Their influences and
+                    adventures with computers, AI, and specific machines (e.g.,IBM 1401, TRS-80, Heathkit kit)\n*
+                    Their personal journeys of self-discovery, growth, and exploration through their experiences with
+                    writing, programming, and AI\n\nThis title provides a comprehensive overview of the document\'s
+                    content, highlighting the author\'s unique perspectives on early computing, AI, and personal
+                    development.',
+                'questions_this_excerpt_can_answer': "Based on the provided context, here's a question that this
+                    context can specifically answer:\n\nWhat was Paul Graham's experience with the IBM 1401 computer
+                    in 9th grade, and how did it affect his understanding of programming?\n\nThis question is
+                    unlikely to be found elsewhere because it is highly specific to the context and deals with
+                    personal experiences rather than general knowledge.",
+                'section_summary': 'Here is a summary of the key topics and entities in the section:\n\n**Key
+                    Topics:**\n\n1. Paul Graham\'s early experiences with writing and programming.\n2. His work on
+                    the IBM 1401 computer in 9th grade (around age 13-14).\n3. The process of writing programs using
+                    Fortran language and punch cards.\n4. The limitations of the IBM 1401, such as no input options
+                    other than punched cards.\n5. The impact of microcomputers on programming.\n\n**Entities:**\n\n1.
+                    Paul Graham - author of the passage.\n2. IBM 1401 computer - a machine used for "data processing"
+                    in school.\n3. Fortran language - programming language used to write programs.\n4. Punch cards -
+                    physical medium for storing and loading program data.\n5. Rich Draves - friend who also worked on
+                    the IBM 1401 with Paul Graham.\n\nLet me know if you have any further questions!',
+                'excerpt_keywords': 'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401,
+                    Microcomputers'
             }
         """
         info = EXTRACTORS.copy() if info is None else info
