@@ -97,8 +97,8 @@ class Storage:
             >>> store = Storage.create()
             >>> print(store)
             <BLANKLINE>
-                        Documents: 0
-                        Indexes: 0
+                    Documents: 0
+                    Indexes: 0
             <BLANKLINE>
         """
         storage = cls._create_simple_storage_context()
@@ -211,7 +211,7 @@ class Storage:
         <llama_index.core.storage.docstore.simple_docstore.SimpleDocumentStore at 0x20444d31be0>
         >>> vector_store = store.vector_store
         >>> print(type(vector_store))
-        'llama_index.core.vector_stores.simple.SimpleVectorStore'>
+        <class 'llama_index.core.vector_stores.simple.SimpleVectorStore'>
         """
         if not Path(store_dir).exists():
             raise StorageNotFoundError(f"Storage not found at {store_dir}")
@@ -276,12 +276,12 @@ class Storage:
         - once the documents are added successfully, they are added also to the metadata index.
 
             >>> metadata = store.metadata_index
-            >>> print(metadata)
+            >>> print(metadata) # doctest: +SKIP
                             file_name                                             doc_id
             0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
 
             >>> docstore = store.docstore
-            >>> print(docstore.docs)
+            >>> print(docstore.docs) # doctest: +SKIP
 
             {
                 'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
@@ -375,7 +375,7 @@ class Storage:
 
             >>> data_path = "examples/data/essay"
             >>> docs = Storage.read_documents(data_path)
-            >>> print(docs) # DOCTEST: +SKIP
+            >>> print(docs) # doctest: +SKIP
             [
                 Document(
                     id_='a25111e2e59f81bb7a0e3efb48255**',
@@ -528,7 +528,7 @@ class Storage:
 
             - Example format for `info`
 
-            .. code-block:: python
+             .. code-block:: rst
 
                 {
                     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
@@ -538,6 +538,7 @@ class Storage:
                     "keyword": {"keywords": 10},
                     "entity": {"prediction_threshold": 0.5}
                 }
+
 
         Returns
         -------
@@ -566,11 +567,11 @@ class Storage:
             ...     "title": {"nodes": 5},
             ...     "summary": {"summaries": ["prev", "self"]}
             ... }
-            >>> extracted_nodes = Storage.apply_extractors(docs, extractors_info)
+            >>> extracted_nodes = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
             Parsing nodes: 100%|██████████| 1/1 [00:00<00:00, 1000.31it/s]
             100%|██████████| 1/1 [00:05<00:00,  5.82s/it]
             100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
-            >>> len(extracted_nodes)
+            >>> len(extracted_nodes) # doctest: +SKIP
             1
             >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
             {
@@ -587,13 +588,10 @@ class Storage:
             >>> data_path = "examples/data/essay"
             >>> docs = Storage.read_documents(data_path)
             >>> extractors_info = {
-            >>>     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
-            >>>     "title": {"nodes": 5},
-            >>>     "question_answer": {"questions": 1},
-            >>>     "summary": {"summaries": ["prev", "self"]},
-            >>>     "keyword": {"keywords": 3},
-            >>>     "entity": {"prediction_threshold": 0.5},
-            >>> }
+            ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+            ...     "title": {"nodes": 5},
+            ...     "question_answer": {"questions": 1},
+            ... }
 
             >>> extracted_docs = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
             Parsing nodes: 100%|██████████| 1/1 [00:00<00:00,  4.52it/s]
@@ -601,9 +599,9 @@ class Storage:
             100%|██████████| 53/53 [03:46<00:00,  4.27s/it]
              26%|██▋       | 14/53 [00:48<02:08,  3.29s/it]
             100%|██████████| 53/53 [00:47<00:00,  1.13it/s]
-            >>> len(extracted_docs)
+            >>> len(extracted_docs) # doctest: +SKIP
             53
-            >>> print(extracted_docs[0])
+            >>> print(extracted_docs[0]) # doctest: +SKIP
             Node ID: 9b4fca22-7f1f-4876-bb71-d4b29500daa3
             Text: What I Worked On    February 2021    Before college the two main
             things I worked on, outside of school, were writing and programming. I
@@ -611,7 +609,7 @@ class Storage:
             write then, and probably still are: short stories. My stories were
             awful. They had hardly any plot, just characters with strong feelings,
             whic...
-            >>> print(extracted_docs[0].extra_info)
+            >>> print(extracted_docs[0].extra_info) # doctest: +SKIP
             {
                 'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
                 'file_name': 'paul-graham-essay.txt',

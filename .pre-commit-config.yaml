@@ -127,4 +127,4 @@ repos:
         name: doctest
         entry: pytest --doctest-modules
         language: system
-        files: src/llama_utils/.*\.py$
+        files: ^src/llama_utils/.*\.py$
