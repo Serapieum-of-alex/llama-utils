@@ -421,7 +421,10 @@ class Storage:
 
         return documents
 
-    r"""Get nodes by file name.
+    def get_nodes_by_file_name(
+        self, file_name: str, exact_match: bool = False
+    ) -> List[BaseNode]:
+        r"""Get nodes by file name.
 
         Parameters
         ----------
@@ -497,10 +500,6 @@ class Storage:
                     )
 
         """
-
-    def get_nodes_by_file_name(
-        self, file_name: str, exact_match: bool = False
-    ) -> List[BaseNode]:
         if exact_match:
             doc_ids = self.metadata_index.loc[
                 self.metadata_index["file_name"] == file_name, "doc_id"
