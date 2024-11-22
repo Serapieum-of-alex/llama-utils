@@ -58,6 +58,7 @@ class Storage:
 
         metadata_index: DataFrame, optional, default=None
             The metadata index for the documents.
+
             ,file_name,doc_id
             0,paul_graham_essay.txt,cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7
             1,paul_graham_essay.txt,0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf
