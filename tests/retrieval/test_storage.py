@@ -175,7 +175,7 @@ def test_extract_info(mock_pipeline_run, document: Document, text_node: TextNode
         "keyword": {"keywords": 10},
         "entity": {"prediction_threshold": 0.5},
     }
-    nodes = Storage.extract_info(documents, info)
+    nodes = Storage.apply_extractors(documents, info)
 
     # Check if the pipeline.run method was called with expected arguments
     mock_pipeline_run.assert_called_once_with(

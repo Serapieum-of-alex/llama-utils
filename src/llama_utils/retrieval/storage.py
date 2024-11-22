@@ -262,7 +262,7 @@ class Storage:
 
             >>> store = Storage.create()
 
-        - You can add documents to the store as follows:
+        - Then you can add documents to the store using the `add_documents` method:
 
             >>> data_path = "examples/data/essay"
             >>> docs = Storage.read_documents(data_path)
@@ -272,6 +272,8 @@ class Storage:
                         Documents: 1
                         Indexes: 0
             <BLANKLINE>
+
+        - once the documents are added successfully, they are added also to the metadata index.
 
             >>> metadata = store.metadata_index
             >>> print(metadata)
@@ -419,10 +421,7 @@ class Storage:
 
         return documents
 
-    def get_nodes_by_file_name(
-        self, file_name: str, exact_match: bool = False
-    ) -> List[BaseNode]:
-        """Get nodes by file name.
+    r"""Get nodes by file name.
 
         Parameters
         ----------
@@ -435,7 +434,73 @@ class Storage:
         -------
         List[TextNode]
             The nodes with the specified file name.
+
+        Examples
+        --------
+        First read the storage context from a directory:
+            >>> storage_dir = "examples/paul-graham-essay-storage"
+            >>> store = Storage.load(storage_dir)
+            >>> print(store) # doctest: +SKIP
+            <BLANKLINE>
+                        Documents: 53
+                        Indexes: 2
+            <BLANKLINE>
+
+        The storage context contains the following data:
+
+            >>> print(store.metadata_index.head(3))
+                           file_name                                             doc_id
+            0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+            1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+            2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+
+        You can get all the nodes for file `paul_graham_essay.txt` as follows:
+
+            >>> nodes = store.get_nodes_by_file_name("paul_graham_essay.txt")
+            >>> nodes[0] # doctest: +SKIP
+            TextNode(
+                id_='cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+                embedding=None,
+                metadata={
+                    'file_path': 'examples\\data\\paul_graham_essay.txt',
+                    'file_name': 'paul_graham_essay.txt',
+                    'file_type': 'text/plain',
+                    'file_size': 75395,
+                    'creation_date': '2024-10-24',
+                    'last_modified_date': '2024-09-16',
+                    'document_title': 'Based on the candidate titles and content, I would suggest a comprehensive title
+                        that captures the essence of the text. Here\'s a potential title:\n\n"From Early Days ***'
+                },
+                excluded_embed_metadata_keys=['file_name'],
+                excluded_llm_metadata_keys=['file_name'],
+                relationships={
+                    <NodeRelationship.SOURCE: '1'>:
+                    RelatedNodeInfo(
+                        node_id='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
+                        node_type=<ObjectType.DOCUMENT: '4'>,
+                        metadata={
+                            'file_path': 'examples\\data\\paul_graham_essay.txt',
+                            'file_name': 'paul_graham_essay.txt',
+                            'file_type': 'text/plain',
+                            'file_size': 75395,
+                            'creation_date': '2024-10-24',
+                            'last_modified_date': '2024-09-16'
+                        },
+                        hash='2a494d84cd0ab1e73396773258b809a47739482c90b80d5f61d374e754c3ef06'
+                    ),
+                    <NodeRelationship.NEXT: '3'>: RelatedNodeInfo(node_id='15478c7a-fdab-40c8-92e7-42973b9d3b28', node_type=<ObjectType.TEXT: '1'>, metadata={}, hash='424546c0aa78015988ced235522cdd238633d5edc1b92667cbdcda44d72613ec')}, text='What I Worked On\r\n\r\nFebruary 2021\r\n\r\nBefore college the two main things I worked on, outside of school, were writing and programming. I didn\'t write essays. I wrote what beginning writers were supposed to write then, and probably still are: short stories. My stories were awful. They had hardly any plot, just characters with strong feelings, which I imagined made them deep.\r\n\r\nThe first programs I tried writing were on the IBM 1401 that our school district used for what was then called "data processing." This was in 9th grade, so I was 13 or 14. The school district\'s 1401 happened to be in the basement of our junior high school, and my friend Rich Draves and I got permission to use it. It was like a mini Bond villain\'s lair down there, with all these alien-looking machines — CPU, disk drives, printer, card reader — sitting up on a raised floor under bright fluorescent lights.\r\n\r\nThe language we used was an early version of Fortran. You had to type programs on punch cards, then stack them in the card reader and press a button to load the program into memory and run it. The result would ordinarily be to print something on the spectacularly loud printer.\r\n\r\nI was puzzled by the 1401. I couldn\'t figure out what to do with it. And in retrospect there\'s not much I could have',
+                    mimetype='text/plain',
+                    start_char_idx=4,
+                    end_char_idx=2027,
+                    text_template='[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n',
+                    metadata_template='{key}: {value}', metadata_seperator='\n'
+                    )
+
         """
+
+    def get_nodes_by_file_name(
+        self, file_name: str, exact_match: bool = False
+    ) -> List[BaseNode]:
         if exact_match:
             doc_ids = self.metadata_index.loc[
                 self.metadata_index["file_name"] == file_name, "doc_id"
@@ -449,9 +514,9 @@ class Storage:
         return docs
 
     @staticmethod
-    def extract_info(
+    def apply_extractors(
         documents: List[Union[Document, BaseNode]],
-        info: Dict[str, Dict[str, int]] = None,
+        extractors: Dict[str, Dict[str, int]] = None,
     ) -> Sequence[BaseNode]:
         """Extract information from a list of documents using predefined extractors.
 
@@ -459,29 +524,33 @@ class Storage:
         ----------
         documents : List[Union[Document, BaseNode]]
             List of documents or nodes to process. Each document should be an instance of `Document` or `BaseNode`.
-        info : Dict[str, Dict[str, Any]], optional
+        extractors : Dict[str, Dict[str, Any]], optional
             A dictionary defining the information extraction configuration. If not provided, default extractors will be used.
 
-            Example format for `info`:
-            {
-                "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
-                "title": {"nodes": 5},
-                "question_answer": {"questions": 3},
-                "summary": {"summaries": ["prev", "self"]},
-                "keyword": {"keywords": 10},
-                "entity": {"prediction_threshold": 0.5}
-            }
+            - Example format for `info`
+
+            .. code-block:: python
+
+                {
+                    "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+                    "title": {"nodes": 5},
+                    "question_answer": {"questions": 3},
+                    "summary": {"summaries": ["prev", "self"]},
+                    "keyword": {"keywords": 10},
+                    "entity": {"prediction_threshold": 0.5}
+                }
 
         Returns
         -------
         Sequence[BaseNode]
             A sequence of processed nodes with extracted metadata. Extracted data is stored in the node's `metadata`
             field under the following keys:
-            - "document_title": Extracted title.
-            - "questions_this_excerpt_can_answer": Extracted questions.
-            - "summary": Extracted summaries.
-            - "keywords": Extracted keywords.
-            - "entities": Extracted entities.
+
+                - "document_title": Extracted title.
+                - "questions_this_excerpt_can_answer": Extracted questions.
+                - "summary": Extracted summaries.
+                - "keywords": Extracted keywords.
+                - "entities": Extracted entities.
 
         Examples
         --------
@@ -491,24 +560,20 @@ class Storage:
             >>> config_loader = ConfigLoader()
 
         You can extract information from a single document as follows:
+
             >>> docs = [Document(text="Sample text", metadata={})]
             >>> extractors_info = {
             ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
             ...     "title": {"nodes": 5},
             ...     "summary": {"summaries": ["prev", "self"]}
             ... }
-            >>> extracted_nodes = Storage.extract_info(docs, extractors_info)
+            >>> extracted_nodes = Storage.apply_extractors(docs, extractors_info)
             Parsing nodes: 100%|██████████| 1/1 [00:00<00:00, 1000.31it/s]
             100%|██████████| 1/1 [00:05<00:00,  5.82s/it]
             100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
             >>> len(extracted_nodes)
             1
             >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
-            {
-                "document_title": "Sample Title",
-                "summary": ["Summary 1", "Summary 2"]
-            }
-
             {
                 'document_title': "I'm excited to help! Unfortunately, there doesn't seem to be any text provided.
                     Please go ahead and share the sample text, and I'll do my best to give you a comprehensive title
@@ -531,7 +596,7 @@ class Storage:
             >>>     "entity": {"prediction_threshold": 0.5},
             >>> }
 
-            >>> extracted_docs = Storage.extract_info(docs, extractors_info) # doctest: +SKIP
+            >>> extracted_docs = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
             Parsing nodes: 100%|██████████| 1/1 [00:00<00:00,  4.52it/s]
             100%|██████████| 5/5 [00:15<00:00,  3.19s/it]
             100%|██████████| 53/53 [03:46<00:00,  4.27s/it]
@@ -556,37 +621,21 @@ class Storage:
                 'creation_date': '2024-10-25',
                 'last_modified_date': '2024-09-16',
                 'document_title': 'After reviewing the potential titles and themes mentioned in the context,
-                    I would suggest the following comprehensive title:\n\n"A Personal Odyssey of Writing,
-                    Programming, and Artificial Intelligence: Early Computing Experiences, Influences,
-                    and Journeys"\n\nThis title captures the main themes and entities discussed in the passage,
-                    including:\n\n* The author\'s early writing and programming experiences\n*Their influences and
-                    adventures with computers, AI, and specific machines (e.g.,IBM 1401, TRS-80, Heathkit kit)\n*
-                    Their personal journeys of self-discovery, growth, and exploration through their experiences with
-                    writing, programming, and AI\n\nThis title provides a comprehensive overview of the document\'s
-                    content, highlighting the author\'s unique perspectives on early computing, AI, and personal
-                    development.',
+                    I would suggest the following comprehensive title \n\n"A Personal Odyssey ***,'.
                 'questions_this_excerpt_can_answer': "Based on the provided context, here's a question that this
-                    context can specifically answer:\n\nWhat was Paul Graham's experience with the IBM 1401 computer
-                    in 9th grade, and how did it affect his understanding of programming?\n\nThis question is
-                    unlikely to be found elsewhere because it is highly specific to the context and deals with
-                    personal experiences rather than general knowledge.",
+                    context can specifically answer:\n\nWhat was Paul Graham's experience with the IBM ***",
                 'section_summary': 'Here is a summary of the key topics and entities in the section:\n\n**Key
-                    Topics:**\n\n1. Paul Graham\'s early experiences with writing and programming.\n2. His work on
-                    the IBM 1401 computer in 9th grade (around age 13-14).\n3. The process of writing programs using
-                    Fortran language and punch cards.\n4. The limitations of the IBM 1401, such as no input options
-                    other than punched cards.\n5. The impact of microcomputers on programming.\n\n**Entities:**\n\n1.
-                    Paul Graham - author of the passage.\n2. IBM 1401 computer - a machine used for "data processing"
-                    in school.\n3. Fortran language - programming language used to write programs.\n4. Punch cards -
-                    physical medium for storing and loading program data.\n5. Rich Draves - friend who also worked on
-                    the IBM 1401 with Paul Graham.\n\nLet me know if you have any further questions!',
+                    Topics:**\n\n1. Paul Graham\'s early experiences with writing and programming.\n2. His work on ***',
                 'excerpt_keywords': 'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401,
                     Microcomputers'
             }
         """
-        info = EXTRACTORS.copy() if info is None else info
+        extractors = EXTRACTORS.copy() if extractors is None else extractors
 
         extractors = [
-            EXTRACTORS[key](**val) for key, val in info.items() if key in EXTRACTORS
+            EXTRACTORS[key](**val)
+            for key, val in extractors.items()
+            if key in EXTRACTORS
         ]
         pipeline = IngestionPipeline(transformations=extractors)
 
