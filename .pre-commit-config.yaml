@@ -66,22 +66,15 @@ repos:
       - id: pydocstyle
         name: "[py   - check] pydocstyle"
         files: ^src/llama_utils/.*\.py$
-
-
-  #- repo: https://github.com/psf/black
-  #  rev: 22.8.0
-  #  hooks:
-  #    - id: black
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
         name: "[py   - format] isort"
-  - repo: https://github.com/ambv/black
+  - repo: https://github.com/psf/black
     rev: 24.10.0
     hooks:
       - id: black
-        name: "[py   - format] black"
   - repo: https://github.com/lovesegfault/beautysh
     rev: v6.2.1
     hooks:
