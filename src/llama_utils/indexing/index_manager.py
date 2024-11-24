@@ -1,17 +1,27 @@
+"""Index manager module."""
+
+import logging
 from typing import List
+
+from llama_index.core import VectorStoreIndex, load_indices_from_storage
 from llama_index.core.indices.base import BaseIndex
-from llama_index.core import load_indices_from_storage, VectorStoreIndex
+from llama_index.core.schema import Document
+
 from llama_utils.retrieval.storage import Storage
+
+logger = logging.getLogger(__name__)
 
 
 class IndexManager:
     """A class to manage multiple indexes, handling updates, deletions, and retrieval operations."""
 
     def __init__(self, ids: List[str], indexes: List[BaseIndex]):
+        """Initialize the index manager."""
         self._indexes = indexes
         self._ids = ids
 
     def __str__(self):
+        """String representation of the index manager."""
         return f"""
             ids={self.ids},
             indexes={self.indexes})
@@ -19,7 +29,7 @@ class IndexManager:
 
     @classmethod
     def load_from_storage(cls, storage: Storage) -> "IndexManager":
-        """Reads indexes from storage.
+        """Read indexes from storage.
 
         Parameters
         ----------
@@ -61,7 +71,7 @@ class IndexManager:
 
     @property
     def indexes(self) -> List[BaseIndex]:
-        """Indexes"""
+        """Indexes."""
         return self._indexes
 
     @indexes.setter
@@ -70,12 +80,12 @@ class IndexManager:
 
     @property
     def ids(self) -> List[str]:
-        """Index IDs"""
+        """Index IDs."""
         return self._ids
 
     @classmethod
     def create_from_storage(cls, storage: Storage) -> "IndexManager":
-        """Creates a new index.
+        """Create a new index.
 
         Parameters
         ----------

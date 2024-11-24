@@ -50,6 +50,8 @@ pre-commit-commit-msg-hooks = "^0.1.0"
 flake8-pyproject = "^1.2.3"
 pydata-sphinx-theme = "^0.16.0"
 
+[tool.isort]
+profile = "black"
 
 [tool.flake8]
 ignore = ["E722", "E501", "E261", "F405", "F403"]
@@ -59,6 +61,8 @@ per-file-ignores = [
 max-line-length = 120
 count = true
 
+[tool.pydocstyle]
+ignore = ["D401", "D413", "D213", "D203"]
 
 [tool.pytest.ini_options]
 #addopts = "--cov=image_process --cov-report=term-missing"

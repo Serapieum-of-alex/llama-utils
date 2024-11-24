@@ -1,9 +1,14 @@
-import sys
+"""Logger."""
+
 import logging
+import sys
 
 
 class Logger:
+    """Logger class."""
+
     def __init__(self, name: str, level: int = logging.INFO, file_name: str = None):
+        """Initialize the logger."""
         logging.basicConfig(
             level=level,
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

@@ -1,5 +1,5 @@
-import pytest
 from llama_index.core import VectorStoreIndex
+
 from llama_utils.indexing.index_manager import IndexManager
 from llama_utils.retrieval.storage import Storage
 

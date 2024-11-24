@@ -1,6 +1,7 @@
 import pytest
-from llama_index.core.schema import Document, TextNode
 from llama_index.core import StorageContext
+from llama_index.core.schema import Document, TextNode
+
 from llama_utils.utils.config_loader import ConfigLoader
 
 ConfigLoader()

@@ -1,11 +1,15 @@
+"""LLMs and embedding models."""
+
 import os
 from warnings import warn
-from llama_index.llms.azure_openai import AzureOpenAI
+
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.llms.ollama import Ollama
 
 
 def azure_open_ai(model_id: str = "gpt-4o", engine: str = "4o"):
+    """Get the Azure OpenAI model."""
     endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
     api_key = os.environ.get("AZURE_OPENAI_API_KEY")
     api_version = os.environ.get("AZURE_OPENAI_API_VERSION")
@@ -45,7 +49,7 @@ def get_ollama_llm(model_id: str = "llama3"):
 def get_hugging_face_embedding(
     model_name: str = "BAAI/bge-base-en-v1.5", cache_folder: str = None
 ) -> HuggingFaceEmbedding:
-    """
+    """Get the hugging face embedding model.
 
     Parameters
     ----------

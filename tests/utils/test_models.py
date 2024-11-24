@@ -1,11 +1,12 @@
 import pytest
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
+
 from llama_utils.utils.models import (
-    get_ollama_llm,
     azure_open_ai,
     get_hugging_face_embedding,
+    get_ollama_llm,
 )
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 
 def test_get_ollama_llm():

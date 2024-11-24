@@ -1,7 +1,8 @@
-from llama_index.llms.ollama import Ollama
 from llama_index.core.settings import _Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_utils.utils.config_loader import ConfigLoader, TEXT_SPLITTER
+from llama_index.llms.ollama import Ollama
+
+from llama_utils.utils.config_loader import TEXT_SPLITTER, ConfigLoader
 
 
 def test_config_loader():

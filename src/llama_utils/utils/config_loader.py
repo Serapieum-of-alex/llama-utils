@@ -1,14 +1,17 @@
+"""A class or function to load configuration."""
+
 from typing import Any
+
 from llama_index.core import Settings
-from llama_utils.utils.models import get_ollama_llm, get_hugging_face_embedding
 from llama_index.core.node_parser import SentenceSplitter
 
+from llama_utils.utils.models import get_hugging_face_embedding, get_ollama_llm
 
 TEXT_SPLITTER = SentenceSplitter(chunk_size=1024, chunk_overlap=20)
 
 
 class ConfigLoader:
-    """A class or function to load configuration files (e.g., YAML, JSON)."""
+    """A class or function to load configuration."""
 
     def __init__(
         self,
@@ -38,10 +41,12 @@ class ConfigLoader:
 
     @property
     def settings(self):
+        """Get the settings."""
         return self._settings
 
     @property
     def llm(self):
+        """Get the llm model."""
         return self._llm
 
     @llm.setter
@@ -51,6 +56,7 @@ class ConfigLoader:
 
     @property
     def embedding(self):
+        """Get the embedding model."""
         return self._embedding
 
     @embedding.setter

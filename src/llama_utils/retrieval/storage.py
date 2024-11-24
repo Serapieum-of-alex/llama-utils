@@ -2,27 +2,27 @@
 
 import os
 from pathlib import Path
-from typing import Sequence, Union, List, Dict
+from typing import Dict, List, Sequence, Union
+
 import pandas as pd
-from pandas import DataFrame
-from llama_index.core.storage.docstore import SimpleDocumentStore, BaseDocumentStore
-from llama_index.core.storage.index_store import SimpleIndexStore
-from llama_index.core.vector_stores import SimpleVectorStore
-from llama_index.core.storage.index_store.types import BaseIndexStore
-from llama_index.core import StorageContext
-from llama_index.core.schema import Document, TextNode, BaseNode
-from llama_index.core import SimpleDirectoryReader
-from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core import SimpleDirectoryReader, StorageContext
 from llama_index.core.extractors import (
-    TitleExtractor,
-    QuestionsAnsweredExtractor,
     KeywordExtractor,
+    QuestionsAnsweredExtractor,
     SummaryExtractor,
+    TitleExtractor,
 )
 from llama_index.core.ingestion import IngestionPipeline
-from llama_utils.utils.helper_functions import generate_content_hash
-from llama_utils.utils.errors import StorageNotFoundError
+from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core.schema import BaseNode, Document, TextNode
+from llama_index.core.storage.docstore import BaseDocumentStore, SimpleDocumentStore
+from llama_index.core.storage.index_store import SimpleIndexStore
+from llama_index.core.storage.index_store.types import BaseIndexStore
+from llama_index.core.vector_stores import SimpleVectorStore
+from pandas import DataFrame
 
+from llama_utils.utils.errors import StorageNotFoundError
+from llama_utils.utils.helper_functions import generate_content_hash
 
 EXTRACTORS = dict(
     text_splitter=TokenTextSplitter,
@@ -220,6 +220,7 @@ class Storage:
         return cls(storage, metadata_index)
 
     def __str__(self):
+        """Return a string representation of the storage."""
         message = f"""
         Documents: {len(self.docstore.docs)}
         Indexes: {len(self.index_store.index_structs())}
@@ -343,7 +344,7 @@ class Storage:
         recursive: bool = False,
         **kwargs,
     ) -> List[Union[Document, TextNode]]:
-        """Read documents from a directory.
+        r"""Read documents from a directory.
 
         the `read_documents` method reads documents from a directory and returns a list of documents.
         the `doc_id` is sha256 hash number generated based on the document's text content.
@@ -517,7 +518,7 @@ class Storage:
         documents: List[Union[Document, BaseNode]],
         extractors: Dict[str, Dict[str, int]] = None,
     ) -> Sequence[BaseNode]:
-        """Extract information from a list of documents using predefined extractors.
+        r"""Extract information from a list of documents using predefined extractors.
 
         Parameters
         ----------
@@ -657,6 +658,7 @@ def save_metadata_index(data: pd.DataFrame, path: str):
 
 
 def create_metadata_index_existing_docs(docs: Dict[str, BaseNode]):
+    """Create a metadata index for existing documents."""
     metadata_index = {}
     i = 0
     for key, val in docs.items():
