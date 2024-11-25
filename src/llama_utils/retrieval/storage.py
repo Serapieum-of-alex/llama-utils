@@ -16,6 +16,7 @@ from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import TokenTextSplitter
 from llama_index.core.schema import BaseNode, Document, TextNode
 from llama_index.core.storage.docstore import BaseDocumentStore, SimpleDocumentStore
+from llama_index.core.storage.docstore.types import RefDocInfo
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.storage.index_store.types import BaseIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
@@ -231,6 +232,51 @@ class Storage:
     def metadata_index(self) -> pd.DataFrame:
         """Get the metadata index."""
         return self._metadata_index
+
+    @property
+    def document_metadata(self) -> Dict[str, RefDocInfo]:
+        r"""Document metadata.
+
+        Returns
+        -------
+        Dict[str, RefDocInfo]
+            The document metadata.
+
+        Examples
+        --------
+        You can get the document metadata using the `document_metadata` property:
+
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> document_metadata = store.document_metadata
+
+        The `document_metadata` is a dictionary with the document ID as the key and the document metadata as the value:
+
+        >>> documents_id = list(document_metadata.keys())
+        >>> print(documents_id) # doctest: +SKIP
+        ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
+        >>> print(document_metadata) # doctest: +SKIP
+        {
+            'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
+                RefDocInfo(
+                    node_ids=[
+                        'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+                        '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
+                        'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
+                        '120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5d0e64a0d2d2805a4b7'
+                    ],
+                    metadata={
+                        'file_path': 'examples\\data\\paul_graham_essay.txt',
+                        'file_name': 'paul_graham_essay.txt',
+                        'file_type': 'text/plain',
+                        'file_size': 75395,
+                        'creation_date': '2024-10-24',
+                        'last_modified_date': '2024-09-16',
+                        'document_title': 'Based on the candidate titles and content, I would suggest a***.'
+                    }
+                )
+            }
+        """
+        return self.docstore.get_all_ref_doc_info()
 
     def node_id_list(self) -> List[str]:
         """Get the metadata of the nodes in the docstore.
