@@ -232,6 +232,30 @@ class Storage:
         """Get the metadata index."""
         return self._metadata_index
 
+    def node_id_list(self) -> List[str]:
+        """Get the metadata of the nodes in the docstore.
+
+        Returns
+        -------
+        Dict[str, Dict[str, Any]]
+            The metadata of the nodes in the docstore.
+
+        Examples
+        --------
+        You can get the metadata of the nodes in the docstore using the `nodes_metadata` method:
+
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> nodes_metadata = store.node_id_list()
+        >>> print(nodes_metadata) # doctest: +SKIP
+        [
+            'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+            '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
+            'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
+            ...
+        ]
+        """
+        return list(self.docstore.docs.keys())
+
     def add_documents(
         self,
         docs: Sequence[Union[Document, TextNode]],

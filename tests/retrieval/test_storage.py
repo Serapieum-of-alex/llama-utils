@@ -150,6 +150,20 @@ class TestStorage:
         nodes = test_empty_storage.get_nodes_by_file_name("node-path", exact_match=True)
         assert nodes == [text_node]
 
+    def test_node_list(
+        self,
+        test_empty_storage: Storage,
+        text_node_2: TextNode,
+        text_node: TextNode,
+    ):
+        """docstore has only two text nodes and no documents."""
+        test_empty_storage.add_documents([text_node, text_node_2])
+        node_list = test_empty_storage.node_id_list()
+        assert node_list == [
+            'dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4',
+            'cc385eb9c8562d248624152b09f90c366b441d9e1f8d0f3752aca2124cb36dd7'
+        ]
+
 
 def test_read_documents(data_path: str):
     docs = Storage.read_documents(data_path)
