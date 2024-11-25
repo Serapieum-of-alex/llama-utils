@@ -2,6 +2,7 @@ import pytest
 from llama_index.core import StorageContext
 from llama_index.core.schema import Document, TextNode
 
+from llama_utils.retrieval.storage import Storage
 from llama_utils.utils.config_loader import ConfigLoader
 
 ConfigLoader()
@@ -62,3 +63,13 @@ def storage_docstore(storage_path: str) -> StorageContext:
 @pytest.fixture()
 def paul_grahm_essay_storage():
     return "tests/data/paul-graham-essay-storage"
+
+
+@pytest.fixture(scope="function")
+def paul_graham_essay_storage(paul_grahm_essay_storage: str) -> Storage:
+    return Storage.load(paul_grahm_essay_storage)
+
+
+@pytest.fixture()
+def essay_document_id() -> str:
+    return "a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092"

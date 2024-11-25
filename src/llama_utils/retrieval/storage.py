@@ -302,6 +302,38 @@ class Storage:
         """
         return list(self.docstore.docs.keys())
 
+    def delete_document(self, doc_id: str):
+        """Delete a document from the docstore.
+
+        Parameters
+        ----------
+        doc_id: str
+            The ID of the document to delete.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        You can delete a document from the document store and all the nodes that are related to it using the
+        `delete_document` method by providing the `document_id`:
+
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> document_metadata = store.document_metadata
+        >>> document_id = list(document_metadata.keys())[0]
+        >>> print(document_id) # doctest: +SKIP
+        a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092
+        >>> store.delete_document(document_id)
+
+        Now if you check the document_metadata, you will find that the document is deleted:
+        >>> print(store.document_metadata)
+        {}
+        """
+        if doc_id not in self.document_metadata.keys():
+            raise ValueError(f"Document with ID {doc_id} not found.")
+        self.docstore.delete_ref_doc(doc_id)
+
     def add_documents(
         self,
         docs: Sequence[Union[Document, TextNode]],

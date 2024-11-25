@@ -164,17 +164,30 @@ class TestStorage:
             "cc385eb9c8562d248624152b09f90c366b441d9e1f8d0f3752aca2124cb36dd7",
         ]
 
-    def test_document_metadata(self,paul_grahm_essay_storage: str):
-        storage = Storage.load(paul_grahm_essay_storage)
-        document_metadata = storage.document_metadata
+    def test_document_metadata(self, paul_graham_essay_storage: Storage):
+
+        document_metadata = paul_graham_essay_storage.document_metadata
         assert isinstance(document_metadata, dict)
         assert len(document_metadata.keys()) == 1
         doc_metadata = document_metadata[list(document_metadata.keys())[0]]
         assert list(doc_metadata.metadata.keys()) == [
-            'file_path', 'file_name', 'file_type', 'file_size', 'creation_date', 'last_modified_date', 'document_title'
+            "file_path",
+            "file_name",
+            "file_type",
+            "file_size",
+            "creation_date",
+            "last_modified_date",
+            "document_title",
         ]
         assert len(doc_metadata.node_ids) == 53
 
+    def test_delete_document(
+        self, paul_graham_essay_storage: Storage, essay_document_id: str
+    ):
+        paul_graham_essay_storage.delete_document(essay_document_id)
+        assert (
+            essay_document_id not in paul_graham_essay_storage.document_metadata.keys()
+        )
 
 
 def test_read_documents(data_path: str):
