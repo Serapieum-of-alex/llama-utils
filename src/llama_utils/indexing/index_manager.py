@@ -5,8 +5,8 @@ from typing import List
 
 from llama_index.core import VectorStoreIndex, load_indices_from_storage
 from llama_index.core.indices.base import BaseIndex
-from llama_index.core.schema import Document
 
+from llama_utils.indexing.custom_index import CustomIndex
 from llama_utils.retrieval.storage import Storage
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class IndexManager:
 
     def __init__(self, ids: List[str], indexes: List[BaseIndex]):
         """Initialize the index manager."""
-        self._indexes = indexes
+        self._indexes = [CustomIndex(index) for index in indexes]
         self._ids = ids
 
     def __str__(self):
@@ -70,7 +70,7 @@ class IndexManager:
         return cls(index_ids, indexes)
 
     @property
-    def indexes(self) -> List[BaseIndex]:
+    def indexes(self) -> List[CustomIndex]:
         """Indexes."""
         return self._indexes
 

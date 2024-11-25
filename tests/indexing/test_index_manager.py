@@ -1,5 +1,6 @@
 from llama_index.core import VectorStoreIndex
 
+from llama_utils.indexing.custom_index import CustomIndex
 from llama_utils.indexing.index_manager import IndexManager
 from llama_utils.retrieval.storage import Storage
 
@@ -29,4 +30,4 @@ def test_create_from_storage(paul_grahm_essay_storage: str):
     index_manager = IndexManager.create_from_storage(storage)
     assert isinstance(index_manager, IndexManager)
     assert len(index_manager.indexes) == 1
-    assert isinstance(index_manager.indexes[0], VectorStoreIndex)
+    assert isinstance(index_manager.indexes[0], CustomIndex)
