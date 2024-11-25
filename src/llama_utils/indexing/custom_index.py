@@ -3,7 +3,7 @@
 from typing import Dict, List, Union
 
 from llama_index.core import VectorStoreIndex
-from llama_index.core.schema import Document
+from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 
 from llama_utils.utils.helper_functions import generate_content_hash
@@ -76,8 +76,8 @@ class CustomIndex:
 
         Returns
         -------
-        IndexManager
-            The new index manager object
+        CustomIndex
+            The new CustomIndex object
 
         Examples
         --------
@@ -93,4 +93,35 @@ class CustomIndex:
                 doc.doc_id = generate_content_hash(doc.text)
 
         index = VectorStoreIndex.from_documents(docs)
+        return cls(index)
+
+    @classmethod
+    def create_from_nodes(cls, nodes: List[TextNode]):
+        """Create a new index from a node.
+
+        Parameters
+        ----------
+        nodes: List[TextNode]
+            The nodes to create the index from.
+
+        Returns
+        -------
+        CustomIndex
+            The new CustomIndex object
+
+        Examples
+        --------
+        To create a new index you have to define the embedding model
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> configs = ConfigLoader()
+        >>> text_node = TextNode(text="text")
+        >>> index = CustomIndex.create_from_nodes([text_node])
+        >>> print(index) # doctest: +SKIP
+        <BLANKLINE>
+                Index ID: 8d57e294-fd17-43c9-9dec-a12aa7ea0751
+                Number of Document: 0
+        <BLANKLINE>
+        As you see the added node is not a document, so the number of documents is 0.
+        """
+        index = VectorStoreIndex(nodes)
         return cls(index)

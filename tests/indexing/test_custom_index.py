@@ -1,6 +1,6 @@
 import pytest
 from llama_index.core import VectorStoreIndex
-from llama_index.core.schema import Document
+from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores import SimpleVectorStore
 
 from llama_utils.indexing.custom_index import CustomIndex
@@ -26,6 +26,13 @@ def test_create_from_document(document: Document):
     assert list(index.embeddings.keys()) == content_id
     # the embedding is a list of 768 floats based on the BERT model
     assert len(index.embeddings[content_id[0]]) == 768
+
+
+def test_create_from_nodes(text_node: TextNode):
+    index = CustomIndex.create_from_nodes([text_node])
+    assert isinstance(index, CustomIndex)
+    assert len(index.embeddings) == 1
+    assert list(index.index.docstore.docs.keys()) == [text_node.id_]
 
 
 def test_create_custome_index_wrong_input():
