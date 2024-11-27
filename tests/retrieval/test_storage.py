@@ -41,8 +41,9 @@ class TestStorage:
             isinstance(store.store, StorageContext) is not None
         ), "Storage context not created."
         assert isinstance(store.metadata_index, pd.DataFrame)
-        metadata_index = store.metadata_index
-        assert metadata_index.shape[0] == 0
+        assert store.metadata() == {}
+        metadata_df = store.metadata(as_dataframe=True)
+        assert metadata_df.shape[0] == 0
         return store
 
     def test_properties(self, test_empty_storage: Storage):
@@ -56,6 +57,8 @@ class TestStorage:
         assert isinstance(storage, StorageContext)
         assert isinstance(storage.docstore, SimpleDocumentStore)
         assert isinstance(store.metadata_index, pd.DataFrame)
+        metadata_dict = store.metadata()
+        metadata_df = store.metadata(as_dataframe=True)
         assert store.metadata_index.shape[0] == 4
         assert len(storage.docstore.docs) == 4
 
@@ -209,7 +212,7 @@ class TestMetaData:
         metadata = paul_graham_essay_storage.metadata(as_dataframe=True)
         assert isinstance(metadata, DataFrame)
         assert metadata.shape[0] == 53
-        assert metadata.columns.to_list() == ["doc_id", "node_id"]
+        assert metadata.columns.to_list() == ["doc_id", "node_id", "file_name"]
         assert metadata["doc_id"].unique() == [
             "a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092"
         ]

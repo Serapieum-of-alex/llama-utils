@@ -45,7 +45,6 @@ class Storage:
     def __init__(
         self,
         storage_context: StorageContext = None,
-        metadata_index: DataFrame = None,
     ):
         """Initialize the Storage.
 
@@ -57,13 +56,6 @@ class Storage:
         storage_context: str, optional, default is None.
             the StorageContext object that is created by LlamaIndex (a native llamaIndex object).
 
-        metadata_index: DataFrame, optional, default=None
-            The metadata index for the documents.
-
-            ,file_name,doc_id
-            0,paul_graham_essay.txt,cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7
-            1,paul_graham_essay.txt,0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf
-            2,paul_graham_essay.txt,d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f
         """
         if not isinstance(storage_context, StorageContext):
             raise ValueError(
@@ -71,16 +63,6 @@ class Storage:
             )
 
         self._store = storage_context
-        if isinstance(metadata_index, pd.DataFrame):
-            self._metadata_index = metadata_index
-        elif metadata_index is None:
-            self._metadata_index = create_metadata_index_existing_docs(
-                self._store.docstore.docs
-            )
-        else:
-            raise ValueError(
-                f"Invalid Storage backend: {storage_context}. Must be a string or StorageContext."
-            )
 
     @classmethod
     def create(cls) -> "Storage":
@@ -103,8 +85,7 @@ class Storage:
             <BLANKLINE>
         """
         storage = cls._create_simple_storage_context()
-        metadata_index = cls._create_metadata_index()
-        return cls(storage, metadata_index)
+        return cls(storage)
 
     @staticmethod
     def _create_simple_storage_context() -> StorageContext:
@@ -171,7 +152,7 @@ class Storage:
         """
         self.store.persist(persist_dir=store_dir)
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
-        save_metadata_index(self.metadata_index, file_path)
+        save_metadata_index(self.metadata(as_dataframe=True), file_path)
 
     @classmethod
     def load(cls, store_dir: str) -> "Storage":
@@ -201,13 +182,13 @@ class Storage:
                     Documents: 53
                     Indexes: 2
         <BLANKLINE>
-        >>> metadata = store.metadata_index
-        >>> print(metadata) # doctest: +SKIP
-                        file_name                                             doc_id
-        0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
-        1   paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
-        2   paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
-        3   paul_graham_essay.txt  120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5...
+        >>> metadata = store.metadata(as_dataframe=True)
+        >>> print(metadata.head()) # doctest: +SKIP
+                                     doc_id                              node_id              file_name
+        0   a25111e2e59f81bb7a0e3efb4825...  cadde590b82362fc7a5f8ce0751c5b30b...  paul_graham_essay.txt
+        1   a25111e2e59f81bb7a0e3efb4825...  0567f3a9756983e1d040ec332255db945...  paul_graham_essay.txt
+        2   a25111e2e59f81bb7a0e3efb4825...  d5542515414f1bf30f6c21f0796af8bde...  paul_graham_essay.txt
+        3   a25111e2e59f81bb7a0e3efb4825...  120b69658a6c69ab8de3167b5ed0db779...  paul_graham_essay.txt
         >>> docstore = store.docstore # doctest: +SKIP
         <llama_index.core.storage.docstore.simple_docstore.SimpleDocumentStore at 0x20444d31be0>
         >>> vector_store = store.vector_store
@@ -217,8 +198,7 @@ class Storage:
         if not Path(store_dir).exists():
             raise StorageNotFoundError(f"Storage not found at {store_dir}")
         storage = StorageContext.from_defaults(persist_dir=store_dir)
-        metadata_index = read_metadata_index(path=store_dir)
-        return cls(storage, metadata_index)
+        return cls(storage)
 
     def __str__(self):
         """Return a string representation of the storage."""
@@ -293,28 +273,32 @@ class Storage:
             1   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
             2   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
         """
-        data: dict = self.docstore.get_all_ref_doc_info()
+        ref_doc_info: dict = self.docstore.get_all_ref_doc_info()
         if as_dataframe:
             doct_node_ids_dict = {}
-            doc_ids = list(data.keys())
+            file_name_doc = {}
+            doc_ids = list(ref_doc_info.keys())
             for doc_id in doc_ids:
                 # get the DocRefInfo object for the first document
-                doc_ref = data[doc_id]
+                doc_ref = ref_doc_info[doc_id].to_dict()
                 # get the node ids for the first document
-                node_ids = doc_ref.to_dict()["node_ids"]
+                node_ids = doc_ref["node_ids"]
+                file_name_doc[doc_id] = doc_ref["metadata"].get("file_name")
                 doct_node_ids_dict[doc_id] = node_ids
 
-            # Convert the dictionary to a DataFrame
             df = pd.DataFrame(
                 list(doct_node_ids_dict.items()), columns=["doc_id", "node_id"]
             )
-
-            # Use the explode method to expand the lists into rows
             df = df.explode("node_id", ignore_index=True)
 
-            # # Rename the column for clarity
-            # df.rename(columns={"node_ids": "node_id"}, inplace=True)
-            data: DataFrame = df
+            # merge the file name with the doc_id
+            file_name_df = pd.DataFrame(
+                file_name_doc.items(), columns=["doc_id", "file_name"]
+            )
+            df = df.merge(file_name_df, on="doc_id", how="left", validate="many_to_one")
+            data = df
+        else:
+            data = ref_doc_info
         return data
 
     def node_id_list(self) -> List[str]:
@@ -407,8 +391,8 @@ class Storage:
         - Then you can add documents to the store using the `add_documents` method:
 
             >>> data_path = "examples/data/essay"
-            >>> docs = Storage.read_documents(data_path)
-            >>> store.add_documents(docs)
+            >>> documents = Storage.read_documents(data_path)
+            >>> store.add_documents(documents)
             >>> print(store) # doctest: +SKIP
             <BLANKLINE>
                         Documents: 1
@@ -417,7 +401,7 @@ class Storage:
 
         - once the documents are added successfully, they are added also to the metadata index.
 
-            >>> metadata = store.metadata_index
+            >>> metadata = store.metadata(as_dataframe=True)
             >>> print(metadata) # doctest: +SKIP
                             file_name                                             doc_id
             0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
