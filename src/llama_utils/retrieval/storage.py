@@ -234,7 +234,7 @@ class Storage:
         return create_metadata_index_existing_docs(self.docstore.docs)
 
     @property
-    def document_metadata(self) -> Dict[str, RefDocInfo]:
+    def metadata(self) -> Dict[str, RefDocInfo]:
         r"""Document metadata.
 
         Returns
@@ -247,14 +247,14 @@ class Storage:
         You can get the document metadata using the `document_metadata` property:
 
         >>> store = Storage.load("examples/paul-graham-essay-storage")
-        >>> document_metadata = store.document_metadata
+        >>> metadata = store.metadata
 
         The `document_metadata` is a dictionary with the document ID as the key and the document metadata as the value:
 
-        >>> documents_id = list(document_metadata.keys())
+        >>> documents_id = list(metadata.keys())
         >>> print(documents_id) # doctest: +SKIP
         ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
-        >>> print(document_metadata) # doctest: +SKIP
+        >>> print(metadata) # doctest: +SKIP
         {
             'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
                 RefDocInfo(
@@ -320,17 +320,17 @@ class Storage:
         `delete_document` method by providing the `document_id`:
 
         >>> store = Storage.load("examples/paul-graham-essay-storage")
-        >>> document_metadata = store.document_metadata
+        >>> document_metadata = store.metadata
         >>> document_id = list(document_metadata.keys())[0]
         >>> print(document_id) # doctest: +SKIP
         a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092
         >>> store.delete_document(document_id)
 
         Now if you check the document_metadata, you will find that the document is deleted:
-        >>> print(store.document_metadata)
+        >>> print(store.metadata)
         {}
         """
-        if doc_id not in self.document_metadata.keys():
+        if doc_id not in self.metadata.keys():
             raise ValueError(f"Document with ID {doc_id} not found.")
         self.docstore.delete_ref_doc(doc_id)
 
