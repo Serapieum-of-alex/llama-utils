@@ -9,6 +9,7 @@ from llama_index.core.schema import Document, TextNode
 from llama_index.core.storage.docstore import SimpleDocumentStore
 from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
+from pandas import DataFrame
 
 from llama_utils.retrieval.storage import Storage
 from llama_utils.utils.helper_functions import generate_content_hash
@@ -179,11 +180,20 @@ class TestStorage:
         assert node_list == check_node_id
         assert check_node_id == metadata_index.loc[:, "doc_id"].to_list()
 
-    def test_metadata(self, paul_graham_essay_storage: Storage):
-        document_metadata = paul_graham_essay_storage.metadata
-        assert isinstance(document_metadata, dict)
-        assert len(document_metadata.keys()) == 1
-        doc_metadata = document_metadata[list(document_metadata.keys())[0]]
+    def test_delete_document(
+        self, paul_graham_essay_storage: Storage, essay_document_id: str
+    ):
+        paul_graham_essay_storage.delete_document(essay_document_id)
+        assert essay_document_id not in paul_graham_essay_storage.metadata().keys()
+
+
+class TestMetaData:
+
+    def test_default(self, paul_graham_essay_storage: Storage):
+        metadata = paul_graham_essay_storage.metadata()
+        assert isinstance(metadata, dict)
+        assert len(metadata.keys()) == 1
+        doc_metadata = metadata[list(metadata.keys())[0]]
         assert list(doc_metadata.metadata.keys()) == [
             "file_path",
             "file_name",
@@ -195,11 +205,14 @@ class TestStorage:
         ]
         assert len(doc_metadata.node_ids) == 53
 
-    def test_delete_document(
-        self, paul_graham_essay_storage: Storage, essay_document_id: str
-    ):
-        paul_graham_essay_storage.delete_document(essay_document_id)
-        assert essay_document_id not in paul_graham_essay_storage.metadata.keys()
+    def test_as_dataframe(self, paul_graham_essay_storage: Storage):
+        metadata = paul_graham_essay_storage.metadata(as_dataframe=True)
+        assert isinstance(metadata, DataFrame)
+        assert metadata.shape[0] == 53
+        assert metadata.columns.to_list() == ["doc_id", "node_id"]
+        assert metadata["doc_id"].unique() == [
+            "a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092"
+        ]
 
 
 def test_read_documents(data_path: str):

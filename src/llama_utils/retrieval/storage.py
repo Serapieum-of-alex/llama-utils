@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Dict, List, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import pandas as pd
 from llama_index.core import SimpleDirectoryReader, StorageContext
@@ -233,50 +233,89 @@ class Storage:
         """Get the metadata index."""
         return create_metadata_index_existing_docs(self.docstore.docs)
 
-    @property
-    def metadata(self) -> Dict[str, RefDocInfo]:
+    def metadata(
+        self, as_dataframe: Optional[bool] = False
+    ) -> Union[Dict[str, RefDocInfo], DataFrame]:
         r"""Document metadata.
+
+        Get the metadata of all the documents in the docstore.
+
+        Parameters
+        ----------
+        as_dataframe: bool, optional, default is False.
+            True to return the metadata as a DataFrame.
 
         Returns
         -------
-        Dict[str, RefDocInfo]
-            The document metadata.
+        Dict[str, RefDocInfo] or DataFrame
+            The metadata of all the documents in the docstore.
 
         Examples
         --------
-        You can get the document metadata using the `document_metadata` property:
+        You can get the document metadata as a dictionary using the `metadata` method with the default parameter values:
 
-        >>> store = Storage.load("examples/paul-graham-essay-storage")
-        >>> metadata = store.metadata
+            >>> store = Storage.load("examples/paul-graham-essay-storage")
+            >>> metadata = store.metadata()
 
-        The `document_metadata` is a dictionary with the document ID as the key and the document metadata as the value:
+            The `metadata` is a dictionary with the document ID as the key and the document metadata as the value:
 
-        >>> documents_id = list(metadata.keys())
-        >>> print(documents_id) # doctest: +SKIP
-        ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
-        >>> print(metadata) # doctest: +SKIP
-        {
-            'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
-                RefDocInfo(
-                    node_ids=[
-                        'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
-                        '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
-                        'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
-                        '120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5d0e64a0d2d2805a4b7'
-                    ],
-                    metadata={
-                        'file_path': 'examples\\data\\paul_graham_essay.txt',
-                        'file_name': 'paul_graham_essay.txt',
-                        'file_type': 'text/plain',
-                        'file_size': 75395,
-                        'creation_date': '2024-10-24',
-                        'last_modified_date': '2024-09-16',
-                        'document_title': 'Based on the candidate titles and content, I would suggest a***.'
-                    }
-                )
-            }
+            >>> documents_id = list(metadata.keys())
+            >>> print(documents_id) # doctest: +SKIP
+            ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
+            >>> print(metadata) # doctest: +SKIP
+            {
+                'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
+                    RefDocInfo(
+                        node_ids=[
+                            'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+                            '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
+                            'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
+                            '120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5d0e64a0d2d2805a4b7'
+                        ],
+                        metadata={
+                            'file_path': 'examples\\data\\paul_graham_essay.txt',
+                            'file_name': 'paul_graham_essay.txt',
+                            'file_type': 'text/plain',
+                            'file_size': 75395,
+                            'creation_date': '2024-10-24',
+                            'last_modified_date': '2024-09-16',
+                            'document_title': 'Based on the candidate titles and content, I would suggest a***.'
+                        }
+                    )
+                }
+
+        To get the metadata as a DataFrame, you can set the `as_dataframe` parameter to True:
+
+            >>> metadata = store.metadata(as_dataframe=True)
+            >>> print(metadata) # doctest: +SKIP
+                                                           doc_id                                            node_id
+            0   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+            1   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+            2   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
         """
-        return self.docstore.get_all_ref_doc_info()
+        data: dict = self.docstore.get_all_ref_doc_info()
+        if as_dataframe:
+            doct_node_ids_dict = {}
+            doc_ids = list(data.keys())
+            for doc_id in doc_ids:
+                # get the DocRefInfo object for the first document
+                doc_ref = data[doc_id]
+                # get the node ids for the first document
+                node_ids = doc_ref.to_dict()["node_ids"]
+                doct_node_ids_dict[doc_id] = node_ids
+
+            # Convert the dictionary to a DataFrame
+            df = pd.DataFrame(
+                list(doct_node_ids_dict.items()), columns=["doc_id", "node_id"]
+            )
+
+            # Use the explode method to expand the lists into rows
+            df = df.explode("node_id", ignore_index=True)
+
+            # # Rename the column for clarity
+            # df.rename(columns={"node_ids": "node_id"}, inplace=True)
+            data: DataFrame = df
+        return data
 
     def node_id_list(self) -> List[str]:
         """Get the metadata of the nodes in the docstore.
@@ -321,16 +360,16 @@ class Storage:
 
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> document_metadata = store.metadata
-        >>> document_id = list(document_metadata.keys())[0]
+        >>> document_id = list(document_metadata().keys())[0]
         >>> print(document_id) # doctest: +SKIP
         a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092
         >>> store.delete_document(document_id)
 
         Now if you check the document_metadata, you will find that the document is deleted:
-        >>> print(store.metadata)
+        >>> print(store.metadata())
         {}
         """
-        if doc_id not in self.metadata.keys():
+        if doc_id not in self.metadata().keys():
             raise ValueError(f"Document with ID {doc_id} not found.")
         self.docstore.delete_ref_doc(doc_id)
 
