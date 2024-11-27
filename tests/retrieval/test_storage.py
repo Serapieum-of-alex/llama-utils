@@ -40,6 +40,8 @@ class TestStorage:
             isinstance(store.store, StorageContext) is not None
         ), "Storage context not created."
         assert isinstance(store.metadata_index, pd.DataFrame)
+        metadata_index = store.metadata_index
+        assert metadata_index.shape[0] == 0
         return store
 
     def test_properties(self, test_empty_storage: Storage):
@@ -53,6 +55,7 @@ class TestStorage:
         assert isinstance(storage, StorageContext)
         assert isinstance(storage.docstore, SimpleDocumentStore)
         assert isinstance(store.metadata_index, pd.DataFrame)
+        assert store.metadata_index.shape[0] == 4
         assert len(storage.docstore.docs) == 4
 
     def test_storage_context(self, storage_docstore: StorageContext):
@@ -70,6 +73,7 @@ class TestStorage:
     def test_save(self, test_empty_storage: Storage):
         path = "tests/data/Storage"
         test_empty_storage.save(path)
+
         assert os.path.exists(path), "Storage not saved."
         docstore_content = [
             "default__vector_store.json",
@@ -96,7 +100,9 @@ class TestStorage:
         df = test_empty_storage.metadata_index
         assert df.shape[0] == 2
         assert df.loc[0, "doc_id"] == hash_document
+        assert df.loc[0, "file_name"] == "document-path"
         assert df.loc[1, "doc_id"] == hash_text_node
+        assert df.loc[1, "file_name"] == "node-path"
 
     def test_add_duplicated_documents(
         self,
@@ -112,11 +118,17 @@ class TestStorage:
         # capture the printed text
         captured = capsys.readouterr()
         assert len(test_empty_storage.store.docstore.docs) == 2
+        metadata_index = test_empty_storage.metadata_index
         assert captured.out == (
             "Document with ID 8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3 "
             "already exists. Skipping.\nDocument with ID "
             "dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4 already exists. Skipping.\n"
         )
+        assert metadata_index.shape[0] == 2
+        assert metadata_index.loc[:, "file_name"].to_list() == [
+            "document-path",
+            "node-path",
+        ]
 
     def test_different_nodes_same_document(
         self,
@@ -136,7 +148,7 @@ class TestStorage:
         docstore = test_empty_storage.store.docstore
         assert docstore.get_document(hash_text_node) == text_node
         df = test_empty_storage.metadata_index
-        assert df.loc[:, "file_name"].to_list() == ["node-path", "node-path_1"]
+        assert df.loc[:, "file_name"].to_list() == ["node-path", "node-path"]
 
     def test_get_nodes_by_file_name(
         self,
@@ -148,7 +160,7 @@ class TestStorage:
         nodes = test_empty_storage.get_nodes_by_file_name("node-")
         assert nodes == [text_node, text_node_2]
         nodes = test_empty_storage.get_nodes_by_file_name("node-path", exact_match=True)
-        assert nodes == [text_node]
+        assert nodes == [text_node, text_node_2]
 
     def test_node_id_list(
         self,
@@ -157,12 +169,15 @@ class TestStorage:
         text_node: TextNode,
     ):
         """docstore has only two text nodes and no documents."""
-        test_empty_storage.add_documents([text_node, text_node_2])
-        node_list = test_empty_storage.node_id_list()
-        assert node_list == [
+        check_node_id = [
             "dfbab7917ff16a68316aaf745bbbaeffe4b8c1692763548605020c227831c1c4",
             "cc385eb9c8562d248624152b09f90c366b441d9e1f8d0f3752aca2124cb36dd7",
         ]
+        test_empty_storage.add_documents([text_node, text_node_2])
+        node_list = test_empty_storage.node_id_list()
+        metadata_index = test_empty_storage.metadata_index
+        assert node_list == check_node_id
+        assert check_node_id == metadata_index.loc[:, "doc_id"].to_list()
 
     def test_document_metadata(self, paul_graham_essay_storage: Storage):
 

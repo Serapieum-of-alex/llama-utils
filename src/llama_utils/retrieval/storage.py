@@ -231,7 +231,7 @@ class Storage:
     @property
     def metadata_index(self) -> pd.DataFrame:
         """Get the metadata index."""
-        return self._metadata_index
+        return create_metadata_index_existing_docs(self.docstore.docs)
 
     @property
     def document_metadata(self) -> Dict[str, RefDocInfo]:
@@ -603,13 +603,14 @@ class Storage:
                     )
 
         """
+        metadata_index = self.metadata_index
         if exact_match:
-            doc_ids = self.metadata_index.loc[
-                self.metadata_index["file_name"] == file_name, "doc_id"
+            doc_ids = metadata_index.loc[
+                metadata_index["file_name"] == file_name, "doc_id"
             ].values
         else:
-            doc_ids = self.metadata_index.loc[
-                self.metadata_index["file_name"].str.contains(file_name, regex=True),
+            doc_ids = metadata_index.loc[
+                metadata_index["file_name"].str.contains(file_name, regex=True),
                 "doc_id",
             ].values
         docs = self.docstore.get_nodes(doc_ids)
@@ -764,8 +765,15 @@ def create_metadata_index_existing_docs(docs: Dict[str, BaseNode]):
     metadata_index = {}
     i = 0
     for key, val in docs.items():
+        if "file_name" in val.metadata:
+            file_name = val.metadata["file_name"]
+        elif "file_path" in val.metadata:
+            file_name = Path(val.metadata["file_path"]).name
+        else:
+            file_name = f"doc_{i}"
+
         metadata_index[i] = {
-            "file_name": val.metadata["file_name"],
+            "file_name": file_name,
             "doc_id": generate_content_hash(val.text),
         }
         i += 1
