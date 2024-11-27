@@ -412,9 +412,6 @@ class Storage:
                     )
             }
         """
-        new_entries = []
-        file_names = []
-        # Create a metadata-based index
         for doc in docs:
             # change the id to a sha256 hash if it is not already
             if generate_id:
@@ -422,21 +419,8 @@ class Storage:
 
             if not self.docstore.document_exists(doc.node_id) or update:
                 self.docstore.add_documents([doc], allow_update=update)
-                # Update the metadata index with file name as key and doc_id as value
-                file_name = os.path.basename(doc.metadata["file_path"])
-                if file_name in file_names:
-                    file_name = f"{file_name}_{len(file_names)}"
-                new_entries.append({"file_name": file_name, "doc_id": doc.node_id})
-                file_names.append(file_name)
             else:
                 print(f"Document with ID {doc.node_id} already exists. Skipping.")
-
-        # Convert new entries to a DataFrame and append to the existing metadata DataFrame
-        if new_entries:
-            new_entries_df = pd.DataFrame(new_entries)
-            self._metadata_index = pd.concat(
-                [self._metadata_index, new_entries_df], ignore_index=True
-            )
 
     @staticmethod
     def read_documents(
