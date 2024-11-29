@@ -40,7 +40,31 @@ class CustomIndex:
 
     @property
     def metadata(self) -> IndexDict:
-        """Return the metadata."""
+        """metadata.
+
+        Returns
+        -------
+        IndexDict
+            The metadata of the index.
+
+        Examples
+        --------
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> config_loader = ConfigLoader()
+        >>> text_node = TextNode(text="text")
+        >>> index = CustomIndex.create_from_nodes([text_node])
+        >>> metadata = index.metadata
+        >>> type(metadata)
+        <class 'llama_index.core.data_structs.data_structs.IndexDict'>
+        >>> print(metadata) # doctest: +SKIP
+        IndexDict(
+            index_id='f543efc6-2d2c-451c-bfb6-ce7e1f0c3a51',
+            summary=None,
+            nodes_dict={'5bf5b272-3d2d-4f7c-9d12-be72de8646e1': '5bf5b272-3d2d-4f7c-9d12-be72de8646e1'},
+            doc_id_dict={},
+            embeddings_dict={}
+        )
+        """
         return self.index.index_struct
 
     @property
