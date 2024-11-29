@@ -73,3 +73,8 @@ def paul_graham_essay_storage(paul_grahm_essay_storage: str) -> Storage:
 @pytest.fixture()
 def essay_document_id() -> str:
     return "a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092"
+
+
+@pytest.fixture()
+def essay_node_id() -> str:
+    return "cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7"

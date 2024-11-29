@@ -183,11 +183,15 @@ class TestStorage:
         assert node_list == check_node_id
         assert check_node_id == metadata_index.loc[:, "doc_id"].to_list()
 
-    def test_delete_document(
-        self, paul_graham_essay_storage: Storage, essay_document_id: str
-    ):
+
+class TestDeleteDocument:
+    def test_document(self, paul_graham_essay_storage: Storage, essay_document_id: str):
         paul_graham_essay_storage.delete_document(essay_document_id)
         assert essay_document_id not in paul_graham_essay_storage.metadata().keys()
+
+    def test_node(self, paul_graham_essay_storage: Storage, essay_node_id: str):
+        paul_graham_essay_storage.delete_node(essay_node_id)
+        assert essay_node_id not in paul_graham_essay_storage.node_id_list()
 
 
 class TestMetaData:

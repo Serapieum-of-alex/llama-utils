@@ -357,6 +357,30 @@ class Storage:
             raise ValueError(f"Document with ID {doc_id} not found.")
         self.docstore.delete_ref_doc(doc_id)
 
+    def delete_node(self, node_id: str):
+        """Delete a node from the docstore.
+
+        Parameters
+        ----------
+        node_id: str
+            The ID of the node to delete.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        You can delete a node from the document store using the `delete_node` method by providing the `node_id`:
+
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> node_id = store.node_id_list()[0]
+        >>> print(node_id)
+        cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7
+        >>> store.delete_node(node_id)
+        """
+        self.docstore.delete_document(node_id)
+
     def add_documents(
         self,
         docs: Sequence[Union[Document, TextNode]],
