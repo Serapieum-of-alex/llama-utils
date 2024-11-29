@@ -1,5 +1,6 @@
 import pytest
 from llama_index.core import VectorStoreIndex
+from llama_index.core.data_structs.data_structs import IndexDict
 from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores import SimpleVectorStore
 
@@ -38,3 +39,10 @@ def test_create_from_nodes(text_node: TextNode):
 def test_create_custome_index_wrong_input():
     with pytest.raises(ValueError):
         CustomIndex("wrong input")
+
+
+def test_metadata(text_node: TextNode):
+    index = CustomIndex.create_from_nodes([text_node])
+    metadata = index.metadata
+    assert isinstance(metadata, IndexDict)
+    assert list(metadata.nodes_dict.keys()) == [text_node.id_]

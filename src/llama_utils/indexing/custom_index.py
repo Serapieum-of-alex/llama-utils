@@ -3,6 +3,7 @@
 from typing import Dict, List, Union
 
 from llama_index.core import VectorStoreIndex
+from llama_index.core.data_structs.data_structs import IndexDict
 from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 
@@ -36,6 +37,11 @@ class CustomIndex:
     def index(self) -> VectorStoreIndex:
         """Return the index object."""
         return self._index
+
+    @property
+    def metadata(self) -> IndexDict:
+        """Return the metadata."""
+        return self.index.index_struct
 
     @property
     def vector_store(self) -> BasePydanticVectorStore:
@@ -96,7 +102,7 @@ class CustomIndex:
         return cls(index)
 
     @classmethod
-    def create_from_nodes(cls, nodes: List[TextNode]):
+    def create_from_nodes(cls, nodes: List[TextNode]) -> "CustomIndex":
         """Create a new index from a node.
 
         Parameters
