@@ -47,9 +47,12 @@ class TestStorage:
         return store
 
     def test_properties(self, test_empty_storage: Storage):
-        isinstance(test_empty_storage.docstore, SimpleDocumentStore)
-        isinstance(test_empty_storage.vector_store, SimpleVectorStore)
-        isinstance(test_empty_storage.index_store, SimpleIndexStore)
+        assert isinstance(test_empty_storage.docstore, SimpleDocumentStore)
+        assert isinstance(test_empty_storage.vector_store, SimpleVectorStore)
+        assert isinstance(test_empty_storage.index_store, SimpleIndexStore)
+        string = "\n        Documents: 0\n        Indexes: 0\n        "
+        assert test_empty_storage.__str__() == string
+        assert test_empty_storage.__repr__() == string
 
     def test_load(self, storage_path: str):
         store = Storage.load(storage_path)

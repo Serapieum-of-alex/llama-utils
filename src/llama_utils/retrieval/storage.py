@@ -208,6 +208,14 @@ class Storage:
         """
         return message
 
+    def __repr__(self):
+        """Return a string representation of the storage."""
+        message = f"""
+        Documents: {len(self.docstore.docs)}
+        Indexes: {len(self.index_store.index_structs())}
+        """
+        return message
+
     @property
     def metadata_index(self) -> pd.DataFrame:
         """Get the metadata index."""
