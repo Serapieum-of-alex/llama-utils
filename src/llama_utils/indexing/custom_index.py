@@ -33,6 +33,13 @@ class CustomIndex:
         Number of Document: {len(self.doc_ids)}
         """
 
+    def __repr__(self):
+        """String representation of the CustomIndex object."""
+        return f"""
+        Index ID: {self.id}
+        Number of Document: {len(self.doc_ids)}
+        """
+
     @property
     def index(self) -> VectorStoreIndex:
         """Return the index object."""

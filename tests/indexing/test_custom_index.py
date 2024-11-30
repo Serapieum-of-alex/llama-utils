@@ -15,10 +15,9 @@ def test_create_from_document(document: Document):
     doc_list = [document, "any text"]
     index = CustomIndex.create_from_documents(doc_list)
     assert isinstance(index, CustomIndex)
-    assert (
-        index.__str__()
-        == f"\n        Index ID: {index.id}\n        Number of Document: {len(index.doc_ids)}\n        "
-    )
+    string = f"\n        Index ID: {index.id}\n        Number of Document: {len(index.doc_ids)}\n        "
+    assert index.__str__() == string
+    assert index.__repr__() == string
     assert isinstance(index.index, VectorStoreIndex)
     assert isinstance(index.id, str)
     assert isinstance(index.vector_store, SimpleVectorStore)
