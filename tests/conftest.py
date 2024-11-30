@@ -1,5 +1,5 @@
 import pytest
-from llama_index.core import StorageContext
+from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.schema import Document, TextNode
 
 from llama_utils.retrieval.storage import Storage
@@ -33,6 +33,12 @@ def text_node_2() -> TextNode:
         id_="d2",
         metadata={"node": "info", "file_path": "node-path"},
     )
+
+
+@pytest.fixture
+def vector_store_index(text_node: TextNode) -> VectorStoreIndex:
+    """Vector store index with one text node."""
+    return VectorStoreIndex([text_node])
 
 
 @pytest.fixture()

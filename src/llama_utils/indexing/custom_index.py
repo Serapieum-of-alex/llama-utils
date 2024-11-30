@@ -76,17 +76,17 @@ class CustomIndex:
 
     @property
     def vector_store(self) -> BasePydanticVectorStore:
-        """Return the vector store."""
+        """The vector store."""
         return self.index.vector_store
 
     @property
     def doc_ids(self) -> List[str]:
-        """Return the document IDs."""
+        """The document IDs. (only documents not the nodes)."""
         return list(self.index.ref_doc_info.keys())
 
     @property
     def id(self) -> str:
-        """Return the index ID."""
+        """The index ID."""
         return self._id
 
     @property
@@ -162,3 +162,67 @@ class CustomIndex:
         """
         index = VectorStoreIndex(nodes)
         return cls(index)
+
+    def add_documents(self, documents: List[Document], generate_id: bool = True):
+        """Add documents to the index.
+
+        Parameters
+        ----------
+        documents: List[Document]
+            The documents to add to the index.
+        generate_id: bool, optional, default is False.
+            True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes.
+
+        Raises
+        ------
+        ValueError
+            If the documents are not a list of Document objects.
+        ValueError
+            If the documents are not instances of Document.
+
+        Examples
+        --------
+        Set the ConfigLoader to define the embedding model that you want to use to create the embeddings in the index:
+
+            >>> from llama_utils.utils.config_loader import ConfigLoader
+            >>> configs = ConfigLoader()
+
+        Create a new index from a document:
+
+            >>> doc = Document(text="text", id_="doc 1")
+            >>> index = CustomIndex.create_from_documents([doc])
+            >>> print(index) # doctest: +SKIP
+            <BLANKLINE>
+                    Index ID: 91dd8a18-3ab5-41ca-b8de-998077b9235c
+                    Number of Document: 1
+            <BLANKLINE>
+
+        Add a new document to the index:
+
+            >>> doc2 = Document(text="text2", id_="doc 2")
+
+        The `add_documents` method has the `genereate_id` parameter, which is set to True by default to generate a
+        sha256 hash number as a doc_id based on the content of the nodes:
+
+            >>> index.add_documents([doc2])
+            >>> print(index.doc_ids) # doctest: +SKIP
+            ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'fd848ca35a6281600b5da598c7cb4d5df561e0ee63ee7cec0e98e6049996f3ff']
+
+        If you want to keep the same doc_id, you can set the `generate_id` parameter to False:
+
+                >>> index.add_documents([doc2], generate_id=False)
+                >>> print(index.doc_ids) # doctest: +SKIP
+                ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'doc 2']
+        """
+        if not isinstance(documents, list):
+            raise ValueError("The documents should be a list of Document")
+
+        if not all(isinstance(doc, Document) for doc in documents):
+            raise ValueError("All the documents should be instances of Document")
+
+        if generate_id:
+            for doc in documents:
+                doc.doc_id = generate_content_hash(doc.text)
+
+        for documnt in documents:
+            self.index.insert(documnt)
