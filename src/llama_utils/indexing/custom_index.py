@@ -101,6 +101,11 @@ class CustomIndex:
         self._embedding_model = model
 
     @property
+    def node_id_list(self) -> List[str]:
+        """The node IDs."""
+        return list(self.metadata.nodes_dict.keys())
+
+    @property
     def embeddings(self) -> Dict[str, List[float]]:
         """Return the embeddings."""
         # the ref_ids is a mapping of text_id to ref_doc_id

@@ -97,6 +97,10 @@ class TestProperties:
             == "sentence-transformers/all-MiniLM-L6-v2"
         )
 
+    def test_node_ids(self, vector_store_index: VectorStoreIndex):
+        c_index = CustomIndex(vector_store_index)
+        assert c_index.node_id_list == ["d2"]
+
 
 class TestAddDocument:
 
