@@ -138,7 +138,7 @@ class CustomIndex:
         # change the node.id to the content hash
         if generate_id:
             for doc in docs:
-                doc.doc_id = generate_content_hash(doc.text)
+                doc.node_id = generate_content_hash(doc.text)
 
         index = VectorStoreIndex.from_documents(docs)
         return cls(index)
@@ -226,12 +226,20 @@ class CustomIndex:
                 ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'doc 2']
         """
         if not isinstance(documents, list):
-            raise ValueError("The documents should be a list of Document")
+            raise ValueError("The documents should be a list of Document/TextNodes")
 
-        if not all(isinstance(doc, Document) for doc in documents):
-            raise ValueError("All the documents should be instances of Document")
-
-        for documnt in documents:
+        for document in documents:
             if generate_id:
-                documnt.doc_id = generate_content_hash(documnt.text)
-            self.index.insert(documnt)
+                document.node_id = generate_content_hash(document.text)
+
+            if isinstance(document, Document):
+                self.index.insert(document)
+            elif isinstance(document, TextNode):
+                document.embedding = self.embedding_model.get_text_embedding(
+                    document.text
+                )
+                self.index.insert_nodes([document])
+            else:
+                raise ValueError(
+                    "The document should be an instance of Document or TextNode"
+                )
