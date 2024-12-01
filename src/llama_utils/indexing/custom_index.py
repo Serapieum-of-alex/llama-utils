@@ -8,6 +8,7 @@ from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 
 from llama_utils.utils.helper_functions import generate_content_hash
+from llama_utils.utils.models import get_hugging_face_embedding
 
 
 class CustomIndex:
@@ -25,6 +26,7 @@ class CustomIndex:
             raise ValueError("The index should be an instance of VectorStoreIndex")
         self._id = index.index_id
         self._index = index
+        self._embedding_model = get_hugging_face_embedding()
 
     def __str__(self):
         """String representation of the CustomIndex object."""
@@ -88,6 +90,15 @@ class CustomIndex:
     def id(self) -> str:
         """The index ID."""
         return self._id
+
+    @property
+    def embedding_model(self):
+        """The embedding model."""
+        return self._embedding_model
+
+    @embedding_model.setter
+    def embedding_model(self, model):
+        self._embedding_model = model
 
     @property
     def embeddings(self) -> Dict[str, List[float]]:

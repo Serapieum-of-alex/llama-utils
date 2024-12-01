@@ -3,6 +3,7 @@ from llama_index.core import VectorStoreIndex
 from llama_index.core.data_structs.data_structs import IndexDict
 from llama_index.core.schema import Document, TextNode
 from llama_index.core.vector_stores import SimpleVectorStore
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 from llama_utils.indexing.custom_index import CustomIndex
 
@@ -45,6 +46,19 @@ def test_metadata(text_node: TextNode):
     metadata = index.metadata
     assert isinstance(metadata, IndexDict)
     assert list(metadata.nodes_dict.keys()) == [text_node.id_]
+
+
+class TestProperties:
+    def test_embedding_model(self, vector_store_index: VectorStoreIndex):
+        c_index = CustomIndex(vector_store_index)
+        assert isinstance(c_index.embedding_model, HuggingFaceEmbedding)
+        c_index.embedding_model = HuggingFaceEmbedding(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+        assert (
+            c_index.embedding_model.model_name
+            == "sentence-transformers/all-MiniLM-L6-v2"
+        )
 
 
 class TestAddDocument:
