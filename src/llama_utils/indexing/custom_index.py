@@ -220,9 +220,7 @@ class CustomIndex:
         if not all(isinstance(doc, Document) for doc in documents):
             raise ValueError("All the documents should be instances of Document")
 
-        if generate_id:
-            for doc in documents:
-                doc.doc_id = generate_content_hash(doc.text)
-
         for documnt in documents:
+            if generate_id:
+                documnt.doc_id = generate_content_hash(documnt.text)
             self.index.insert(documnt)
