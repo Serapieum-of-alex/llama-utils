@@ -33,10 +33,21 @@ Main Features
 
 - llama-index
 
-Future work
--------------
+Package Overview
+----------------
 
-- Developing a DEM processing module for generating the river network at different DEM spatial resolutions.
+```mermaid
+graph TB
+    Package[llama-utils]
+    Package --> SubPackage1[Indexing]
+    Package --> SubPackage3[Storage]
+    SubPackage1 --> Module1[index_manager.py]
+    SubPackage1 --> Module2[custom_index.py]
+    SubPackage3 --> Module5[storage.py]
+    SubPackage3 --> Module6[config_loader.py]
+```
+
+complete overview of the design and architecture [here](/docs/design_architecture_diagrams.md)
 
 Installing llama-utils
 ===============
