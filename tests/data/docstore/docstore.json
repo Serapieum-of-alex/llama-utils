@@ -1,0 +1,138 @@
+{
+    "docstore/data": {
+        "071a8dd42f2561aba4e2fd02b311274a67f002e59bae58226030e623064de468": {
+            "__data__": {
+                "id_": "071a8dd42f2561aba4e2fd02b311274a67f002e59bae58226030e623064de468",
+                "embedding": null,
+                "metadata": {
+                    "file_path": "C:\\gdrive\\algorithms\\AI\\llms\\llama-utils\\tests\\data\\files\\text_1.txt",
+                    "file_name": "text_1.txt",
+                    "file_type": "text/plain",
+                    "file_size": 1081,
+                    "creation_date": "2024-10-22",
+                    "last_modified_date": "2024-10-23"
+                },
+                "excluded_embed_metadata_keys": [
+                    "file_name"
+                ],
+                "excluded_llm_metadata_keys": [
+                    "file_name"
+                ],
+                "relationships": {},
+                "text": "Birds are a group of warm-blooded vertebrates constituting the class Aves (/\u02c8e\u026avi\u02d0z/), characterised by feathers,\r\ntoothless beaked jaws, the laying of hard-shelled eggs, a high metabolic rate, a four-chambered heart, and a strong yet\r\nlightweight skeleton. Birds live worldwide and range in size from the 5.5 cm (2.2 in) bee hummingbird to the 2.8 m\r\n(9 ft 2 in) common ostrich. There are over 11,000 living species, more than half of which are passerine, or \"perching\"\r\nbirds. Birds have wings whose development varies according to species; the only known groups without wings are the\r\nextinct moa and elephant birds. Wings, which are modified forelimbs, gave birds the ability to fly, although further\r\nevolution has led to the loss of flight in some birds, including ratites, penguins, and diverse endemic island species.\r\nThe digestive and respiratory systems of birds are also uniquely adapted for flight. Some bird species of aquatic\r\nenvironments, particularly seabirds and some waterbirds, have further evolved for swimming. The study of birds is called\r\nornithology.\r\n",
+                "mimetype": "text/plain",
+                "start_char_idx": null,
+                "end_char_idx": null,
+                "text_template": "{metadata_str}\n\n{content}",
+                "metadata_template": "{key}: {value}",
+                "metadata_seperator": "\n",
+                "class_name": "Document"
+            },
+            "__type__": "4"
+        },
+        "6fa024af3845fb59b87bf456dc180d3bcf90544e73a91e81da1059b8307a11f5": {
+            "__data__": {
+                "id_": "6fa024af3845fb59b87bf456dc180d3bcf90544e73a91e81da1059b8307a11f5",
+                "embedding": null,
+                "metadata": {
+                    "file_path": "C:\\gdrive\\algorithms\\AI\\llms\\llama-utils\\tests\\data\\files\\text_2.txt",
+                    "file_name": "text_2.txt",
+                    "file_type": "text/plain",
+                    "file_size": 632,
+                    "creation_date": "2024-10-22",
+                    "last_modified_date": "2024-10-22"
+                },
+                "excluded_embed_metadata_keys": [
+                    "file_name"
+                ],
+                "excluded_llm_metadata_keys": [
+                    "file_name"
+                ],
+                "relationships": {},
+                "text": "Birds are feathered theropod dinosaurs and constitute the only known living dinosaurs. Likewise, birds are considered\r\nreptiles in the modern cladistic sense of the term, and their closest living relatives are the crocodilians. Birds are\r\ndescendants of the primitive avialans (whose members include Archaeopteryx) which first appeared during the Late\r\nJurassic. According to recent estimates, modern birds (Neornithes) evolved in the Late Cretaceous and diversified\r\ndramatically around the time of the Cretaceous\u2013Paleogene extinction event 66 million years ago, which killed off the\r\npterosaurs and all non-avian dinosaurs.[7]\r\n",
+                "mimetype": "text/plain",
+                "start_char_idx": null,
+                "end_char_idx": null,
+                "text_template": "{metadata_str}\n\n{content}",
+                "metadata_template": "{key}: {value}",
+                "metadata_seperator": "\n",
+                "class_name": "Document"
+            },
+            "__type__": "4"
+        },
+        "f9349bc1f236b7900f5ec5ee9e119806db2f970ce308b5db694156b03f69f709": {
+            "__data__": {
+                "id_": "f9349bc1f236b7900f5ec5ee9e119806db2f970ce308b5db694156b03f69f709",
+                "embedding": null,
+                "metadata": {
+                    "file_path": "C:\\gdrive\\algorithms\\AI\\llms\\llama-utils\\tests\\data\\files\\text_3.txt",
+                    "file_name": "text_3.txt",
+                    "file_type": "text/plain",
+                    "file_size": 790,
+                    "creation_date": "2024-10-22",
+                    "last_modified_date": "2024-10-22"
+                },
+                "excluded_embed_metadata_keys": [
+                    "file_name"
+                ],
+                "excluded_llm_metadata_keys": [
+                    "file_name"
+                ],
+                "relationships": {},
+                "text": "Many social species preserve knowledge across generations (culture). Birds are social, communicating with visual\r\nsignals, calls, and songs, and participating in such behaviours as cooperative breeding and hunting, flocking, and\r\nmobbing of predators. The vast majority of bird species are socially (but not necessarily sexually) monogamous, usually\r\nfor one breeding season at a time, sometimes for years, and rarely for life. Other species have breeding systems that\r\nare polygynous (one male with many females) or, rarely, polyandrous (one female with many males). Birds produce\r\noffspring by laying eggs which are fertilised through sexual reproduction. They are usually laid in a nest and incubated\r\nby the parents. Most birds have an extended period of parental care after hatching.\r\n",
+                "mimetype": "text/plain",
+                "start_char_idx": null,
+                "end_char_idx": null,
+                "text_template": "{metadata_str}\n\n{content}",
+                "metadata_template": "{key}: {value}",
+                "metadata_seperator": "\n",
+                "class_name": "Document"
+            },
+            "__type__": "4"
+        },
+        "4741bce91068532d71c4e25423432e34e4c51916ade425c9fec9fb6f4785935f": {
+            "__data__": {
+                "id_": "4741bce91068532d71c4e25423432e34e4c51916ade425c9fec9fb6f4785935f",
+                "embedding": null,
+                "metadata": {
+                    "file_path": "C:\\gdrive\\algorithms\\AI\\llms\\llama-utils\\tests\\data\\files\\text_4.txt",
+                    "file_name": "text_4.txt",
+                    "file_type": "text/plain",
+                    "file_size": 684,
+                    "creation_date": "2024-10-22",
+                    "last_modified_date": "2024-10-22"
+                },
+                "excluded_embed_metadata_keys": [
+                    "file_name"
+                ],
+                "excluded_llm_metadata_keys": [
+                    "file_name"
+                ],
+                "relationships": {},
+                "text": "Many species of birds are economically important as food for human consumption and raw material in manufacturing, with\r\ndomesticated and undomesticated birds being important sources of eggs, meat, and feathers. Songbirds, parrots, and other\r\nspecies are popular as pets. Guano (bird excrement) is harvested for use as a fertiliser. Birds figure throughout human\r\nculture. About 120 to 130 species have become extinct due to human activity since the 17th century, and hundreds more\r\nbefore then. Human activity threatens about 1,200 bird species with extinction, though efforts are underway to protect\r\nthem. Recreational birdwatching is an important part of the ecotourism industry.\r\n",
+                "mimetype": "text/plain",
+                "start_char_idx": null,
+                "end_char_idx": null,
+                "text_template": "{metadata_str}\n\n{content}",
+                "metadata_template": "{key}: {value}",
+                "metadata_seperator": "\n",
+                "class_name": "Document"
+            },
+            "__type__": "4"
+        }
+    },
+    "docstore/metadata": {
+        "071a8dd42f2561aba4e2fd02b311274a67f002e59bae58226030e623064de468": {
+            "doc_hash": "d7c7a3203c51a7260fc956bbe9e8531ca00afaa3d2548b72c641435e321f5757"
+        },
+        "6fa024af3845fb59b87bf456dc180d3bcf90544e73a91e81da1059b8307a11f5": {
+            "doc_hash": "6fc8d7519f9b30046aaaf39a332a657927a1c2fcc352dd01962d54a15d0367d6"
+        },
+        "f9349bc1f236b7900f5ec5ee9e119806db2f970ce308b5db694156b03f69f709": {
+            "doc_hash": "849087a6e621e158c6cf59fa6123d642fc7ab8a7a3983879a8c5dd8d552c505d"
+        },
+        "4741bce91068532d71c4e25423432e34e4c51916ade425c9fec9fb6f4785935f": {
+            "doc_hash": "79cb5fcac221a45e9b12cb44305f918bddf878456f9690304a13d4a5626476ae"
+        }
+    }
+}
