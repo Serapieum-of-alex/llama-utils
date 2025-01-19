@@ -1,0 +1,94 @@
+site_name: Llama-utils
+site_url: https://github.com/Serapieum-of-alex/llama-utils
+site_description: Llama-utils is a Python package for data manipulation and analysis in the Llama language model
+theme:
+  name: material
+  language: en
+  features:
+  - announce.dismiss
+  - content.action.edit
+  - content.action.view
+  - content.code.annotate
+  - content.code.copy
+  - content.tooltips
+  - navigation.footer
+  - navigation.indexes
+  - navigation.sections
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.top
+  - search.highlight
+  - search.suggest
+  - toc.follow
+  palette:
+  - media: "(prefers-color-scheme)"
+    toggle:
+      icon: material/brightness-auto
+      name: Switch to light mode
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    primary: teal
+    accent: purple
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: black
+    accent: lime
+    toggle:
+      icon: material/weather-night
+      name: Switch to system preference
+
+plugins:
+  - search
+  - mkdocs-jupyter
+  - autorefs
+  - mkdocstrings:
+        default_handler: python
+        handlers:
+          python:
+            rendering:
+              show_root_toc_entry: false
+              show_source: true
+              show_signature_annotations: true
+              heading_level: 3
+              show_category_heading: false
+              group_by_category: false
+            selection:
+              inherited_members: false
+            options:
+              show_root_heading: true
+              show_signature_annotations: true
+              docstring_style: numpy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+nav:
+  - Home: "index.md"
+  - Installation:
+      - "installation.md"
+  - Design:
+      - "design-architecture-diagrams.md"
+
+#   - How-to:
+#       - Installation:
+#           - "Local clone + Poetry": "guides/poetry.md"
+#       - Contributing:
+#           - "guides/contributing.md"
+#       - Documentation:
+#           - "guides/documentation.md"
+  - API Reference:
+      - index_manager.md
+      - storage.md
+      - utils.md
+#   - Change logs: "changelog.md"
+
+extra:
+  version_selector: true

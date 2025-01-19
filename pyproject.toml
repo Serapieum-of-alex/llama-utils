@@ -31,7 +31,7 @@ pytest-xdist = "^3.6.1"
 xdoctest = {extras = ["colors"], version = "^1.1.0"}
 typeguard = "^4.3.0"
 
-[tool.poetry.dev-dependencies]
+[poetry.group.dev.dependencies]
 flake8 = "^7.1.1"
 coverage = {extras = ["toml"], version = "^7.6.1"}
 safety = "^3.2.9"
