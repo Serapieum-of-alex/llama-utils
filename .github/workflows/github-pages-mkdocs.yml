@@ -1,0 +1,77 @@
+name: Deploy MkDocs
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'  # Match all branches for pull requests
+
+jobs:
+  deploy-main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install poetry
+      run: |
+        pip install poetry
+
+    - name: Configure Poetry
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+          poetry --version
+          poetry install
+
+    - name: Deploy to GitHub Pages
+      env:
+        ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git
+        poetry run mkdocs gh-deploy --force
+
+  deploy-pr:
+      if: github.event_name == 'pull_request'
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install poetry
+        run: |
+          pip install poetry
+
+      - name: Configure Poetry
+        run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Deploy to GitHub Pages (Pull Request)
+        env:
+          ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BRANCH_NAME=pr-${PR_NUMBER}
+          poetry run mkdocs gh-deploy --remote-branch gh-pages --force --config-file mkdocs.yml --site-dir site/${BRANCH_NAME}
