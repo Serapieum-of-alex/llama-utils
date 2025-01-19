@@ -64,7 +64,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install
+          poetry install --with main,docs
 
       - name: Deploy to GitHub Pages (Pull Request)
         env:
