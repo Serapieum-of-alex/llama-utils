@@ -47,7 +47,7 @@ graph TB
     SubPackage3 --> Module6[config_loader.py]
 ```
 
-complete overview of the design and architecture [here](/docs/design_architecture_diagrams.md)
+complete overview of the design and architecture [here](/docs/design-architecture-diagrams.md)
 
 Installing llama-utils
 ===============
