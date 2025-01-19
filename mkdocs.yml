@@ -1,5 +1,5 @@
 site_name: Llama-utils
-site_url: https://github.com/Serapieum-of-alex/llama-utils
+site_url: https://github.com/Serapieum-of-alex/llama-utils/
 site_description: Llama-utils is a Python package for data manipulation and analysis in the Llama language model
 theme:
   name: material
@@ -63,6 +63,16 @@ plugins:
               show_signature_annotations: true
               docstring_style: numpy
   - table-reader
+  - tags
+  - mike:
+      # These fields are all optional; the defaults are as below...
+      alias_type: symlink
+      redirect_template: null
+      deploy_prefix: ''
+      canonical_version: null
+      version_selector: true
+      css_dir: css
+      javascript_dir: js
 
 markdown_extensions:
   - admonition
