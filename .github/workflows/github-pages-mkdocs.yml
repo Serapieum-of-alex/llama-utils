@@ -33,6 +33,10 @@ jobs:
           poetry --version
           poetry install
 
+    - name: Set PYTHONPATH
+      run: |
+        echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
+
     - name: Deploy to GitHub Pages
       env:
         ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
@@ -64,6 +68,10 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
+
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
       - name: Deploy to GitHub Pages (Pull Request)
         env:
