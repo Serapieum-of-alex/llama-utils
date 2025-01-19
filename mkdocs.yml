@@ -93,4 +93,6 @@ nav:
 #   - Change logs: "changelog.md"
 
 extra:
+  version:
+    provider: mike
   version_selector: true
