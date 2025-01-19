@@ -75,6 +75,4 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git
           PR_NUMBER=${{ github.event.pull_request.number }}
           BRANCH_NAME=pr-${PR_NUMBER}
-          #  poetry run mkdocs gh-deploy --remote-branch gh-pages --force --config-file mkdocs.yml --site-dir site/${BRANCH_NAME}
           poetry run mike deploy --push develop
-          git push --force origin gh-pages
