@@ -7,10 +7,13 @@ on:
   pull_request:
     branches:
       - '**'  # Match all branches for pull requests
+  release:
+      types:
+        - published  # Trigger when a release is published
 
 jobs:
-  deploy-main:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  deploy-release:
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -34,6 +37,10 @@ jobs:
           poetry --version
           poetry install --with main,docs
 
+    - name: Set release notes tag
+      run: |
+        export RELEASE_TAG_VERSION=${{ github.event.release.tag_name }}
+        echo "RELEASE_TAG_VERSION=${RELEASE_TAG_VERSION}" >> $GITHUB_ENV
 
     - name: Deploy to GitHub Pages
       env:
@@ -41,8 +48,8 @@ jobs:
       run: |
         git config --global user.name '${{ github.actor }}'
         git config --global user.email '${{ github.actor }}@users.noreply.github.com'
-        git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git
-        poetry run mkdocs gh-deploy --force
+        poetry run mike deploy --push --update-aliases ${RELEASE_TAG_VERSION} latest
+        poetry run mike set-default --push latest
 
   deploy-pr:
       if: github.event_name == 'pull_request'
