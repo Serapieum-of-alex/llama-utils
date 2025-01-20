@@ -92,7 +92,7 @@ nav:
       - index_manager.md
       - storage.md
       - utils.md
-#   - Change logs: "changelog.md"
+  - Change logs: "change-log.md"
 
 extra:
   version:
