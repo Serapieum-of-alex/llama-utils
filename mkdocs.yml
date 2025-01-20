@@ -83,16 +83,16 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
-  - Home: "index.md"
+  - Home: index.md
   - Installation:
-      - "installation.md"
+      - dev/installation.md
   - Design:
-      - "design-architecture-diagrams.md"
+      - design-architecture-diagrams.md
   - API Reference:
-      - index_manager.md
-      - storage.md
-      - utils.md
-  - Change logs: "change-log.md"
+      - api/index_manager.md
+      - api/storage.md
+      - api/utils.md
+  - Change logs: change-log.md
 
 extra:
   version:
