@@ -13,8 +13,9 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-
+    - uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -31,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
           poetry --version
-          poetry install
+          poetry install --with main,docs
 
 
     - name: Deploy to GitHub Pages
@@ -70,6 +71,7 @@ jobs:
         env:
           ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
         run: |
+          git fetch
           git config --global user.name '${{ github.actor }}'
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
           #git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_DEPLOY_TOKEN }}@github.com/${{ github.repository }}.git
