@@ -1,7 +1,7 @@
 # llama-utils
 LlamaIndex utility package
 
-[![Documentation Status](https://readthedocs.org/projects/llama-utils/badge/?version=latest)](https://llama-utils.readthedocs.io/en/latest/?badge=latest)
+[![Deploy MkDocs](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml)
 [![Python Versions](https://img.shields.io/pypi/pyversions/llama-utils.png)](https://img.shields.io/pypi/pyversions/llama-utils)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
