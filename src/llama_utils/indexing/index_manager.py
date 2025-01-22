@@ -46,22 +46,27 @@ class IndexManager:
         First we need to load the `ConfigLoader` to define the embedding model that was used to create the embeddings
         in the index.
 
-            >>> from llama_utils.utils.config_loader import ConfigLoader
-            >>> config_loader = ConfigLoader()
+        ```python
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> config_loader = ConfigLoader()
+
+        ```
 
         Next, we load the storage object and the index manager object.
 
-            >>> storage_dir = "examples/paul-graham-essay-storage"
-            >>> storage_context = Storage.load(storage_dir)
-            >>> index_manager = IndexManager.load_from_storage(storage_context)
-            >>> print(index_manager) # doctest: +SKIP
-            <BLANKLINE>
-                ids=['8d57e294-fd17-43c9-9dec-a12aa7ea0751', 'edd0d507-9100-4cfb-8002-2267449c6668'],
-                indexes=[
-                    <llama_index.core.indices.vector_store_index.VectorStoreIndex object at 0x7f9f2a1e9d90>,
-                    <llama_index.core.indices.vector_store_index.VectorStoreIndex object at 0x7f9f2a1e9e50>
-                ])
-            <BLANKLINE>
+        ```python
+        >>> storage_dir = "examples/paul-graham-essay-storage"
+        >>> storage_context = Storage.load(storage_dir)
+        >>> index_manager = IndexManager.load_from_storage(storage_context) # doctest: +SKIP
+        >>> print(index_manager) # doctest: +SKIP
+        <BLANKLINE>
+            ids=['8d57e294-fd17-43c9-9dec-a12aa7ea0751', 'edd0d507-9100-4cfb-8002-2267449c6668'],
+            indexes=[
+                <llama_index.core.indices.vector_store_index.VectorStoreIndex object at 0x7f9f2a1e9d90>,
+                <llama_index.core.indices.vector_store_index.VectorStoreIndex object at 0x7f9f2a1e9e50>
+            ])
+        <BLANKLINE>
+        ```
         """
         storage = storage.store
         index_instructs = storage.index_store.index_structs()

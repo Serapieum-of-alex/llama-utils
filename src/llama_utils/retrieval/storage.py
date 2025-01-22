@@ -77,12 +77,15 @@ class Storage:
         --------
         You can create a new storage (in-memory) using the `create` method as follows:
 
-            >>> store = Storage.create()
-            >>> print(store)
-            <BLANKLINE>
-                    Documents: 0
-                    Indexes: 0
-            <BLANKLINE>
+        ```python
+        >>> store = Storage.create()
+        >>> print(store)
+        <BLANKLINE>
+                Documents: 0
+                Indexes: 0
+        <BLANKLINE>
+
+        ```
         """
         storage = cls._create_simple_storage_context()
         return cls(storage)
@@ -138,10 +141,11 @@ class Storage:
         Examples
         --------
         You can save a storage to a directory as follows:
-
+        ```python
         >>> store = Storage.create()
         >>> store.save("examples/paul-graham-essay-storage-example")
 
+        ```
         The following files will be created in the specified directory:
         - metadata_index.csv
         - docstore.json
@@ -176,6 +180,7 @@ class Storage:
         Examples
         --------
         You can load a storage from a directory as follows:
+        ```python
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> print(store) # doctest: +SKIP
         <BLANKLINE>
@@ -194,6 +199,8 @@ class Storage:
         >>> vector_store = store.vector_store
         >>> print(type(vector_store))
         <class 'llama_index.core.vector_stores.simple.SimpleVectorStore'>
+
+        ```
         """
         if not Path(store_dir).exists():
             raise StorageNotFoundError(f"Storage not found at {store_dir}")
@@ -241,45 +248,47 @@ class Storage:
         Examples
         --------
         You can get the document metadata as a dictionary using the `metadata` method with the default parameter values:
+        ```python
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> metadata = store.metadata()
 
-            >>> store = Storage.load("examples/paul-graham-essay-storage")
-            >>> metadata = store.metadata()
-
-            The `metadata` is a dictionary with the document ID as the key and the document metadata as the value:
-
-            >>> documents_id = list(metadata.keys())
-            >>> print(documents_id) # doctest: +SKIP
-            ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
-            >>> print(metadata) # doctest: +SKIP
-            {
-                'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
-                    RefDocInfo(
-                        node_ids=[
-                            'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
-                            '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
-                            'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
-                            '120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5d0e64a0d2d2805a4b7'
-                        ],
-                        metadata={
-                            'file_path': 'examples\\data\\paul_graham_essay.txt',
-                            'file_name': 'paul_graham_essay.txt',
-                            'file_type': 'text/plain',
-                            'file_size': 75395,
-                            'creation_date': '2024-10-24',
-                            'last_modified_date': '2024-09-16',
-                            'document_title': 'Based on the candidate titles and content, I would suggest a***.'
-                        }
-                    )
-                }
-
+        ```
+        The `metadata` is a dictionary with the document ID as the key and the document metadata as the value:
+        ```python
+        >>> documents_id = list(metadata.keys())
+        >>> print(documents_id) # doctest: +SKIP
+        ['a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092']
+        >>> print(metadata) # doctest: +SKIP
+        {
+            'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
+                RefDocInfo(
+                    node_ids=[
+                        'cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+                        '0567f3a9756983e1d040ec332255db94521ed5dc1b03fc7312f653c0e670a0bf',
+                        'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
+                        '120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5d0e64a0d2d2805a4b7'
+                    ],
+                    metadata={
+                        'file_path': 'examples\\data\\paul_graham_essay.txt',
+                        'file_name': 'paul_graham_essay.txt',
+                        'file_type': 'text/plain',
+                        'file_size': 75395,
+                        'creation_date': '2024-10-24',
+                        'last_modified_date': '2024-09-16',
+                        'document_title': 'Based on the candidate titles and content, I would suggest a***.'
+                    }
+                )
+            }
+        ```
         To get the metadata as a DataFrame, you can set the `as_dataframe` parameter to True:
-
-            >>> metadata = store.metadata(as_dataframe=True)
-            >>> print(metadata) # doctest: +SKIP
-                                                           doc_id                                            node_id
-            0   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
-            1   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
-            2   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        ```python
+        >>> metadata = store.metadata(as_dataframe=True)
+        >>> print(metadata) # doctest: +SKIP
+                                                       doc_id                                            node_id
+        0   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        1   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+        2   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        ```
         """
         ref_doc_info: dict = self.docstore.get_all_ref_doc_info()
         if as_dataframe:
@@ -320,7 +329,7 @@ class Storage:
         Examples
         --------
         You can get the metadata of the nodes in the docstore using the `nodes_metadata` method:
-
+        ```python
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> nodes_metadata = store.node_id_list()
         >>> print(nodes_metadata) # doctest: +SKIP
@@ -330,6 +339,7 @@ class Storage:
             'd5542515414f1bf30f6c21f0796af8bde4c513f2e72a2df21f0810f10826252f',
             ...
         ]
+        ```
         """
         return list(self.docstore.docs.keys())
 
@@ -350,6 +360,7 @@ class Storage:
         You can delete a document from the document store and all the nodes that are related to it using the
         `delete_document` method by providing the `document_id`:
 
+        ```python
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> document_metadata = store.metadata
         >>> document_id = list(document_metadata().keys())[0]
@@ -357,9 +368,15 @@ class Storage:
         a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092
         >>> store.delete_document(document_id)
 
+        ```
+
         Now if you check the document_metadata, you will find that the document is deleted:
+
+        ```python
         >>> print(store.metadata())
         {}
+
+        ```
         """
         if doc_id not in self.metadata().keys():
             raise ValueError(f"Document with ID {doc_id} not found.")
@@ -380,12 +397,14 @@ class Storage:
         Examples
         --------
         You can delete a node from the document store using the `delete_node` method by providing the `node_id`:
-
+        ```
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> node_id = store.node_id_list()[0]
         >>> print(node_id)
         cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7
         >>> store.delete_node(node_id)
+
+        ```
         """
         self.docstore.delete_document(node_id)
 
@@ -417,55 +436,56 @@ class Storage:
         Examples
         --------
         - First create the storage object:
-
-            >>> store = Storage.create()
+        ```python
+        >>> store = Storage.create()
 
         - Then you can add documents to the store using the `add_documents` method:
 
-            >>> data_path = "examples/data/essay"
-            >>> documents = Storage.read_documents(data_path)
-            >>> store.add_documents(documents)
-            >>> print(store) # doctest: +SKIP
-            <BLANKLINE>
-                        Documents: 1
-                        Indexes: 0
-            <BLANKLINE>
+        >>> data_path = "examples/data/essay"
+        >>> documents = Storage.read_documents(data_path)
+        >>> store.add_documents(documents)
+        >>> print(store) # doctest: +SKIP
+        <BLANKLINE>
+                    Documents: 1
+                    Indexes: 0
+        <BLANKLINE>
 
         - once the documents are added successfully, they are added also to the metadata index.
 
-            >>> metadata = store.metadata(as_dataframe=True)
-            >>> print(metadata) # doctest: +SKIP
-                            file_name                                             doc_id
-            0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        >>> metadata = store.metadata(as_dataframe=True)
+        >>> print(metadata) # doctest: +SKIP
+                        file_name                                             doc_id
+        0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
 
-            >>> docstore = store.docstore
-            >>> print(docstore.docs) # doctest: +SKIP
+        >>> docstore = store.docstore
+        >>> print(docstore.docs) # doctest: +SKIP
 
-            {
-                'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
-                    Document(
-                        id_='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
-                        embedding=None,
-                        metadata={
-                            'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
-                            'file_name': 'paul-graham-essay.txt',
-                            'file_type': 'text/plain',
-                            'file_size': 75395,
-                            'creation_date': '2024-10-25',
-                            'last_modified_date': '2024-09-16'
-                        },
-                        excluded_embed_metadata_keys=['file_name'],
-                        excluded_llm_metadata_keys=['file_name'],
-                        relationships={},
-                        text='What I Worked On February 2021 Before college the two ...',
-                        mimetype='text/plain',
-                        start_char_idx=None,
-                        end_char_idx=None,
-                        text_template='{metadata_str}\n\n{content}',
-                        metadata_template='{key}: {value}',
-                        metadata_seperator='\n'
-                    )
-            }
+        {
+            'a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092':
+                Document(
+                    id_='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
+                    embedding=None,
+                    metadata={
+                        'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
+                        'file_name': 'paul-graham-essay.txt',
+                        'file_type': 'text/plain',
+                        'file_size': 75395,
+                        'creation_date': '2024-10-25',
+                        'last_modified_date': '2024-09-16'
+                    },
+                    excluded_embed_metadata_keys=['file_name'],
+                    excluded_llm_metadata_keys=['file_name'],
+                    relationships={},
+                    text='What I Worked On February 2021 Before college the two ...',
+                    mimetype='text/plain',
+                    start_char_idx=None,
+                    end_char_idx=None,
+                    text_template='{metadata_str}\n\n{content}',
+                    metadata_template='{key}: {value}',
+                    metadata_seperator='\n'
+                )
+        }
+        ```
         """
         for doc in docs:
             # change the id to a sha256 hash if it is not already
@@ -514,34 +534,35 @@ class Storage:
         Examples
         --------
         You can read documents from a directory as follows:
-
-            >>> data_path = "examples/data/essay"
-            >>> docs = Storage.read_documents(data_path)
-            >>> print(docs) # doctest: +SKIP
-            [
-                Document(
-                    id_='a25111e2e59f81bb7a0e3efb48255**',
-                    embedding=None,
-                    metadata={
-                        'file_path': 'examples/data/essay/paul-graham-essay.txt',
-                        'file_name': 'paul-graham-essay.txt',
-                        'file_type': 'text/plain',
-                        'file_size': 75395,
-                        'creation_date': '2024-10-25',
-                        'last_modified_date': '2024-09-16'
-                    },
-                    excluded_embed_metadata_keys=['file_name'],
-                    excluded_llm_metadata_keys=['file_name'],
-                    relationships={},
-                    text='What I Worked On\n\nFebruary 2021\n\nBefore college the two main things ****',
-                    mimetype='text/plain',
-                    start_char_idx=None,
-                    end_char_idx=None,
-                    text_template='{metadata_str}\n\n{content}',
-                    metadata_template='{key}: {value}',
-                    metadata_seperator='\n'
-                )
-            ]
+        ```python
+        >>> data_path = "examples/data/essay"
+        >>> docs = Storage.read_documents(data_path)
+        >>> print(docs) # doctest: +SKIP
+        [
+            Document(
+                id_='a25111e2e59f81bb7a0e3efb48255**',
+                embedding=None,
+                metadata={
+                    'file_path': 'examples/data/essay/paul-graham-essay.txt',
+                    'file_name': 'paul-graham-essay.txt',
+                    'file_type': 'text/plain',
+                    'file_size': 75395,
+                    'creation_date': '2024-10-25',
+                    'last_modified_date': '2024-09-16'
+                },
+                excluded_embed_metadata_keys=['file_name'],
+                excluded_llm_metadata_keys=['file_name'],
+                relationships={},
+                text='What I Worked On\n\nFebruary 2021\n\nBefore college the two main things ****',
+                mimetype='text/plain',
+                start_char_idx=None,
+                end_char_idx=None,
+                text_template='{metadata_str}\n\n{content}',
+                metadata_template='{key}: {value}',
+                metadata_seperator='\n'
+            )
+        ]
+        ```
         """
         if not Path(path).exists():
             raise FileNotFoundError(f"Directory not found: {path}")
@@ -582,65 +603,68 @@ class Storage:
 
         Examples
         --------
-        First read the storage context from a directory:
-            >>> storage_dir = "examples/paul-graham-essay-storage"
-            >>> store = Storage.load(storage_dir)
-            >>> print(store) # doctest: +SKIP
-            <BLANKLINE>
-                        Documents: 53
-                        Indexes: 2
-            <BLANKLINE>
+        - First read the storage context from a directory:
+        ```python
+        >>> storage_dir = "examples/paul-graham-essay-storage"
+        >>> store = Storage.load(storage_dir)
+        >>> print(store) # doctest: +SKIP
+        <BLANKLINE>
+                    Documents: 53
+                    Indexes: 2
+        <BLANKLINE>
 
-        The storage context contains the following data:
+        - The storage context contains the following data:
 
-            >>> print(store.metadata_index.head(3))
-                           file_name                                             doc_id
-            0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
-            1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
-            2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        >>> print(store.metadata_index.head(3))
+                       file_name                                             doc_id
+        0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+        2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+
 
         You can get all the nodes for file `paul_graham_essay.txt` as follows:
 
-            >>> nodes = store.get_nodes_by_file_name("paul_graham_essay.txt")
-            >>> nodes[0] # doctest: +SKIP
-            TextNode(
-                id_='cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
-                embedding=None,
-                metadata={
-                    'file_path': 'examples\\data\\paul_graham_essay.txt',
-                    'file_name': 'paul_graham_essay.txt',
-                    'file_type': 'text/plain',
-                    'file_size': 75395,
-                    'creation_date': '2024-10-24',
-                    'last_modified_date': '2024-09-16',
-                    'document_title': 'Based on the candidate titles and content, I would suggest a comprehensive title
-                        that captures the essence of the text. Here\'s a potential title:\n\n"From Early Days ***'
-                },
-                excluded_embed_metadata_keys=['file_name'],
-                excluded_llm_metadata_keys=['file_name'],
-                relationships={
-                    <NodeRelationship.SOURCE: '1'>:
-                    RelatedNodeInfo(
-                        node_id='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
-                        node_type=<ObjectType.DOCUMENT: '4'>,
-                        metadata={
-                            'file_path': 'examples\\data\\paul_graham_essay.txt',
-                            'file_name': 'paul_graham_essay.txt',
-                            'file_type': 'text/plain',
-                            'file_size': 75395,
-                            'creation_date': '2024-10-24',
-                            'last_modified_date': '2024-09-16'
-                        },
-                        hash='2a494d84cd0ab1e73396773258b809a47739482c90b80d5f61d374e754c3ef06'
-                    ),
-                    <NodeRelationship.NEXT: '3'>: RelatedNodeInfo(node_id='15478c7a-fdab-40c8-92e7-42973b9d3b28', node_type=<ObjectType.TEXT: '1'>, metadata={}, hash='424546c0aa78015988ced235522cdd238633d5edc1b92667cbdcda44d72613ec')}, text='What I Worked On\r\n\r\nFebruary 2021\r\n\r\nBefore college the two main things I worked on, outside of school, were writing and programming. I didn\'t write essays. I wrote what beginning writers were supposed to write then, and probably still are: short stories. My stories were awful. They had hardly any plot, just characters with strong feelings, which I imagined made them deep.\r\n\r\nThe first programs I tried writing were on the IBM 1401 that our school district used for what was then called "data processing." This was in 9th grade, so I was 13 or 14. The school district\'s 1401 happened to be in the basement of our junior high school, and my friend Rich Draves and I got permission to use it. It was like a mini Bond villain\'s lair down there, with all these alien-looking machines — CPU, disk drives, printer, card reader — sitting up on a raised floor under bright fluorescent lights.\r\n\r\nThe language we used was an early version of Fortran. You had to type programs on punch cards, then stack them in the card reader and press a button to load the program into memory and run it. The result would ordinarily be to print something on the spectacularly loud printer.\r\n\r\nI was puzzled by the 1401. I couldn\'t figure out what to do with it. And in retrospect there\'s not much I could have',
-                    mimetype='text/plain',
-                    start_char_idx=4,
-                    end_char_idx=2027,
-                    text_template='[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n',
-                    metadata_template='{key}: {value}', metadata_seperator='\n'
-                    )
 
+        >>> nodes = store.get_nodes_by_file_name("paul_graham_essay.txt")
+        >>> nodes[0] # doctest: +SKIP
+        TextNode(
+            id_='cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7',
+            embedding=None,
+            metadata={
+                'file_path': 'examples\\data\\paul_graham_essay.txt',
+                'file_name': 'paul_graham_essay.txt',
+                'file_type': 'text/plain',
+                'file_size': 75395,
+                'creation_date': '2024-10-24',
+                'last_modified_date': '2024-09-16',
+                'document_title': 'Based on the candidate titles and content, I would suggest a comprehensive title
+                    that captures the essence of the text. Here\'s a potential title:\n\n"From Early Days ***'
+            },
+            excluded_embed_metadata_keys=['file_name'],
+            excluded_llm_metadata_keys=['file_name'],
+            relationships={
+                <NodeRelationship.SOURCE: '1'>:
+                RelatedNodeInfo(
+                    node_id='a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092',
+                    node_type=<ObjectType.DOCUMENT: '4'>,
+                    metadata={
+                        'file_path': 'examples\\data\\paul_graham_essay.txt',
+                        'file_name': 'paul_graham_essay.txt',
+                        'file_type': 'text/plain',
+                        'file_size': 75395,
+                        'creation_date': '2024-10-24',
+                        'last_modified_date': '2024-09-16'
+                    },
+                    hash='2a494d84cd0ab1e73396773258b809a47739482c90b80d5f61d374e754c3ef06'
+                ),
+                <NodeRelationship.NEXT: '3'>: RelatedNodeInfo(node_id='15478c7a-fdab-40c8-92e7-42973b9d3b28', node_type=<ObjectType.TEXT: '1'>, metadata={}, hash='424546c0aa78015988ced235522cdd238633d5edc1b92667cbdcda44d72613ec')}, text='What I Worked On\r\n\r\nFebruary 2021\r\n\r\nBefore college the two main things I worked on, outside of school, were writing and programming. I didn\'t write essays. I wrote what beginning writers were supposed to write then, and probably still are: short stories. My stories were awful. They had hardly any plot, just characters with strong feelings, which I imagined made them deep.\r\n\r\nThe first programs I tried writing were on the IBM 1401 that our school district used for what was then called "data processing." This was in 9th grade, so I was 13 or 14. The school district\'s 1401 happened to be in the basement of our junior high school, and my friend Rich Draves and I got permission to use it. It was like a mini Bond villain\'s lair down there, with all these alien-looking machines — CPU, disk drives, printer, card reader — sitting up on a raised floor under bright fluorescent lights.\r\n\r\nThe language we used was an early version of Fortran. You had to type programs on punch cards, then stack them in the card reader and press a button to load the program into memory and run it. The result would ordinarily be to print something on the spectacularly loud printer.\r\n\r\nI was puzzled by the 1401. I couldn\'t figure out what to do with it. And in retrospect there\'s not much I could have',
+                mimetype='text/plain',
+                start_char_idx=4,
+                end_char_idx=2027,
+                text_template='[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n',
+                metadata_template='{key}: {value}', metadata_seperator='\n'
+                )
+        ```
         """
         metadata_index = self.metadata_index
         if exact_match:
@@ -698,77 +722,82 @@ class Storage:
         Examples
         --------
         First create a config loader object:
+        ```python
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> config_loader = ConfigLoader()
 
-            >>> from llama_utils.utils.config_loader import ConfigLoader
-            >>> config_loader = ConfigLoader()
+        ```
 
         You can extract information from a single document as follows:
 
-            >>> docs = [Document(text="Sample text", metadata={})]
-            >>> extractors_info = {
-            ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
-            ...     "title": {"nodes": 5},
-            ...     "summary": {"summaries": ["prev", "self"]}
-            ... }
-            >>> extracted_nodes = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
-            Parsing nodes: 100%|██████████| 1/1 [00:00<00:00, 1000.31it/s]
-            100%|██████████| 1/1 [00:05<00:00,  5.82s/it]
-            100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
-            >>> len(extracted_nodes) # doctest: +SKIP
-            1
-            >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
-            {
-                'document_title': "I'm excited to help! Unfortunately, there doesn't seem to be any text provided.
-                    Please go ahead and share the sample text, and I'll do my best to give you a comprehensive title
-                    that summarizes all the unique entities, titles, or themes found in it.",
-                'section_summary': "I apologize, but since there is no provided text, I have nothing to summarize.
-                    Please provide the sample text, and I'll be happy to help you summarize the key topics and
-                    entities!"
-            }
-
+        ```python
+        >>> docs = [Document(text="Sample text", metadata={})]
+        >>> extractors_info = {
+        ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+        ...     "title": {"nodes": 5},
+        ...     "summary": {"summaries": ["prev", "self"]}
+        ... }
+        >>> extracted_nodes = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
+        Parsing nodes: 100%|██████████| 1/1 [00:00<00:00, 1000.31it/s]
+        100%|██████████| 1/1 [00:05<00:00,  5.82s/it]
+        100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
+        >>> len(extracted_nodes) # doctest: +SKIP
+        1
+        >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
+        {
+            'document_title': "I'm excited to help! Unfortunately, there doesn't seem to be any text provided.
+                Please go ahead and share the sample text, and I'll do my best to give you a comprehensive title
+                that summarizes all the unique entities, titles, or themes found in it.",
+            'section_summary': "I apologize, but since there is no provided text, I have nothing to summarize.
+                Please provide the sample text, and I'll be happy to help you summarize the key topics and
+                entities!"
+        }
+        ```
         You can extract information from a list of documents as follows:
 
-            >>> data_path = "examples/data/essay"
-            >>> docs = Storage.read_documents(data_path)
-            >>> extractors_info = {
-            ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
-            ...     "title": {"nodes": 5},
-            ...     "question_answer": {"questions": 1},
-            ... }
+        ```python
+        >>> data_path = "examples/data/essay"
+        >>> docs = Storage.read_documents(data_path)
+        >>> extractors_info = {
+        ...     "text_splitter": {"separator": " ", "chunk_size": 512, "chunk_overlap": 128},
+        ...     "title": {"nodes": 5},
+        ...     "question_answer": {"questions": 1},
+        ... }
 
-            >>> extracted_docs = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
-            Parsing nodes: 100%|██████████| 1/1 [00:00<00:00,  4.52it/s]
-            100%|██████████| 5/5 [00:15<00:00,  3.19s/it]
-            100%|██████████| 53/53 [03:46<00:00,  4.27s/it]
-             26%|██▋       | 14/53 [00:48<02:08,  3.29s/it]
-            100%|██████████| 53/53 [00:47<00:00,  1.13it/s]
-            >>> len(extracted_docs) # doctest: +SKIP
-            53
-            >>> print(extracted_docs[0]) # doctest: +SKIP
-            Node ID: 9b4fca22-7f1f-4876-bb71-d4b29500daa3
-            Text: What I Worked On    February 2021    Before college the two main
-            things I worked on, outside of school, were writing and programming. I
-            didn't write essays. I wrote what beginning writers were supposed to
-            write then, and probably still are: short stories. My stories were
-            awful. They had hardly any plot, just characters with strong feelings,
-            whic...
-            >>> print(extracted_docs[0].extra_info) # doctest: +SKIP
-            {
-                'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
-                'file_name': 'paul-graham-essay.txt',
-                'file_type': 'text/plain',
-                'file_size': 75395,
-                'creation_date': '2024-10-25',
-                'last_modified_date': '2024-09-16',
-                'document_title': 'After reviewing the potential titles and themes mentioned in the context,
-                    I would suggest the following comprehensive title \n\n"A Personal Odyssey ***,'.
-                'questions_this_excerpt_can_answer': "Based on the provided context, here's a question that this
-                    context can specifically answer:\n\nWhat was Paul Graham's experience with the IBM ***",
-                'section_summary': 'Here is a summary of the key topics and entities in the section:\n\n**Key
-                    Topics:**\n\n1. Paul Graham\'s early experiences with writing and programming.\n2. His work on ***',
-                'excerpt_keywords': 'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401,
-                    Microcomputers'
-            }
+        >>> extracted_docs = Storage.apply_extractors(docs, extractors_info) # doctest: +SKIP
+        Parsing nodes: 100%|██████████| 1/1 [00:00<00:00,  4.52it/s]
+        100%|██████████| 5/5 [00:15<00:00,  3.19s/it]
+        100%|██████████| 53/53 [03:46<00:00,  4.27s/it]
+         26%|██▋       | 14/53 [00:48<02:08,  3.29s/it]
+        100%|██████████| 53/53 [00:47<00:00,  1.13it/s]
+        >>> len(extracted_docs) # doctest: +SKIP
+        53
+        >>> print(extracted_docs[0]) # doctest: +SKIP
+        Node ID: 9b4fca22-7f1f-4876-bb71-d4b29500daa3
+        Text: What I Worked On    February 2021    Before college the two main
+        things I worked on, outside of school, were writing and programming. I
+        didn't write essays. I wrote what beginning writers were supposed to
+        write then, and probably still are: short stories. My stories were
+        awful. They had hardly any plot, just characters with strong feelings,
+        whic...
+        >>> print(extracted_docs[0].extra_info) # doctest: +SKIP
+        {
+            'file_path': 'examples\\data\\essay\\paul-graham-essay.txt',
+            'file_name': 'paul-graham-essay.txt',
+            'file_type': 'text/plain',
+            'file_size': 75395,
+            'creation_date': '2024-10-25',
+            'last_modified_date': '2024-09-16',
+            'document_title': 'After reviewing the potential titles and themes mentioned in the context,
+                I would suggest the following comprehensive title \n\n"A Personal Odyssey ***,'.
+            'questions_this_excerpt_can_answer': "Based on the provided context, here's a question that this
+                context can specifically answer:\n\nWhat was Paul Graham's experience with the IBM ***",
+            'section_summary': 'Here is a summary of the key topics and entities in the section:\n\n**Key
+                Topics:**\n\n1. Paul Graham\'s early experiences with writing and programming.\n2. His work on ***',
+            'excerpt_keywords': 'Here are three unique keywords for this document:\n\nPaul Graham, IBM 1401,
+                Microcomputers'
+        }
+        ```
         """
         extractors = EXTRACTORS.copy() if extractors is None else extractors
 

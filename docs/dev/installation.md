@@ -3,6 +3,7 @@ Installation
 
 To install unicloud, run this command in your terminal:
 
-.. code-block:: bash
+```bash
 
-    pip install llama-utils
+     pip install llama-utils
+```

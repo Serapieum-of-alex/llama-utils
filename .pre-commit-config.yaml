@@ -43,6 +43,7 @@ repos:
         name: "[reqs - format] fix requirements.txt"
       - id: check-yaml
         name: "[yaml -  check] validate yaml"
+        exclude: '^mkdocs\.yml$'
   - repo: https://github.com/pycqa/flake8
     rev: 7.1.1
     hooks:

@@ -1,7 +1,7 @@
 # llama-utils
 LlamaIndex utility package
 
-[![Deploy MkDocs](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml)
+[![Documentation Status](https://readthedocs.org/projects/llama-utils/badge/?version=latest)](https://llama-utils.readthedocs.io/en/latest/?badge=latest)
 [![Python Versions](https://img.shields.io/pypi/pyversions/llama-utils.png)](https://img.shields.io/pypi/pyversions/llama-utils)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
@@ -47,7 +47,7 @@ graph TB
     SubPackage3 --> Module6[config_loader.py]
 ```
 
-complete overview of the design and architecture [here](/docs/design-architecture-diagrams.md)
+complete overview of the design and architecture [here](/docs/design_architecture_diagrams.md)
 
 Installing llama-utils
 ===============
@@ -142,3 +142,4 @@ time=2024-11-22T23:20:04.592+01:00 level=INFO source=types.go:123 msg="inference
 
 you can change the port by running the following command
 `ollama serve --port 11435`
+

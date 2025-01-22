@@ -58,6 +58,7 @@ class CustomIndex:
 
         Examples
         --------
+        ```python
         >>> from llama_utils.utils.config_loader import ConfigLoader
         >>> config_loader = ConfigLoader()
         >>> text_node = TextNode(text="text")
@@ -73,6 +74,7 @@ class CustomIndex:
             doc_id_dict={},
             embeddings_dict={}
         )
+        ```
         """
         return self.index.index_struct
 
@@ -134,10 +136,12 @@ class CustomIndex:
 
         Examples
         --------
+        ```python
         >>> doc = Document(text="text")
         >>> index = CustomIndex.create_from_documents([doc]) # doctest: +SKIP
         >>> type(index) # doctest: +SKIP
         <class 'llama_utils.indexing.custom_index.CustomIndex'>
+        ```
         """
         docs = [Document(text=doc) if isinstance(doc, str) else doc for doc in document]
         # change the node.id to the content hash
@@ -165,6 +169,7 @@ class CustomIndex:
         Examples
         --------
         To create a new index you have to define the embedding model
+        ```python
         >>> from llama_utils.utils.config_loader import ConfigLoader
         >>> configs = ConfigLoader()
         >>> text_node = TextNode(text="text")
@@ -174,6 +179,7 @@ class CustomIndex:
                 Index ID: 8d57e294-fd17-43c9-9dec-a12aa7ea0751
                 Number of Document: 0
         <BLANKLINE>
+        ```
         As you see the added node is not a document, so the number of documents is 0.
         """
         index = VectorStoreIndex(nodes)
@@ -199,36 +205,39 @@ class CustomIndex:
         Examples
         --------
         Set the ConfigLoader to define the embedding model that you want to use to create the embeddings in the index:
+        ```python
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> configs = ConfigLoader()
 
-            >>> from llama_utils.utils.config_loader import ConfigLoader
-            >>> configs = ConfigLoader()
-
+        ```
         Create a new index from a document:
-
-            >>> doc = Document(text="text", id_="doc 1")
-            >>> index = CustomIndex.create_from_documents([doc])
-            >>> print(index) # doctest: +SKIP
-            <BLANKLINE>
-                    Index ID: 91dd8a18-3ab5-41ca-b8de-998077b9235c
-                    Number of Document: 1
-            <BLANKLINE>
-
+        ```python
+        >>> doc = Document(text="text", id_="doc 1")
+        >>> index = CustomIndex.create_from_documents([doc])
+        >>> print(index) # doctest: +SKIP
+        <BLANKLINE>
+                Index ID: 91dd8a18-3ab5-41ca-b8de-998077b9235c
+                Number of Document: 1
+        <BLANKLINE>
+        ```
         Add a new document to the index:
+        ```python
+        >>> doc2 = Document(text="text2", id_="doc 2")
 
-            >>> doc2 = Document(text="text2", id_="doc 2")
-
+        ```
         The `add_documents` method has the `genereate_id` parameter, which is set to True by default to generate a
         sha256 hash number as a doc_id based on the content of the nodes:
-
-            >>> index.add_documents([doc2])
-            >>> print(index.doc_ids) # doctest: +SKIP
-            ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'fd848ca35a6281600b5da598c7cb4d5df561e0ee63ee7cec0e98e6049996f3ff']
-
+        ```python
+        >>> index.add_documents([doc2])
+        >>> print(index.doc_ids) # doctest: +SKIP
+        ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'fd848ca35a6281600b5da598c7cb4d5df561e0ee63ee7cec0e98e6049996f3ff']
+        ```
         If you want to keep the same doc_id, you can set the `generate_id` parameter to False:
-
-                >>> index.add_documents([doc2], generate_id=False)
-                >>> print(index.doc_ids) # doctest: +SKIP
-                ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'doc 2']
+        ```python
+        >>> index.add_documents([doc2], generate_id=False)
+        >>> print(index.doc_ids) # doctest: +SKIP
+        ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'doc 2']
+        ```
         """
         if not isinstance(documents, list):
             raise ValueError("The documents should be a list of Document/TextNodes")
