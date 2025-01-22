@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "llama-utils"
 version = "0.1.0"
-description = ""
+description = "LLM utilities for the Llama project"
 authors = ["Mostafa Farrag <moah.farag@gmail.com>"]
 readme = "README.md"
 keywords = ["llm", "generativeai", "chatbot", "rag", "natural language processing"]
@@ -12,17 +12,17 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.12"
-llama-index = "^0.11.19"
+llama-index = "^0.12.12"
 pandas = "^2.2.3"
 
 [tool.poetry.group.analysis.dependencies]
 jupyter="*"
 
 [tool.poetry.group.models.dependencies]
-llama-index-llms-ollama = "^0.3.4"
-llama-index-embeddings-huggingface = "^0.3.1"
-llama-index-llms-azure-openai = "^0.2.2"
-llama-index-embeddings-azure-openai = "^0.2.5"
+llama-index-llms-ollama = "^0.5.0"
+llama-index-embeddings-huggingface = "^0.5.1"
+llama-index-llms-azure-openai = "^0.3.0"
+llama-index-embeddings-azure-openai = "^0.3.0"
 
 [tool.poetry.group.testing.dependencies]
 pytest = "^8.3.3"
