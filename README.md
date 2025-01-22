@@ -2,7 +2,8 @@
 LlamaIndex utility package
 
 [![Deploy MkDocs](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml)
-[![Python Versions](https://img.shields.io/pypi/pyversions/llama-utils.png)](https://img.shields.io/pypi/pyversions/llama-utils)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/llama-utils)
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/MAfarrag/llama-utils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/MAfarrag/llama-utils/context:python)
@@ -11,6 +12,7 @@ LlamaIndex utility package
 ![GitHub forks](https://img.shields.io/github/forks/MAfarrag/llama-utils?style=social)
 ![GitHub Repo stars](https://img.shields.io/github/stars/MAfarrag/llama-utils?style=social)
 [![codecov](https://codecov.io/gh/Serapieum-of-alex/llama-utils/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/Serapieum-of-alex/llama-utils)
+
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5e3aa4d0acc843d1a91caf33545ecf03)](https://www.codacy.com/gh/Serapieum-of-alex/llama-utils/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Serapieum-of-alex/llama-utils&amp;utm_campaign=Badge_Grade)
 
 ![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/mafarrag/llama-utils/0.5.0?include_prereleases&style=plastic)
