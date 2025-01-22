@@ -9,9 +9,76 @@ on:
       - '**'  # Match all branches for pull requests
   release:
       types:
-        - published  # Trigger when a release is published
+        - published
 
 jobs:
+  deploy-pr:
+      if: github.event_name == 'pull_request'
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install poetry
+        run: |
+          pip install poetry
+
+      - name: Configure Poetry
+        run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          poetry install --with main,docs
+
+      - name: Deploy to GitHub Pages (Pull Request)
+        env:
+          ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+          poetry run mike deploy --push develop
+
+  deploy-main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install poetry
+      run: |
+        pip install poetry
+
+    - name: Configure Poetry
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        poetry install --with main,docs
+
+    - name: Deploy to GitHub Pages (Main)
+      env:
+        ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        poetry run mike deploy --push main
+        poetry run mike set-default --push main
+
   deploy-release:
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
@@ -50,36 +117,3 @@ jobs:
         git config --global user.email '${{ github.actor }}@users.noreply.github.com'
         poetry run mike deploy --push --update-aliases ${RELEASE_TAG_VERSION} latest
         poetry run mike set-default --push latest
-
-  deploy-pr:
-      if: github.event_name == 'pull_request'
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: Install poetry
-        run: |
-          pip install poetry
-
-      - name: Configure Poetry
-        run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: |
-          poetry install --with main,docs
-
-      - name: Deploy to GitHub Pages (Pull Request)
-        env:
-          ACTIONS_DEPLOY_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
-        run: |
-          git config --global user.name '${{ github.actor }}'
-          git config --global user.email '${{ github.actor }}@users.noreply.github.com'
-          poetry run mike deploy --push develop
