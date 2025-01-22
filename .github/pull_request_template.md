@@ -26,9 +26,9 @@ Check relevant points.
 
 # Checklist:
 
-- [ ] updated version number in setup.py/pyproject.toml.
+- [ ] updated version number in pyproject.toml.
 - [ ] updated environment.yml and the lock file.
-- [ ] added changes to History.rst.
+- [ ] added changes to change-log.md.
 - [ ] updated the latest version in README file.
 - [ ] I have added tests that prove my fix is effective or that my feature works.
 - [ ] New and existing unit tests pass locally with my changes.
