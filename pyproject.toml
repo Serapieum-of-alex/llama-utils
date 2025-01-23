@@ -77,7 +77,6 @@ count = true
 ignore = ["D401", "D413", "D213", "D203"]
 
 [tool.pytest.ini_options]
-#addopts = "--cov=image_process --cov-report=term-missing"
 testpaths = "tests"
 
 [build-system]
