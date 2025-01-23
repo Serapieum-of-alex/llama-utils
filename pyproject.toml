@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llama-utils"
-version = "0.1.0"
+version = "0.2.0"
 description = "LLM utilities for the Llama project"
 authors = ["Mostafa Farrag <moah.farag@gmail.com>"]
 readme = "README.md"

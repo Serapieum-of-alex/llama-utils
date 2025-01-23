@@ -55,7 +55,7 @@ Installing llama-utils
 Installing `llama-utils` from the `conda-forge` channel can be achieved by:
 
 ```
-conda install -c conda-forge llama-utils=0.1.0
+conda install -c conda-forge llama-utils=0.2.0
 ```
 
 It is possible to list all the versions of `llama-utils` available on your platform with:
@@ -77,7 +77,7 @@ pip install git+https://github.com/Serapieum-of-alex/llama-utils
 to install the last release, you can easily use pip
 
 ```
-pip install llama-utils==0.1.0
+pip install llama-utils==0.2.0
 ```
 
 Quick start
@@ -142,4 +142,3 @@ time=2024-11-22T23:20:04.592+01:00 level=INFO source=types.go:123 msg="inference
 
 you can change the port by running the following command
 `ollama serve --port 11435`
-
