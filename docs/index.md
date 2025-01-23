@@ -1,8 +1,8 @@
 # llama-utils
 LlamaIndex utility package
 
-[![Documentation Status](https://readthedocs.org/projects/llama-utils/badge/?version=latest)](https://llama-utils.readthedocs.io/en/latest/?badge=latest)
-[![Python Versions](https://img.shields.io/pypi/pyversions/llama-utils.png)](https://img.shields.io/pypi/pyversions/llama-utils)
+[![Deploy MkDocs](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/llama-utils)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/MAfarrag/llama-utils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/MAfarrag/llama-utils/context:python)
@@ -55,7 +55,7 @@ Installing llama-utils
 Installing `llama-utils` from the `conda-forge` channel can be achieved by:
 
 ```
-conda install -c conda-forge llama-utils=0.1.0
+conda install -c conda-forge llama-utils=0.2.0
 ```
 
 It is possible to list all the versions of `llama-utils` available on your platform with:
@@ -77,7 +77,7 @@ pip install git+https://github.com/Serapieum-of-alex/llama-utils
 to install the last release, you can easily use pip
 
 ```
-pip install llama-utils==0.1.0
+pip install llama-utils==0.2.0
 ```
 
 Quick start
@@ -142,4 +142,3 @@ time=2024-11-22T23:20:04.592+01:00 level=INFO source=types.go:123 msg="inference
 
 you can change the port by running the following command
 `ollama serve --port 11435`
-
