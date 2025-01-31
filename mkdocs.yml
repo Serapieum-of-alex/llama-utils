@@ -92,6 +92,8 @@ nav:
       - api/index_manager.md
       - api/storage.md
       - api/utils.md
+  - LLM Tools:
+      - tools/ollama.md
   - Change logs: change-log.md
 
 extra:
