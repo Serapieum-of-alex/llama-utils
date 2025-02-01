@@ -476,6 +476,3 @@ time=2024-11-22T23:20:04.400+01:00 level=INFO source=gpu_windows.go:167 msg=pack
 time=2024-11-22T23:20:04.400+01:00 level=INFO source=gpu_windows.go:214 msg="" package=0 cores=8 efficiency=0 threads=16
 time=2024-11-22T23:20:04.592+01:00 level=INFO source=types.go:123 msg="inference compute" id=GPU-04f76f9a-be0a-544b-9a6f-8607b8d0a9ab library=cuda variant=v12 compute=8.6 driver=12.6 name="NVIDIA GeForce RTX 3060 Ti" total="8.0 GiB" available="7.0 GiB"
 ```
-
-you can change the port by running the following command
-`ollama serve --port 11435`
