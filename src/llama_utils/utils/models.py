@@ -1,7 +1,11 @@
 """LLMs and embedding models."""
 
 import os
+from typing import Any, Dict, Optional, Union
 from warnings import warn
+
+
+DEFAULT_CONTEXT_WINDOW = 3900
 
 
 def azure_open_ai(model_id: str = "gpt-4o", engine: str = "4o"):
@@ -60,18 +64,47 @@ def azure_open_ai(model_id: str = "gpt-4o", engine: str = "4o"):
     return llm
 
 
-def get_ollama_llm(model_id: str = "llama3"):
-    """Get the Ollama LLM.
+def get_ollama_llm(
+    model_id: str = "llama3",
+    base_url: str = "http://localhost:11434",
+    temperature: float = 0.75,
+    context_window: int = DEFAULT_CONTEXT_WINDOW,
+    request_timeout: float = 360.0,
+    prompt_key: str = "prompt",
+    json_mode: bool = False,
+    additional_kwargs: Dict[str, Any] = {},
+    is_function_calling_model: bool = True,
+    keep_alive: Optional[Union[float, str]] = None,
+):
+    """Get the Ollama LLM with flexible parameters.
 
     Parameters
     ----------
-    model_id: str, optional, default is "llama3"
-        The model ID.
+    model_id : str
+        The model ID to use.
+    base_url : str, optional
+        The base URL of the Ollama API.
+    temperature : float, optional
+        The temperature setting for response randomness.
+    context_window : int, optional
+        Maximum token window for context.
+    request_timeout : float, optional
+        Timeout for requests.
+    prompt_key : str, optional
+        Key for the prompt in requests.
+    json_mode : bool, optional
+        Whether to return responses in JSON mode.
+    additional_kwargs : dict, optional
+        Additional model-specific parameters.
+    is_function_calling_model : bool, optional
+        Whether the model supports function calling.
+    keep_alive : Optional[Union[float, str]], optional
+        Keep-alive duration.
 
     Returns
     -------
     Ollama
-        The Ollama LLM.
+        An instance of the Ollama LLM.
 
     Raises
     ------
@@ -95,8 +128,19 @@ def get_ollama_llm(model_id: str = "llama3"):
         raise ImportError(
             "Please install the `llama-index-llms-ollama` package to use the Ollama model."
         )
-    llm = Ollama(model=model_id, request_timeout=360.0)
-    return llm
+
+    return Ollama(
+        model=model_id,
+        base_url=base_url,
+        temperature=temperature,
+        context_window=context_window,
+        request_timeout=request_timeout,
+        prompt_key=prompt_key,
+        json_mode=json_mode,
+        additional_kwargs=additional_kwargs,
+        is_function_calling_model=is_function_calling_model,
+        keep_alive=keep_alive,
+    )
 
 
 def get_hugging_face_embedding(

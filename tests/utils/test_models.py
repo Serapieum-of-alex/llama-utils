@@ -16,7 +16,6 @@ def test_get_ollama_llm():
     assert llm.model == "llama3"
     assert llm.request_timeout == 360.0
     assert llm.temperature == 0.75
-    assert llm is not None
 
 
 def test_azure_open_ai():
