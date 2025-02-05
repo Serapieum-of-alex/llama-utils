@@ -57,7 +57,7 @@ Installing llama-utils
 Installing `llama-utils` from the `conda-forge` channel can be achieved by:
 
 ```
-conda install -c conda-forge llama-utils=0.2.0
+conda install -c conda-forge llama-utils=0.3.0
 ```
 
 It is possible to list all the versions of `llama-utils` available on your platform with:
@@ -79,7 +79,7 @@ pip install git+https://github.com/Serapieum-of-alex/llama-utils
 to install the last release, you can easily use pip
 
 ```
-pip install llama-utils==0.2.0
+pip install llama-utils==0.3.0
 ```
 
 Quick start
