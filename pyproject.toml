@@ -19,10 +19,12 @@ pandas = "^2.2.3"
 jupyter="*"
 
 [tool.poetry.group.models.dependencies]
-llama-index-llms-ollama = "^0.5.0"
 llama-index-embeddings-huggingface = "^0.5.1"
+llama-index-llms-huggingface = "^0.4.2"
+llama-index-llms-ollama = "^0.5.0"
 llama-index-llms-azure-openai = "^0.3.0"
 llama-index-embeddings-azure-openai = "^0.3.0"
+
 
 [tool.poetry.group.testing.dependencies]
 pytest = "^8.3.3"
@@ -49,6 +51,9 @@ pre-commit-hooks = "^5.0.0"
 pre-commit-commit-msg-hooks = "^0.1.0"
 flake8-pyproject = "^1.2.3"
 pydata-sphinx-theme = "^0.16.0"
+
+
+
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.2"
