@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.2">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.a40c8224.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.d7758b05.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -295,6 +295,26 @@
   
   
   
+    
+    
+      <li class="md-tabs__item">
+        <a href="tools/ollama.html" class="md-tabs__link">
+          
+  
+    
+  
+  LLM Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
     <li class="md-tabs__item">
       <a href="change-log.html" class="md-tabs__link">
         
@@ -368,6 +388,7 @@
   
   <span class="md-ellipsis">
     Home
+    
   </span>
   
 
@@ -408,6 +429,7 @@
   
   <span class="md-ellipsis">
     Installation
+    
   </span>
   
 
@@ -433,6 +455,7 @@
   
   <span class="md-ellipsis">
     Installation
+    
   </span>
   
 
@@ -480,6 +503,7 @@
   
   <span class="md-ellipsis">
     Design
+    
   </span>
   
 
@@ -505,6 +529,7 @@
   
   <span class="md-ellipsis">
     Design and Architecture Diagrams
+    
   </span>
   
 
@@ -556,6 +581,7 @@
   
   <span class="md-ellipsis">
     API Reference
+    
   </span>
   
 
@@ -581,6 +607,7 @@
   
   <span class="md-ellipsis">
     Index Manager
+    
   </span>
   
 
@@ -602,6 +629,7 @@
   
   <span class="md-ellipsis">
     Storage
+    
   </span>
   
 
@@ -623,6 +651,81 @@
   
   <span class="md-ellipsis">
     Utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    LLM Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            LLM Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tools/ollama.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running a Local LLM using Ollama
+    
   </span>
   
 
@@ -651,6 +754,7 @@
   
   <span class="md-ellipsis">
     Change logs
+    
   </span>
   
 
@@ -690,6 +794,7 @@
               <article class="md-content__inner md-typeset">
                 
                   
+
 
 
 <h1 id="llama-utils">llama-utils</h1>
@@ -775,37 +880,6 @@ Now you can use the <code>llama-utils</code> package to interact with the <code>
 <span class="n">storage</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
 <span class="n">storage</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">STORAGE_DIR</span><span class="p">)</span>
 </code></pre></div>
-<h1 id="errors">Errors</h1>
-<p>You might face the following error when you run the <code>ollama serve</code> command
-<div class="highlight"><pre><span></span><code>Error:<span class="w"> </span>listen<span class="w"> </span>tcp<span class="w"> </span><span class="m">127</span>.0.0.1:11434:<span class="w"> </span>bind:<span class="w"> </span>Only<span class="w"> </span>one<span class="w"> </span>usage<span class="w"> </span>of<span class="w"> </span>each<span class="w"> </span>socket<span class="w"> </span>address<span class="w"> </span><span class="o">(</span>protocol/network<span class="w"> </span>address/port<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>normally<span class="w"> </span>permitted.
-</code></pre></div>
-This error is due to the port <code>11434</code> is already in use, to solve this error, you can check which process is using this port by running the following command
-<div class="highlight"><pre><span></span><code>netstat<span class="w"> </span>-ano<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span>:11434
-</code></pre></div>
-You will get the following output
-<div class="highlight"><pre><span></span><code><span class="w">    </span>TCP<span class="w">    </span><span class="m">127</span>.0.0.1:11434<span class="w">        </span><span class="m">0</span>.0.0.0:0<span class="w">              </span>LISTENING<span class="w">       </span><span class="m">20796</span>
-</code></pre></div>
-Then you can kill the process by running the following command
-<div class="highlight"><pre><span></span><code>taskkill<span class="w"> </span>/F<span class="w"> </span>/PID<span class="w"> </span><span class="m">20796</span>
-</code></pre></div>
-you will gee the following output
-<div class="highlight"><pre><span></span><code>SUCCESS:<span class="w"> </span>The<span class="w"> </span>process<span class="w"> </span>with<span class="w"> </span>PID<span class="w"> </span><span class="m">20796</span><span class="w"> </span>has<span class="w"> </span>been<span class="w"> </span>terminated.
-</code></pre></div></p>
-<ul>
-<li>Then you can run the <code>ollama serve</code> command again, you should see the following output
-<div class="highlight"><pre><span></span><code><span class="m">2024</span>/11/22<span class="w"> </span><span class="m">23</span>:20:04<span class="w"> </span>routes.go:1189:<span class="w"> </span>INFO<span class="w"> </span>server<span class="w"> </span>config<span class="w"> </span><span class="nv">env</span><span class="o">=</span><span class="s2">&quot;map[CUDA_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_DEBUG:false OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://127.0.0.1:11434 OLLAMA_INTEL_GPU:false OLLAMA_KEEP_ALIVE:5m0s OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MODELS:C:\\Users\\eng_m\\.ollama\\models OLLAMA_MULTIUSER_CACHE:false OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NUM_PARALLEL:0 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://*] OLLAMA_SCHED_SPREAD:false OLLAMA_TMPDIR: ROCR_VISIBLE_DEVICES:]&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.393+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>images.go:755<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;total blobs: 28&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.395+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>images.go:762<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;total unused blobs removed: 0&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.397+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>routes.go:1240<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;Listening on 127.0.0.1:11434 (version 0.4.1)&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.400+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>common.go:49<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;Dynamic LLM libraries&quot;</span><span class="w"> </span><span class="nv">runners</span><span class="o">=</span><span class="s2">&quot;[cpu cpu_avx cpu_avx2 cuda_v11 cuda_v12 rocm]&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.400+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>gpu.go:221<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;looking for compatible GPUs&quot;</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.400+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>gpu_windows.go:167<span class="w"> </span><span class="nv">msg</span><span class="o">=</span>packages<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">1</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.400+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>gpu_windows.go:214<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="nv">package</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">cores</span><span class="o">=</span><span class="m">8</span><span class="w"> </span><span class="nv">efficiency</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">threads</span><span class="o">=</span><span class="m">16</span>
-<span class="nv">time</span><span class="o">=</span><span class="m">2024</span>-11-22T23:20:04.592+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>types.go:123<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;inference compute&quot;</span><span class="w"> </span><span class="nv">id</span><span class="o">=</span>GPU-04f76f9a-be0a-544b-9a6f-8607b8d0a9ab<span class="w"> </span><span class="nv">library</span><span class="o">=</span>cuda<span class="w"> </span><span class="nv">variant</span><span class="o">=</span>v12<span class="w"> </span><span class="nv">compute</span><span class="o">=</span><span class="m">8</span>.6<span class="w"> </span><span class="nv">driver</span><span class="o">=</span><span class="m">12</span>.6<span class="w"> </span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;NVIDIA GeForce RTX 3060 Ti&quot;</span><span class="w"> </span><span class="nv">total</span><span class="o">=</span><span class="s2">&quot;8.0 GiB&quot;</span><span class="w"> </span><span class="nv">available</span><span class="o">=</span><span class="s2">&quot;7.0 GiB&quot;</span>
-</code></pre></div></li>
-</ul>
-<p>you can change the port by running the following command
-<code>ollama serve --port 11435</code></p>
 
 
 
@@ -885,7 +959,7 @@ you will gee the following output
     <script id="__config" type="application/json">{"base": ".", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.60a45f97.min.js"></script>
+      <script src="assets/javascripts/bundle.f13b1293.min.js"></script>
       
     
   </body>
