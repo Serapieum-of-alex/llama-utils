@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/index.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/change-log.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/design-architecture-diagrams.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/api/index_manager.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/api/storage.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/api/utils.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/dev/installation.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/Serapieum-of-alex/llama-utils/0.3.0/tools/ollama.html</loc>
+         <lastmod>2025-02-05</lastmod>
+    </url>
+</urlset>
