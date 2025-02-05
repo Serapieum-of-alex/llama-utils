@@ -31,6 +31,10 @@ Key Features of Ollama
 
    This should return the installed version.
 
+<p align="center">
+  <img src="images/ollama-version.png" alt="Ollama List">
+</p>
+
 ### **macOS**
 
 1. **Install via Homebrew**
