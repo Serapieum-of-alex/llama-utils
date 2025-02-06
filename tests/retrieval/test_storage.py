@@ -40,9 +40,9 @@ class TestStorage:
         assert (
             isinstance(store.store, StorageContext) is not None
         ), "Storage context not created."
-        assert isinstance(store.metadata_index, pd.DataFrame)
-        assert store.metadata() == {}
-        metadata_df = store.metadata(as_dataframe=True)
+        assert isinstance(store.node_metadata, pd.DataFrame)
+        assert store.document_metadata() == {}
+        metadata_df = store.document_metadata(as_dataframe=True)
         assert metadata_df.shape[0] == 0
         return store
 
@@ -59,10 +59,10 @@ class TestStorage:
         storage = store._store
         assert isinstance(storage, StorageContext)
         assert isinstance(storage.docstore, SimpleDocumentStore)
-        assert isinstance(store.metadata_index, pd.DataFrame)
-        metadata_dict = store.metadata()
-        metadata_df = store.metadata(as_dataframe=True)
-        assert store.metadata_index.shape[0] == 4
+        assert isinstance(store.node_metadata, pd.DataFrame)
+        metadata_dict = store.document_metadata()
+        metadata_df = store.document_metadata(as_dataframe=True)
+        assert store.node_metadata.shape[0] == 4
         assert len(storage.docstore.docs) == 4
 
     def test_storage_context(self, storage_docstore: StorageContext):
@@ -70,7 +70,7 @@ class TestStorage:
         storage = store._store
         assert isinstance(storage, StorageContext)
         assert isinstance(storage.docstore, SimpleDocumentStore)
-        assert isinstance(store.metadata_index, pd.DataFrame)
+        assert isinstance(store.node_metadata, pd.DataFrame)
         assert len(storage.docstore.docs) == 4
 
     def test_constructor_raise_error(self):
@@ -104,11 +104,11 @@ class TestStorage:
         docstore = test_empty_storage.store.docstore
         assert docstore.get_document(hash_document) == document
         assert docstore.get_document(hash_text_node) == text_node
-        df = test_empty_storage.metadata_index
+        df = test_empty_storage.node_metadata
         assert df.shape[0] == 2
-        assert df.loc[0, "doc_id"] == hash_document
+        assert df.loc[0, "node_id"] == hash_document
         assert df.loc[0, "file_name"] == "document-path"
-        assert df.loc[1, "doc_id"] == hash_text_node
+        assert df.loc[1, "node_id"] == hash_text_node
         assert df.loc[1, "file_name"] == "node-path"
 
     def test_add_duplicated_documents(
@@ -125,7 +125,7 @@ class TestStorage:
         # capture the printed text
         captured = capsys.readouterr()
         assert len(test_empty_storage.store.docstore.docs) == 2
-        metadata_index = test_empty_storage.metadata_index
+        metadata_index = test_empty_storage.node_metadata
         assert captured.out == (
             "Document with ID 8323ac870e04bcf4b64eb04624001a025027d8f797414072df1b81e087f74fb3 "
             "already exists. Skipping.\nDocument with ID "
@@ -154,7 +154,7 @@ class TestStorage:
         assert len(test_empty_storage.store.docstore.docs) == 2
         docstore = test_empty_storage.store.docstore
         assert docstore.get_document(hash_text_node) == text_node
-        df = test_empty_storage.metadata_index
+        df = test_empty_storage.node_metadata
         assert df.loc[:, "file_name"].to_list() == ["node-path", "node-path"]
 
     def test_get_nodes_by_file_name(
@@ -182,15 +182,18 @@ class TestStorage:
         ]
         test_empty_storage.add_documents([text_node, text_node_2])
         node_list = test_empty_storage.node_id_list()
-        metadata_index = test_empty_storage.metadata_index
+        metadata_index = test_empty_storage.node_metadata
         assert node_list == check_node_id
-        assert check_node_id == metadata_index.loc[:, "doc_id"].to_list()
+        assert check_node_id == metadata_index.loc[:, "node_id"].to_list()
 
 
 class TestDeleteDocument:
     def test_document(self, paul_graham_essay_storage: Storage, essay_document_id: str):
         paul_graham_essay_storage.delete_document(essay_document_id)
-        assert essay_document_id not in paul_graham_essay_storage.metadata().keys()
+        assert (
+            essay_document_id
+            not in paul_graham_essay_storage.document_metadata().keys()
+        )
 
     def test_node(self, paul_graham_essay_storage: Storage, essay_node_id: str):
         paul_graham_essay_storage.delete_node(essay_node_id)
@@ -200,7 +203,7 @@ class TestDeleteDocument:
 class TestMetaData:
 
     def test_default(self, paul_graham_essay_storage: Storage):
-        metadata = paul_graham_essay_storage.metadata()
+        metadata = paul_graham_essay_storage.document_metadata()
         assert isinstance(metadata, dict)
         assert len(metadata.keys()) == 1
         doc_metadata = metadata[list(metadata.keys())[0]]
@@ -216,7 +219,7 @@ class TestMetaData:
         assert len(doc_metadata.node_ids) == 53
 
     def test_as_dataframe(self, paul_graham_essay_storage: Storage):
-        metadata = paul_graham_essay_storage.metadata(as_dataframe=True)
+        metadata = paul_graham_essay_storage.document_metadata(as_dataframe=True)
         assert isinstance(metadata, DataFrame)
         assert metadata.shape[0] == 53
         assert metadata.columns.to_list() == ["doc_id", "node_id", "file_name"]

@@ -49,7 +49,7 @@ class Storage:
         """Initialize the Storage.
 
         The constructor method takes a llama_index.core.StorageContext object that is a native llamaIndex object
-        and and a metadata table (pandas.DataFrame-optional) as input.
+        and a metadata table (pandas.DataFrame-optional) as input.
 
         Parameters
         ----------
@@ -156,7 +156,7 @@ class Storage:
         """
         self.store.persist(persist_dir=store_dir)
         file_path = os.path.join(store_dir, ID_MAPPING_FILE)
-        save_metadata_index(self.metadata(as_dataframe=True), file_path)
+        save_metadata_index(self.document_metadata(as_dataframe=True), file_path)
 
     @classmethod
     def load(cls, store_dir: str) -> "Storage":
@@ -187,7 +187,7 @@ class Storage:
                     Documents: 53
                     Indexes: 2
         <BLANKLINE>
-        >>> metadata = store.metadata(as_dataframe=True)
+        >>> metadata = store.document_metadata(as_dataframe=True)
         >>> print(metadata.head()) # doctest: +SKIP
                                      doc_id                              node_id              file_name
         0   a25111e2e59f81bb7a0e3efb4825...  cadde590b82362fc7a5f8ce0751c5b30b...  paul_graham_essay.txt
@@ -224,11 +224,11 @@ class Storage:
         return message
 
     @property
-    def metadata_index(self) -> pd.DataFrame:
+    def node_metadata(self) -> pd.DataFrame:
         """Get the metadata index."""
         return create_metadata_index_existing_docs(self.docstore.docs)
 
-    def metadata(
+    def document_metadata(
         self, as_dataframe: Optional[bool] = False
     ) -> Union[Dict[str, RefDocInfo], DataFrame]:
         r"""Document metadata.
@@ -250,7 +250,7 @@ class Storage:
         You can get the document metadata as a dictionary using the `metadata` method with the default parameter values:
         ```python
         >>> store = Storage.load("examples/paul-graham-essay-storage")
-        >>> metadata = store.metadata()
+        >>> metadata = store.document_metadata()
 
         ```
         The `metadata` is a dictionary with the document ID as the key and the document metadata as the value:
@@ -282,7 +282,7 @@ class Storage:
         ```
         To get the metadata as a DataFrame, you can set the `as_dataframe` parameter to True:
         ```python
-        >>> metadata = store.metadata(as_dataframe=True)
+        >>> metadata = store.document_metadata(as_dataframe=True)
         >>> print(metadata) # doctest: +SKIP
                                                        doc_id                                            node_id
         0   a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ff...  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
@@ -362,7 +362,7 @@ class Storage:
 
         ```python
         >>> store = Storage.load("examples/paul-graham-essay-storage")
-        >>> document_metadata = store.metadata
+        >>> document_metadata = store.document_metadata
         >>> document_id = list(document_metadata().keys())[0]
         >>> print(document_id) # doctest: +SKIP
         a25111e2e59f81bb7a0e3efb48255f4a5d4f722aaf13ffd112463fb98c227092
@@ -373,12 +373,12 @@ class Storage:
         Now if you check the document_metadata, you will find that the document is deleted:
 
         ```python
-        >>> print(store.metadata())
+        >>> print(store.document_metadata())
         {}
 
         ```
         """
-        if doc_id not in self.metadata().keys():
+        if doc_id not in self.document_metadata().keys():
             raise ValueError(f"Document with ID {doc_id} not found.")
         self.docstore.delete_ref_doc(doc_id)
 
@@ -444,17 +444,17 @@ class Storage:
         >>> data_path = "examples/data/essay"
         >>> documents = Storage.read_documents(data_path)
         >>> store.add_documents(documents)
-        >>> print(store) # doctest: +SKIP
+        >>> print(store)
         <BLANKLINE>
-                    Documents: 1
-                    Indexes: 0
+                Documents: 1
+                Indexes: 0
         <BLANKLINE>
 
         - once the documents are added successfully, they are added also to the metadata index.
 
-        >>> metadata = store.metadata(as_dataframe=True)
+        >>> metadata = store.node_metadata
         >>> print(metadata) # doctest: +SKIP
-                        file_name                                             doc_id
+                        file_name                                            node_id
         0   paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
 
         >>> docstore = store.docstore
@@ -607,16 +607,16 @@ class Storage:
         ```python
         >>> storage_dir = "examples/paul-graham-essay-storage"
         >>> store = Storage.load(storage_dir)
-        >>> print(store) # doctest: +SKIP
+        >>> print(store)
         <BLANKLINE>
-                    Documents: 53
-                    Indexes: 2
+                Documents: 53
+                Indexes: 2
         <BLANKLINE>
 
         - The storage context contains the following data:
 
-        >>> print(store.metadata_index.head(3))
-                       file_name                                             doc_id
+        >>> print(store.node_metadata.head(3))
+                       file_name                                            node_id
         0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
         1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
         2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
@@ -666,15 +666,15 @@ class Storage:
                 )
         ```
         """
-        metadata_index = self.metadata_index
+        metadata_index = self.node_metadata
         if exact_match:
             doc_ids = metadata_index.loc[
-                metadata_index["file_name"] == file_name, "doc_id"
+                metadata_index["file_name"] == file_name, "node_id"
             ].values
         else:
             doc_ids = metadata_index.loc[
                 metadata_index["file_name"].str.contains(file_name, regex=True),
-                "doc_id",
+                "node_id",
             ].values
         docs = self.docstore.get_nodes(doc_ids)
         return docs
@@ -743,7 +743,7 @@ class Storage:
         100%|██████████| 1/1 [00:00<00:00,  1.54it/s]
         >>> len(extracted_nodes) # doctest: +SKIP
         1
-        >>> print(extracted_nodes[0].metadata) # doctest: +SKIP
+        >>> print(extracted_nodes[0].document_metadata) # doctest: +SKIP
         {
             'document_title': "I'm excited to help! Unfortunately, there doesn't seem to be any text provided.
                 Please go ahead and share the sample text, and I'll do my best to give you a comprehensive title
@@ -842,7 +842,7 @@ def create_metadata_index_existing_docs(docs: Dict[str, BaseNode]):
 
         metadata_index[i] = {
             "file_name": file_name,
-            "doc_id": generate_content_hash(val.text),
+            "node_id": generate_content_hash(val.text),
         }
         i += 1
     df = pd.DataFrame.from_dict(metadata_index, orient="index")
