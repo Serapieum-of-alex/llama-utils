@@ -32,7 +32,7 @@ Key Features of Ollama
    This should return the installed version.
 
 <p align="center">
-  <img src="images/ollama-version.png" alt="Ollama List">
+  <img src="images/ollama/ollama-version.png" alt="Ollama List">
 </p>
 
 ### **macOS**
@@ -72,7 +72,7 @@ ollama list
 ```
 
 <p align="center">
-  <img src="images/ollama-list.png" alt="Ollama List">
+  <img src="images/ollama/ollama-list.png" alt="Ollama List">
 </p>
 
 
@@ -88,7 +88,7 @@ ollama pull llama2
 
 
 <p align="center">
-  <img src="images/ollama-pull-gemma.png" alt="Ollama Pull">
+  <img src="images/ollama/ollama-pull-gemma.png" alt="Ollama Pull">
 </p>
 
 
@@ -96,7 +96,7 @@ ollama pull llama2
 located in a subdirectory called `blobs`. The model's manifest is available in the `~/.ollama/models/manifests/registry.ollama.ai/library/<model>/latest` file.
 
 <p align="center">
-  <img src="images/ollama-models-blobs.png" alt="Ollama download location" width="600">
+  <img src="images/ollama/ollama-models-blobs.png" alt="Ollama download location" width="600">
 </p>
 
 
@@ -106,7 +106,7 @@ located in a subdirectory called `blobs`. The model's manifest is available in t
 ollama rm llama3
 ```
 <p align="center">
-  <img src="images/ollama-rm.png" alt="Ollama remove">
+  <img src="images/ollama/ollama-rm.png" alt="Ollama remove">
 </p>
 
 ---
@@ -144,7 +144,7 @@ time=2025-02-01T20:05:46.959+01:00 level=INFO source=types.go:131 msg="inference
 ```
 
 <p align="center">
-  <img src="images/ollama-serve.png" alt="Ollama Serve">
+  <img src="images/ollama/ollama-serve.png" alt="Ollama Serve">
 </p>
 
 Check if the server is running:
@@ -205,7 +205,7 @@ sudo ollama serve
 ollama run mistral
 ```
 <p align="center">
-  <img src="images/ollama-run-terminal.png" alt="Ollama Run">
+  <img src="images/ollama/ollama-run-terminal.png" alt="Ollama Run">
 </p>
 
 to exit type
