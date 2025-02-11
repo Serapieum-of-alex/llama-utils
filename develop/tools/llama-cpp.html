@@ -1,0 +1,1746 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Llama-utils is a Python package for data manipulation and analysis in the Llama language model">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/Serapieum-of-alex/llama-utils/develop/tools/llama-cpp.html">
+      
+      
+        <link rel="prev" href="ollama.html">
+      
+      
+        <link rel="next" href="../change-log.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.2">
+    
+    
+      
+        <title>Using Llama.cpp for Local LLM Inference - Llama-utils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7758b05.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-llamacpp-for-local-llm-inference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Llama-utils" class="md-header__button md-logo" aria-label="Llama-utils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Llama-utils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using Llama.cpp for Local LLM Inference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="lime"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../dev/installation.html" class="md-tabs__link">
+          
+  
+    
+  
+  Installation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../design-architecture-diagrams.html" class="md-tabs__link">
+          
+  
+    
+  
+  Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api/index_manager.html" class="md-tabs__link">
+          
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="ollama.html" class="md-tabs__link">
+          
+  
+    
+  
+  LLM Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../change-log.html" class="md-tabs__link">
+        
+  
+    
+  
+  Change logs
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Llama-utils" class="md-nav__button md-logo" aria-label="Llama-utils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Llama-utils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/installation.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Design
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Design
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-architecture-diagrams.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design and Architecture Diagrams
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/index_manager.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index Manager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/storage.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/utils.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    LLM Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            LLM Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ollama.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running a Local LLM using Ollama
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Using Llama.cpp for Local LLM Inference
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="llama-cpp.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Using Llama.cpp for Local LLM Inference
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-llamacpp-compares-to-other-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Llama.cpp Compares to Other Tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Windows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Choosing the Right Binary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-and-macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux and MacOS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-gguf-ggml-hugging-face-and-lora-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding GGUF, GGML, Hugging Face, and LoRA Formats
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding GGUF, GGML, Hugging Face, and LoRA Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-gguf" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GGUF?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-ggml" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GGML?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-ggml-to-gguf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting GGML to GGUF
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hugging-face-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hugging Face Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lora-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      LoRA Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-gguf-model-files-from-hugging-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downloading GGUF Model Files from Hugging Face
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-a-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run a model:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run a model:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-llamacpp-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interacting with Llama.cpp in Python
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interacting with Llama.cpp in Python">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-llama-cpp-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview of llama-cpp-python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-required-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Required Packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-inference-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Inference in Python
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-and-using-gguf-models-with-llamafrom_pretrained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downloading and Using GGUF Models with Llama.from_pretrained
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-llamacpp-as-a-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Llama.cpp as a Server
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Llama.cpp as a Server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Server
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-requests-using-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Send Requests Using Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-requests-from-terminal-linuxmacos-or-powershell-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../change-log.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Change logs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-llamacpp-compares-to-other-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Llama.cpp Compares to Other Tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Windows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-the-right-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Choosing the Right Binary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-and-macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux and MacOS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-gguf-ggml-hugging-face-and-lora-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding GGUF, GGML, Hugging Face, and LoRA Formats
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding GGUF, GGML, Hugging Face, and LoRA Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-gguf" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GGUF?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-ggml" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is GGML?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-ggml-to-gguf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting GGML to GGUF
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hugging-face-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hugging Face Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lora-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      LoRA Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-gguf-model-files-from-hugging-face" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downloading GGUF Model Files from Hugging Face
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-a-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run a model:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Run a model:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-llamacpp-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interacting with Llama.cpp in Python
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interacting with Llama.cpp in Python">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-llama-cpp-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview of llama-cpp-python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-required-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Required Packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-inference-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Inference in Python
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-and-using-gguf-models-with-llamafrom_pretrained" class="md-nav__link">
+    <span class="md-ellipsis">
+      Downloading and Using GGUF Models with Llama.from_pretrained
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-llamacpp-as-a-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Llama.cpp as a Server
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Llama.cpp as a Server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-the-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start the Server
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-requests-using-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Send Requests Using Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-requests-from-terminal-linuxmacos-or-powershell-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="using-llamacpp-for-local-llm-inference">Using Llama.cpp for Local LLM Inference</h1>
+<h2 id="introduction">Introduction</h2>
+<p>Llama.cpp is a powerful and efficient inference framework for running LLaMA models locally on your machine. Unlike other tools such as Ollama, LM Studio, and similar LLM-serving solutions, Llama.cpp is designed to provide high-performance, low-resource inference while offering flexibility for different hardware architectures.</p>
+<h3 id="how-llamacpp-compares-to-other-tools">How Llama.cpp Compares to Other Tools</h3>
+<ul>
+<li><strong>Llama.cpp vs. Ollama</strong>: Ollama provides a more user-friendly experience with built-in model management, whereas Llama.cpp gives you full control over your models and hardware acceleration.</li>
+<li><strong>Llama.cpp vs. LM Studio</strong>: LM Studio offers a GUI for managing models, whereas Llama.cpp is focused on CLI and scripting automation for advanced users.</li>
+<li><strong>Advantages of Llama.cpp</strong>:<ul>
+<li>Lightweight and highly optimized for CPU inference.</li>
+<li>Supports a variety of platforms including Windows, Linux, and macOS.</li>
+<li>Allows fine-tuned control over model execution, including running models as servers or embedding them into Python applications.</li>
+</ul>
+</li>
+</ul>
+<p>This tutorial will guide you through the installation process on different operating systems and show you how to interact with LLMs using Python and HTTP requests.</p>
+<h2 id="installation">Installation</h2>
+<p>For detailed build instructions, refer to the official guide: <a href="https://github.com/ggerganov/llama.cpp/blob/master/docs/build.md">Llama.cpp Build Instructions</a>
+in the following I will explain the different pre-built binaries that you can download from the llama.cpp github 
+repository and how to install them on your machine  </p>
+<h3 id="windows">Windows</h3>
+<h4 id="choosing-the-right-binary">Choosing the Right Binary</h4>
+<p>If you are downloading the pre-built binaries from the Llama.cpp releases page, choose the correct one based on your CPU and GPU capabilities:</p>
+<ul>
+<li><strong><code>llama-b4671-bin-win-avx-x64.zip</code></strong>: For CPUs with basic AVX support (Intel Sandy Bridge and later, AMD Bulldozer and later).</li>
+<li><strong><code>llama-b4671-bin-win-avx2-x64.zip</code></strong>: For CPUs with AVX2 support (Intel Haswell and later, AMD Excavator and later).</li>
+<li><strong><code>llama-b4671-bin-win-avx512-x64.zip</code></strong>: For CPUs with AVX-512 support (Intel Skylake-X and newer, limited to certain Intel CPUs).</li>
+<li><strong><code>llama-b4671-bin-win-cuda-cu11.7-x64.zip</code></strong> / <strong><code>llama-b4671-bin-win-cuda-cu12.4-x64.zip</code></strong>: For systems with NVIDIA GPUs that support CUDA. These versions utilize CUDA acceleration for improved inference speed.</li>
+</ul>
+<p>If you are unsure, start with AVX2, as most modern CPUs support it. If your CPU is older, use the AVX version. If you have a high-end CPU, use the AVX-512 version for better performance. If you have an NVIDIA GPU and want to leverage CUDA, use the appropriate CUDA version matching your installed CUDA driver version.</p>
+<p align="center">
+  <img src="images/llama-cpp/llama-cpp-release.png" alt="llama cpp release" title="llama cpp release" width="600">
+</p>
+
+<h2 id="linux-and-macos">Linux and MacOS</h2>
+<p>For Linux, download <code>llama-b4671-bin-ubuntu-x64.zip</code>, and for macOS, use <code>llama-b4671-bin-macos-x64.zip</code> or <code>llama-b4671-bin-macos-arm64.zip</code>. Extract them to a directory and add that directory to your system's environment variables to run the executables from any location.</p>
+<p>you can also use the following installation using curl on linux
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://ollama.com/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+</code></pre></div></p>
+<p>After Downloading the right files, unzip the files and add the extracted directory to your system's environment variables to run the executables from any location.</p>
+<h2 id="understanding-gguf-ggml-hugging-face-and-lora-formats">Understanding GGUF, GGML, Hugging Face, and LoRA Formats</h2>
+<h3 id="what-is-gguf">What is GGUF?</h3>
+<p>GGUF (Generalized GGML Unified Format) is an optimized file format designed for running large language models efficiently using Llama.cpp and other frameworks. It improves compatibility and performance by standardizing how model weights and metadata are stored, allowing for efficient inference on different hardware architectures.</p>
+<h3 id="what-is-ggml">What is GGML?</h3>
+<p>GGML (Generalized Gradient Model Language) is an earlier format used for LLM inference that supports quantized models, making them more memory-efficient. However, GGUF has largely replaced GGML due to its enhanced features and improved performance.</p>
+<h3 id="converting-ggml-to-gguf">Converting GGML to GGUF</h3>
+<p>If you have a GGML model and need to use it with Llama.cpp, you can convert it to GGUF using a conversion script.</p>
+<p>Example command:</p>
+<p><div class="highlight"><pre><span></span><code>python<span class="w"> </span>convert_llama_ggml_to_gguf.py<span class="w"> </span>--input<span class="w"> </span>model.ggml<span class="w"> </span>--output<span class="w"> </span>model.gguf
+</code></pre></div>
+The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github repository in the main directory.</p>
+<h3 id="hugging-face-format">Hugging Face Format</h3>
+<p>Hugging Face models are typically stored in PyTorch (<code>.bin</code> or <code>.safetensors</code>) format. These models can be converted into GGUF format using conversion scripts like <code>convert_hf_to_gguf.py</code>.</p>
+<h3 id="lora-format">LoRA Format</h3>
+<p>LoRA (Low-Rank Adaptation) is a fine-tuning technique used to efficiently adapt large language models to specific tasks. LoRA adapters store only the fine-tuned weight differences rather than modifying the entire model. To use LoRA with Llama.cpp, you may need to merge LoRA weights with a base model before conversion to GGUF using <code>convert_lora_to_gguf.py</code>.</p>
+<h2 id="downloading-gguf-model-files-from-hugging-face">Downloading GGUF Model Files from Hugging Face</h2>
+<p>You can download GGUF model files from Hugging Face and use them with Llama.cpp. Follow these steps:</p>
+<ol>
+<li>
+<p><strong>Visit Hugging Face Models Page</strong>: Go to <a href="https://huggingface.co/">Hugging Face</a> and search for LLaMA or any model compatible with GGUF. in this tutorial we will use the mistral gguf files downloaded from this link `<a href="https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF`">https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF`</a></p>
+</li>
+<li>
+<p><strong>Download the Model</strong>: Navigate to the model’s repository and download the GGUF version of the model. If the GGUF format is not available, you may need to convert it manually as explained before.</p>
+</li>
+<li>
+<p><strong>Move the File</strong>: Place the downloaded or converted GGUF model into your <code>models/</code> directory.</p>
+</li>
+</ol>
+<h2 id="run-a-model">Run a model:</h2>
+<p>Now we can use the command llama-cli that is one of the executables that we have downloaded, you can check all the flags that can be used with the llama-cli command to trigger the llm model using the gguf file.</p>
+<div class="highlight"><pre><span></span><code>llama-cli<span class="w"> </span>-m<span class="w"> </span>your-model.gguf
+</code></pre></div>
+<p align="center">
+  <img src="images/llama-cpp/llama-cli-help.png" alt="llama-cli help">
+</p>
+
+<p align="center">
+  <img src="images/llama-cpp/llama-cli-help-examples.png" alt="llama-cli help examples">
+</p>
+
+<h3 id="interacting-with-llamacpp-in-python">Interacting with Llama.cpp in Python</h3>
+<h4 id="overview-of-llama-cpp-python">Overview of <code>llama-cpp-python</code></h4>
+<p>The <code>llama-cpp-python</code> package provides Python bindings for Llama.cpp, allowing users to:</p>
+<ul>
+<li>Load and run LLaMA models within Python applications.</li>
+<li>Perform text generation tasks using GGUF models.</li>
+<li>Customize inference parameters like temperature, top-k, and top-p for more controlled responses.</li>
+<li>Run models efficiently on both CPU and GPU (if CUDA is enabled).</li>
+<li>Host models as an API server for easy integration into applications.</li>
+</ul>
+<h4 id="installing-required-packages">Installing Required Packages</h4>
+<p>You can use <code>llama-cpp-python</code>, which provides Python bindings for llama.cpp:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>llama-cpp-python
+</code></pre></div>
+<h4 id="running-inference-in-python">Running Inference in Python</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">llama_cpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Llama</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">Llama</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;mistral-7b-instruct-v0.2.Q2_K.gguf&quot;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">create_chat_completion</span><span class="p">(</span>
+  <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;how big is the sky&quot;</span>
+    <span class="p">}</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+<p>The response will be something like</p>
+<div class="highlight"><pre><span></span><code>{
+  &#39;id&#39;: &#39;chatcmpl-e8879677-7335-464a-803b-30a15d68c015&#39;, 
+  &#39;object&#39;: &#39;chat.completion&#39;, 
+  &#39;created&#39;: 1739218403, 
+  &#39;model&#39;: &#39;mistral-7b-instruct-v0.2.Q2_K.gguf&#39;, 
+  &#39;choices&#39;: [
+    {
+      &#39;index&#39;: 0, 
+      &#39;message&#39;: 
+        {
+          &#39;role&#39;: &#39;assistant&#39;, 
+          &#39;content&#39;: &#39; The size of the sky is not something that can be measured in a way that 
+          is meaningful to us, as it is not a physical object with defined dimensions. 
+          The sky is the expanse above the Earth, and it includes the atmosphere and the outer 
+          space beyond. It goes on forever in all directions, as far as our current understanding 
+          of the universe extends. So, we cannot assign a specific size to the sky. 
+          Instead, we can describe the size of specific parts of the universe, such as the diameter 
+          of a star or the distance between two galaxies.&#39;
+        }, 
+        &#39;logprobs&#39;: None, 
+        &#39;finish_reason&#39;: &#39;stop&#39;
+    }
+  ], 
+  &#39;usage&#39;: {
+    &#39;prompt_tokens&#39;: 13, 
+    &#39;completion_tokens&#39;: 112, 
+    &#39;total_tokens&#39;: 125
+    }
+}
+</code></pre></div>
+<h3 id="downloading-and-using-gguf-models-with-llamafrom_pretrained">Downloading and Using GGUF Models with Llama.from_pretrained</h3>
+<p>The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them 
+without manually downloading the files.</p>
+<p>Example:</p>
+<p><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">llama_cpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Llama</span>
+
+<span class="c1"># Download and load a GGUF model directly from Hugging Face</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">Llama</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">repo_id</span><span class="o">=</span><span class="s2">&quot;TheBloke/Mistral-7B-Instruct-v0.2-GGUF&quot;</span><span class="p">,</span> 
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;mistral-7b-instruct-v0.2.Q4_K_M.gguf&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">create_chat_completion</span><span class="p">(</span>
+  <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;How does a black hole work?&quot;</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+This method simplifies the process by automatically downloading and loading the required model into memory, eliminating the need to manually place GGUF files in a directory. and loading the gguf file from that directory.</p>
+<ul>
+<li>
+<p>you can use the <code>cache_dir</code> parameter to specify the directory where the model will be downloaded and cached.</p>
+</li>
+<li>
+<p>the response will be something like 
+<div class="highlight"><pre><span></span><code>{
+    &#39;id&#39;: &#39;chatcmpl-6049f7cd-5e8a-45c0-a69c-e15c1b8842bc&#39;, 
+    &#39;object&#39;: &#39;chat.completion&#39;, 
+    &#39;created&#39;: 1739220646, 
+    &#39;model&#39;: &#39;models--TheBloke--Mistral-7B-Instruct-v0.2-GGUF\\snapshots\\3a6fbf4a41a1d52e415a4958cde6856d34b2db93\\.\\mistral-7b-instruct-v0.2.Q2_K.gguf&#39;, 
+    &#39;choices&#39;: [
+        {
+            &#39;index&#39;: 0, 
+            &#39;message&#39;: 
+                {
+                    &#39;role&#39;: &#39;assistant&#39;, 
+                    &#39;content&#39;: &#39; A black hole is a region in space where the gravitational pull is so strong that nothing, 
+                        not even light, can escape. The gravity of a black hole is so intense because matter is squeezed 
+                        into a very small space.\n\nBlack holes are formed when a massive star collapses under its own 
+                        gravity at the end of its life. The core collapses in on itself, forming a singularity, 
+                        which is a point of infinite density and zero volume. The singularity is surrounded by an event 
+                        horizon, which is the boundary of the black hole from which no escape is possible.\n\nThe 
+                        intense gravity of a black hole warps the fabric of spacetime around it, causing a significant 
+                        distortion in the paths of nearby stars and planets. This distortion is known as a gravitational 
+                        singularity or a black hole.\n\nThe event horizon of a black hole is not a perfect sphere but 
+                        rather an irregularly shaped surface that is constantly changing as the black hole interacts 
+                        with nearby matter. The event horizon is also not a sharp boundary but rather a gradual 
+                        transition from the outside universe to the inside of the black hole.
+                        Black holes are not completely black but rather emit a faint glow due to the energy released 
+                        from the intense gravitational forces at work. This glow is known as Hawking radiation, named 
+                        after the physicist Stephen Hawking, who first proposed the idea.\n\nBlack holes come in 
+                        different sizes, from stellar-mass black holes, which can be as small as a few solar masses, to 
+                        supermassive black holes, which can be millions or billions of solar masses. The supermassive 
+                        black holes are thought to be at the center of most galaxies, including our own Milky Way.
+                        Black holes are fascinating objects in the universe, and scientists continue to study them to 
+                        learn more about the fundamental laws of physics and the nature of spacetime.&#39;
+                }, 
+                &#39;logprobs&#39;: None, 
+                &#39;finish_reason&#39;: &#39;stop&#39;
+            }
+        ], 
+        &#39;usage&#39;: {&#39;prompt_tokens&#39;: 15, &#39;completion_tokens&#39;: 388, &#39;total_tokens&#39;: 403}
+    }
+}
+</code></pre></div></p>
+</li>
+</ul>
+<h2 id="running-llamacpp-as-a-server">Running Llama.cpp as a Server</h2>
+<p>You can run <code>llama.cpp</code> as a server and interact with it via API calls.</p>
+<h3 id="start-the-server">Start the Server</h3>
+<div class="highlight"><pre><span></span><code>llama-server<span class="w"> </span>-m<span class="w"> </span>mistral-7b-instruct-v0.2.Q2_K.gguf
+</code></pre></div>
+<p>launching the model as a server in your terminal will give the following response.</p>
+<p align="center">
+  <img src="images/llama-cpp/server.png" alt="llama-server">
+</p>
+
+<h3 id="send-requests-using-python">Send Requests Using Python</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="c1"># Define the API endpoint</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8000/completion&quot;</span>
+
+<span class="c1"># Define the payload </span>
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;mistral-7b-instruct-v0.2.Q4_K_M.gguf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;How big is the sky?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+    <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">50</span>
+<span class="p">}</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="c1"># Check if the request was successful</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="c1"># Parse the response JSON</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># Extract the result from the response</span>
+        <span class="n">choices</span> <span class="o">=</span> <span class="n">response_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">choices</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No choices found in the response.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed with status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The response will be something like</p>
+<div class="highlight"><pre><span></span><code>Response: 
+The sky is not a tangible object and does not have physical dimensions, so it cannot be measured or quantified in the same way that we measure and quantify objects with size or dimensions. The sky is simply the vast expanse of
+</code></pre></div>
+<h3 id="send-requests-from-terminal-linuxmacos-or-powershell-windows">Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:8000/completion&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;prompt&quot;: &quot;Tell me a fun fact.&quot;, &quot;max_tokens&quot;: 50}&#39;</span>
+</code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>This tutorial covered installing, running, and interacting with Llama.cpp on different platforms. You can now integrate Llama models into your applications for local inference and API-based interactions.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="ollama.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Running a Local LLM using Ollama">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Running a Local LLM using Ollama
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../change-log.html" class="md-footer__link md-footer__link--next" aria-label="Next: Change logs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Change logs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f13b1293.min.js"></script>
+      
+    
+  </body>
+</html>
