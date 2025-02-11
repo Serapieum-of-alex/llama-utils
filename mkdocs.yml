@@ -94,6 +94,7 @@ nav:
       - api/utils.md
   - LLM Tools:
       - tools/ollama.md
+      - tools/llama-cpp.md
   - Change logs: change-log.md
 
 extra:
