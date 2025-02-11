@@ -29,6 +29,7 @@ llama-utils - Large Language Model Utility Package
 =====================================================================
 **llama-utils** is a large language model utility package
 
+[Full Documentation](https://serapieum-of-alex.github.io/llama-utils/latest/)
 
 Main Features
 -------------
