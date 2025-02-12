@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -228,13 +229,25 @@ class TestMetaData:
         ]
 
 
-def test_read_documents(data_path: str):
-    docs = Storage.read_documents(data_path)
-    assert len(docs) == 4
-    doc = docs[0]
-    assert doc.excluded_embed_metadata_keys == ["file_name"]
-    assert doc.excluded_embed_metadata_keys == ["file_name"]
-    assert docs[0].doc_id == generate_content_hash(docs[0].text)
+class TestReadDocuments:
+    def test_read_documents(self, data_path: str):
+        docs = Storage.read_documents(data_path)
+        assert len(docs) == 4
+        assert isinstance(docs[0], Document)
+        doc = docs[0]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert docs[0].metadata["content-hash"] == generate_content_hash(docs[0].text)
+
+    def test_split_into_nodes(self, data_path: str):
+        path = Path(data_path)  # / "text_1.txt"
+        nodes = Storage.read_documents(path, split_into_nodes=True)
+        assert len(nodes) == 4
+        assert isinstance(nodes[0], TextNode)
+        doc = nodes[0]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert nodes[0].metadata["content-hash"] == generate_content_hash(nodes[0].text)
 
 
 @patch("llama_index.core.ingestion.IngestionPipeline.run")

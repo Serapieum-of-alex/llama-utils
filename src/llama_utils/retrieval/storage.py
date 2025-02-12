@@ -13,7 +13,7 @@ from llama_index.core.extractors import (
     TitleExtractor,
 )
 from llama_index.core.ingestion import IngestionPipeline
-from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core.node_parser import SentenceSplitter, TokenTextSplitter
 from llama_index.core.schema import BaseNode, Document, TextNode
 from llama_index.core.storage.docstore import BaseDocumentStore, SimpleDocumentStore
 from llama_index.core.storage.docstore.types import RefDocInfo
@@ -499,13 +499,16 @@ class Storage:
 
     @staticmethod
     def read_documents(
-        path: str,
-        show_progres: bool = False,
+        path: Union[str, Path],
+        split_into_nodes: bool = False,
+        chunk_size: int = 1024,
+        chunk_overlap: int = 100,
+        show_progress: bool = False,
         num_workers: int = None,
         recursive: bool = False,
         **kwargs,
     ) -> List[Union[Document, TextNode]]:
-        r"""Read documents from a directory.
+        r"""Read documents from a directory and optionally splits them into TextNodes.
 
         the `read_documents` method reads documents from a directory and returns a list of documents.
         the `doc_id` is sha256 hash number generated based on the document's text content.
@@ -514,7 +517,18 @@ class Storage:
         ----------
         path: str
             path to the directory containing the documents.
-        show_progres: bool, optional, default is False.
+        split_into_nodes : bool, optional
+            If True, splits documents into smaller TextNodes (default: False).
+        chunk_size : int, optional, default is 1024
+            The size of each text chunk. The `chunk_size` Defines the size of each split chunk (in characters).
+            - Larger values preserve more context but increase memory usage.
+            - Smaller values improve retrieval specificity but may lose context.
+        chunk_overlap : int, optional, default is 100.
+            The overlap size between chunks. The `chunk_overlap` ensures adjacent chunks have overlapping content to
+            preserve context.
+            - Higher overlap improves retrieval coherence but increases redundancy.
+            - Lower overlap minimizes redundancy but might break context.
+        show_progress: bool, optional, default is False.
             True to show progress bar.
         num_workers: int, optional, default is None.
             The number of workers to use for loading the data.
@@ -530,6 +544,24 @@ class Storage:
         ------
         FileNotFoundError
             If the directory is not found.
+
+        Notes
+        -----
+        The best values for `chunk_size` and `chunk_overlap` depend on the type of documents and retrieval needs.
+
+        | **Use Case**                                              | **Recommended `chunk_size`** | **Recommended `chunk_overlap`** |
+        |-----------------------------------------------------------|------------------------------|---------------------------------|
+        | **Short documents (FAQs, structured text, emails)**       | `256 - 512`                  | `50`                           |
+        | **General-purpose (news articles, reports, blog posts)**  | `512 - 1024`                 | `50 - 100`                     |
+        | **Long documents (PDFs, research papers, books)**         | `1024 - 2048`                | `100 - 200`                    |
+        | **Dense technical/scientific papers**                     | `1500 - 2500`                | `200 - 300`                    |
+        | **Conversational AI (chat context memory)**               | `512 - 1024`                 | `50 - 150`                     |
+        | **Legal/contract documents (precise context retention)**  | `2048 - 4096`                | `200 - 400`                    |
+
+        Best Practices:
+        - For most cases, `chunk_size=1024` and `chunk_overlap=100` work well.
+        - If working with FAQs, decrease `chunk_size` to `512`.
+        - If preserving long-form LLM context, use `2048+` with higher overlap.
 
         Examples
         --------
@@ -557,30 +589,44 @@ class Storage:
                 mimetype='text/plain',
                 start_char_idx=None,
                 end_char_idx=None,
-                text_template='{metadata_str}\n\n{content}',
+        4        text_template='{metadata_str}\n\n{content}',
                 metadata_template='{key}: {value}',
                 metadata_seperator='\n'
             )
         ]
         ```
         """
-        if not Path(path).exists():
+        if isinstance(path, str):
+            path = Path(path)
+
+        if not path.exists():
             raise FileNotFoundError(f"Directory not found: {path}")
 
-        reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
+        if path.is_file():
+            reader = SimpleDirectoryReader(input_files=[path])
+        else:
+            reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
+
         documents = reader.load_data(
-            show_progress=show_progres, num_workers=num_workers, **kwargs
+            show_progress=show_progress, num_workers=num_workers, **kwargs
         )
 
+        if split_into_nodes:
+            # Split documents into nodes.
+            splitter = SentenceSplitter(
+                chunk_size=chunk_size, chunk_overlap=chunk_overlap
+            )
+            documents = splitter.get_nodes_from_documents(documents)
+
         for doc in documents:
-            # exclude the file name from the llm metadata in order to avoid affecting the llm by weird file names
+            # exclude the file name from the llm metadata to avoid affecting the llm by weird file names
             doc.excluded_llm_metadata_keys = ["file_name"]
-            # exclude the file name from the embeddings metadata in order to avoid affecting the llm by weird file names
+            # exclude the file name from the embeddings' metadata to avoid affecting the llm by weird file names
             doc.excluded_embed_metadata_keys = ["file_name"]
             # Generate a hash based on the document's text content
             content_hash = generate_content_hash(doc.text)
             # Assign the hash as the doc_id
-            doc.doc_id = content_hash
+            doc.metadata["content-hash"] = content_hash
 
         return documents
 
