@@ -95,6 +95,8 @@ nav:
   - LLM Tools:
       - tools/ollama.md
       - tools/llama-cpp.md
+  - Examples:
+      - tools/notebooks/llama-cpp.ipynb
   - Change logs: change-log.md
 
 extra:
