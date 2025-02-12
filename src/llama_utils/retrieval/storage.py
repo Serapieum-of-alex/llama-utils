@@ -516,7 +516,7 @@ class Storage:
         Parameters
         ----------
         path: str
-            path to the directory containing the documents.
+            path to the directory containing the documents. or a single file path.
         split_into_nodes : bool, optional
             If True, splits documents into smaller TextNodes (default: False).
         chunk_size : int, optional, default is 1024
@@ -567,6 +567,7 @@ class Storage:
         --------
         You can read documents from a directory as follows:
         ```python
+        >>> from llama_utils.retrieval.storage import Storage
         >>> data_path = "examples/data/essay"
         >>> docs = Storage.read_documents(data_path)
         >>> print(docs) # doctest: +SKIP
@@ -594,6 +595,22 @@ class Storage:
                 metadata_seperator='\n'
             )
         ]
+        ```
+
+        You can also use the `split_into_nodes` parameter to split the documents into smaller nodes:
+
+        ```python
+        >>> docs = Storage.read_documents(data_path, split_into_nodes=True)
+        >>> print(len(docs))
+        20
+        >>> print(docs[0]) # doctest: +SKIP
+        Node ID: bfdf48ff-3c2b-49a8-ae25-7a837158d2dc
+        Text: What I Worked On    February 2021    Before college the two main
+        things I worked on, outside of school, were writing and programming. I
+        didn't write essays. I wrote what beginning writers were supposed to
+        write then, and probably still are: short stories. My stories were
+        awful. They had hardly any plot, just characters with strong feelings,
+        whic...
         ```
         """
         if isinstance(path, str):
