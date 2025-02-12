@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
     
     
       
@@ -1400,7 +1400,7 @@
 <p>This tutorial will guide you through the installation process on different operating systems and show you how to interact with LLMs using Python and HTTP requests.</p>
 <h2 id="installation">Installation</h2>
 <p>For detailed build instructions, refer to the official guide: <a href="https://github.com/ggerganov/llama.cpp/blob/master/docs/build.md">Llama.cpp Build Instructions</a>
-in the following I will explain the different pre-built binaries that you can download from the llama.cpp github 
+in the following I will explain the different pre-built binaries that you can download from the llama.cpp github
 repository and how to install them on your machine  </p>
 <h3 id="windows">Windows</h3>
 <h4 id="choosing-the-right-binary">Choosing the Right Binary</h4>
@@ -1491,44 +1491,44 @@ The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github reposito
 </code></pre></div>
 <p>The response will be something like</p>
 <div class="highlight"><pre><span></span><code>{
-  &#39;id&#39;: &#39;chatcmpl-e8879677-7335-464a-803b-30a15d68c015&#39;, 
-  &#39;object&#39;: &#39;chat.completion&#39;, 
-  &#39;created&#39;: 1739218403, 
-  &#39;model&#39;: &#39;mistral-7b-instruct-v0.2.Q2_K.gguf&#39;, 
+  &#39;id&#39;: &#39;chatcmpl-e8879677-7335-464a-803b-30a15d68c015&#39;,
+  &#39;object&#39;: &#39;chat.completion&#39;,
+  &#39;created&#39;: 1739218403,
+  &#39;model&#39;: &#39;mistral-7b-instruct-v0.2.Q2_K.gguf&#39;,
   &#39;choices&#39;: [
     {
-      &#39;index&#39;: 0, 
-      &#39;message&#39;: 
+      &#39;index&#39;: 0,
+      &#39;message&#39;:
         {
-          &#39;role&#39;: &#39;assistant&#39;, 
-          &#39;content&#39;: &#39; The size of the sky is not something that can be measured in a way that 
-          is meaningful to us, as it is not a physical object with defined dimensions. 
-          The sky is the expanse above the Earth, and it includes the atmosphere and the outer 
-          space beyond. It goes on forever in all directions, as far as our current understanding 
-          of the universe extends. So, we cannot assign a specific size to the sky. 
-          Instead, we can describe the size of specific parts of the universe, such as the diameter 
+          &#39;role&#39;: &#39;assistant&#39;,
+          &#39;content&#39;: &#39; The size of the sky is not something that can be measured in a way that
+          is meaningful to us, as it is not a physical object with defined dimensions.
+          The sky is the expanse above the Earth, and it includes the atmosphere and the outer
+          space beyond. It goes on forever in all directions, as far as our current understanding
+          of the universe extends. So, we cannot assign a specific size to the sky.
+          Instead, we can describe the size of specific parts of the universe, such as the diameter
           of a star or the distance between two galaxies.&#39;
-        }, 
-        &#39;logprobs&#39;: None, 
+        },
+        &#39;logprobs&#39;: None,
         &#39;finish_reason&#39;: &#39;stop&#39;
     }
-  ], 
+  ],
   &#39;usage&#39;: {
-    &#39;prompt_tokens&#39;: 13, 
-    &#39;completion_tokens&#39;: 112, 
+    &#39;prompt_tokens&#39;: 13,
+    &#39;completion_tokens&#39;: 112,
     &#39;total_tokens&#39;: 125
     }
 }
 </code></pre></div>
 <h3 id="downloading-and-using-gguf-models-with-llamafrom_pretrained">Downloading and Using GGUF Models with Llama.from_pretrained</h3>
-<p>The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them 
+<p>The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them
 without manually downloading the files.</p>
 <p>Example:</p>
 <p><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">llama_cpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Llama</span>
 
 <span class="c1"># Download and load a GGUF model directly from Hugging Face</span>
 <span class="n">llm</span> <span class="o">=</span> <span class="n">Llama</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-    <span class="n">repo_id</span><span class="o">=</span><span class="s2">&quot;TheBloke/Mistral-7B-Instruct-v0.2-GGUF&quot;</span><span class="p">,</span> 
+    <span class="n">repo_id</span><span class="o">=</span><span class="s2">&quot;TheBloke/Mistral-7B-Instruct-v0.2-GGUF&quot;</span><span class="p">,</span>
     <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;mistral-7b-instruct-v0.2.Q4_K_M.gguf&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -1545,43 +1545,43 @@ This method simplifies the process by automatically downloading and loading the 
 <p>you can use the <code>cache_dir</code> parameter to specify the directory where the model will be downloaded and cached.</p>
 </li>
 <li>
-<p>the response will be something like 
+<p>the response will be something like
 <div class="highlight"><pre><span></span><code>{
-    &#39;id&#39;: &#39;chatcmpl-6049f7cd-5e8a-45c0-a69c-e15c1b8842bc&#39;, 
-    &#39;object&#39;: &#39;chat.completion&#39;, 
-    &#39;created&#39;: 1739220646, 
-    &#39;model&#39;: &#39;models--TheBloke--Mistral-7B-Instruct-v0.2-GGUF\\snapshots\\3a6fbf4a41a1d52e415a4958cde6856d34b2db93\\.\\mistral-7b-instruct-v0.2.Q2_K.gguf&#39;, 
+    &#39;id&#39;: &#39;chatcmpl-6049f7cd-5e8a-45c0-a69c-e15c1b8842bc&#39;,
+    &#39;object&#39;: &#39;chat.completion&#39;,
+    &#39;created&#39;: 1739220646,
+    &#39;model&#39;: &#39;models--TheBloke--Mistral-7B-Instruct-v0.2-GGUF\\snapshots\\3a6fbf4a41a1d52e415a4958cde6856d34b2db93\\.\\mistral-7b-instruct-v0.2.Q2_K.gguf&#39;,
     &#39;choices&#39;: [
         {
-            &#39;index&#39;: 0, 
-            &#39;message&#39;: 
+            &#39;index&#39;: 0,
+            &#39;message&#39;:
                 {
-                    &#39;role&#39;: &#39;assistant&#39;, 
-                    &#39;content&#39;: &#39; A black hole is a region in space where the gravitational pull is so strong that nothing, 
-                        not even light, can escape. The gravity of a black hole is so intense because matter is squeezed 
-                        into a very small space.\n\nBlack holes are formed when a massive star collapses under its own 
-                        gravity at the end of its life. The core collapses in on itself, forming a singularity, 
-                        which is a point of infinite density and zero volume. The singularity is surrounded by an event 
-                        horizon, which is the boundary of the black hole from which no escape is possible.\n\nThe 
-                        intense gravity of a black hole warps the fabric of spacetime around it, causing a significant 
-                        distortion in the paths of nearby stars and planets. This distortion is known as a gravitational 
-                        singularity or a black hole.\n\nThe event horizon of a black hole is not a perfect sphere but 
-                        rather an irregularly shaped surface that is constantly changing as the black hole interacts 
-                        with nearby matter. The event horizon is also not a sharp boundary but rather a gradual 
+                    &#39;role&#39;: &#39;assistant&#39;,
+                    &#39;content&#39;: &#39; A black hole is a region in space where the gravitational pull is so strong that nothing,
+                        not even light, can escape. The gravity of a black hole is so intense because matter is squeezed
+                        into a very small space.\n\nBlack holes are formed when a massive star collapses under its own
+                        gravity at the end of its life. The core collapses in on itself, forming a singularity,
+                        which is a point of infinite density and zero volume. The singularity is surrounded by an event
+                        horizon, which is the boundary of the black hole from which no escape is possible.\n\nThe
+                        intense gravity of a black hole warps the fabric of spacetime around it, causing a significant
+                        distortion in the paths of nearby stars and planets. This distortion is known as a gravitational
+                        singularity or a black hole.\n\nThe event horizon of a black hole is not a perfect sphere but
+                        rather an irregularly shaped surface that is constantly changing as the black hole interacts
+                        with nearby matter. The event horizon is also not a sharp boundary but rather a gradual
                         transition from the outside universe to the inside of the black hole.
-                        Black holes are not completely black but rather emit a faint glow due to the energy released 
-                        from the intense gravitational forces at work. This glow is known as Hawking radiation, named 
-                        after the physicist Stephen Hawking, who first proposed the idea.\n\nBlack holes come in 
-                        different sizes, from stellar-mass black holes, which can be as small as a few solar masses, to 
-                        supermassive black holes, which can be millions or billions of solar masses. The supermassive 
+                        Black holes are not completely black but rather emit a faint glow due to the energy released
+                        from the intense gravitational forces at work. This glow is known as Hawking radiation, named
+                        after the physicist Stephen Hawking, who first proposed the idea.\n\nBlack holes come in
+                        different sizes, from stellar-mass black holes, which can be as small as a few solar masses, to
+                        supermassive black holes, which can be millions or billions of solar masses. The supermassive
                         black holes are thought to be at the center of most galaxies, including our own Milky Way.
-                        Black holes are fascinating objects in the universe, and scientists continue to study them to 
+                        Black holes are fascinating objects in the universe, and scientists continue to study them to
                         learn more about the fundamental laws of physics and the nature of spacetime.&#39;
-                }, 
-                &#39;logprobs&#39;: None, 
+                },
+                &#39;logprobs&#39;: None,
                 &#39;finish_reason&#39;: &#39;stop&#39;
             }
-        ], 
+        ],
         &#39;usage&#39;: {&#39;prompt_tokens&#39;: 15, &#39;completion_tokens&#39;: 388, &#39;total_tokens&#39;: 403}
     }
 }
@@ -1604,7 +1604,7 @@ This method simplifies the process by automatically downloading and loading the 
 <span class="c1"># Define the API endpoint</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8000/completion&quot;</span>
 
-<span class="c1"># Define the payload </span>
+<span class="c1"># Define the payload</span>
 <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;mistral-7b-instruct-v0.2.Q4_K_M.gguf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;How big is the sky?&quot;</span><span class="p">,</span>
@@ -1634,7 +1634,7 @@ This method simplifies the process by automatically downloading and loading the 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>The response will be something like</p>
-<div class="highlight"><pre><span></span><code>Response: 
+<div class="highlight"><pre><span></span><code>Response:
 The sky is not a tangible object and does not have physical dimensions, so it cannot be measured or quantified in the same way that we measure and quantify objects with size or dimensions. The sky is simply the vast expanse of
 </code></pre></div>
 <h3 id="send-requests-from-terminal-linuxmacos-or-powershell-windows">Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)</h3>
@@ -1739,7 +1739,7 @@ The sky is not a tangible object and does not have physical dimensions, so it ca
     <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.f13b1293.min.js"></script>
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
       
     
   </body>
