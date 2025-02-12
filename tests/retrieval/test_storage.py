@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -79,7 +80,7 @@ class TestStorage:
             Storage(5)
 
     def test_save(self, test_empty_storage: Storage):
-        path = "tests/data/Storage"
+        path = "tests/data/test-save-delete-me"
         test_empty_storage.save(path)
 
         assert os.path.exists(path), "Storage not saved."
@@ -91,6 +92,10 @@ class TestStorage:
             "index_store.json",
         ]
         assert all(elem in os.listdir(path) for elem in docstore_content)
+        try:
+            shutil.rmtree(path)
+        except PermissionError:
+            pass
 
     def test_add_documents(
         self,
@@ -236,7 +241,6 @@ class TestReadDocuments:
         assert isinstance(docs[0], Document)
         doc = docs[0]
         assert doc.excluded_embed_metadata_keys == ["file_name"]
-        assert doc.excluded_embed_metadata_keys == ["file_name"]
         assert docs[0].metadata["content-hash"] == generate_content_hash(docs[0].text)
 
     def test_split_into_nodes(self, data_path: str):
@@ -245,7 +249,6 @@ class TestReadDocuments:
         assert len(nodes) == 4
         assert isinstance(nodes[0], TextNode)
         doc = nodes[0]
-        assert doc.excluded_embed_metadata_keys == ["file_name"]
         assert doc.excluded_embed_metadata_keys == ["file_name"]
         assert nodes[0].metadata["content-hash"] == generate_content_hash(nodes[0].text)
 
