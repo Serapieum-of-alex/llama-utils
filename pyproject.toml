@@ -32,6 +32,7 @@ pytest-cov = "^5.0.0"
 pytest-xdist = "^3.6.1"
 xdoctest = {extras = ["colors"], version = "^1.1.0"}
 typeguard = "^4.3.0"
+nbval = "^0.11.0"
 
 [poetry.group.dev.dependencies]
 flake8 = "^7.1.1"
@@ -51,7 +52,6 @@ pre-commit-hooks = "^5.0.0"
 pre-commit-commit-msg-hooks = "^0.1.0"
 flake8-pyproject = "^1.2.3"
 pydata-sphinx-theme = "^0.16.0"
-
 
 
 
@@ -83,6 +83,8 @@ ignore = ["D401", "D413", "D213", "D203"]
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+norecursedirs = "examples/llms"
+
 
 [build-system]
 requires = ["poetry-core"]
