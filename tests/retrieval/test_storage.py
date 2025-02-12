@@ -240,7 +240,7 @@ class TestReadDocuments:
         assert docs[0].metadata["content-hash"] == generate_content_hash(docs[0].text)
 
     def test_split_into_nodes(self, data_path: str):
-        path = Path(data_path)  # / "text_1.txt"
+        path = Path(data_path)
         nodes = Storage.read_documents(path, split_into_nodes=True)
         assert len(nodes) == 4
         assert isinstance(nodes[0], TextNode)
