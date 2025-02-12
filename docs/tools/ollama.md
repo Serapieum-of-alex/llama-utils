@@ -32,7 +32,7 @@ Key Features of Ollama
    This should return the installed version.
 
 <p align="center">
-  <img src="images/ollama-version.png" alt="Ollama List">
+  <img src="images/ollama/ollama-version.png" alt="Ollama List">
 </p>
 
 ### **macOS**
@@ -72,7 +72,7 @@ ollama list
 ```
 
 <p align="center">
-  <img src="images/ollama-list.png" alt="Ollama List">
+  <img src="images/ollama/ollama-list.png" alt="Ollama List">
 </p>
 
 
@@ -88,7 +88,7 @@ ollama pull llama2
 
 
 <p align="center">
-  <img src="images/ollama-pull-gemma.png" alt="Ollama Pull">
+  <img src="images/ollama/ollama-pull-gemma.png" alt="Ollama Pull">
 </p>
 
 
@@ -96,7 +96,7 @@ ollama pull llama2
 located in a subdirectory called `blobs`. The model's manifest is available in the `~/.ollama/models/manifests/registry.ollama.ai/library/<model>/latest` file.
 
 <p align="center">
-  <img src="images/ollama-models-blobs.png" alt="Ollama download location" width="600">
+  <img src="images/ollama/ollama-models-blobs.png" alt="Ollama download location" width="600">
 </p>
 
 
@@ -106,7 +106,7 @@ located in a subdirectory called `blobs`. The model's manifest is available in t
 ollama rm llama3
 ```
 <p align="center">
-  <img src="images/ollama-rm.png" alt="Ollama remove">
+  <img src="images/ollama/ollama-rm.png" alt="Ollama remove">
 </p>
 
 ---
@@ -144,7 +144,7 @@ time=2025-02-01T20:05:46.959+01:00 level=INFO source=types.go:131 msg="inference
 ```
 
 <p align="center">
-  <img src="images/ollama-serve.png" alt="Ollama Serve">
+  <img src="images/ollama/ollama-serve.png" alt="Ollama Serve">
 </p>
 
 Check if the server is running:
@@ -205,7 +205,7 @@ sudo ollama serve
 ollama run mistral
 ```
 <p align="center">
-  <img src="images/ollama-run-terminal.png" alt="Ollama Run">
+  <img src="images/ollama/ollama-run-terminal.png" alt="Ollama Run">
 </p>
 
 to exit type
@@ -389,7 +389,7 @@ set OLLAMA_USE_CUDA=1
 ollama serve
 ```
 
-### 1.**Change port number**
+### 2.**Change port number**
 
 - To change the port number, use the `OLLAMA_HOST` environment variable to specify the new port:
 ```sh
@@ -418,6 +418,29 @@ time=2025-02-01T22:34:26.002+01:00 level=INFO source=gpu_windows.go:214 msg="" p
 time=2025-02-01T22:34:26.188+01:00 level=INFO source=types.go:131 msg="inference compute" id=GPU-04f76f9a-be0a-544b-9a6f-8607b8d0a9ab library=cuda variant=v12 compute=8.6 driver=12.6 name="NVIDIA GeForce RTX 3060 Ti" total="8.0 GiB" available="7.0 GiB"
 ```
 ---
+
+### 2.**Change cache directory**
+
+#### Change default `.ollama` directory (Symlink)
+- To change the cache directory from Windows directory to a directory that exist in a network, you can symlink the `~/.
+ollama` directory to a different location.
+
+- First move the `.ollama` directory to the new location:
+```powershell
+Move-Item "$env:USERPROFILE\.ollama" "<your-new-directory>" -Force
+```
+- Second, create a symlink to the new location:
+```powershell
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.ollama" -Target "<your-new-directory>"
+```
+PowerShell will complain if the old director in your user profile exists, so make sure you move it to the new
+directory as shown above.
+
+- Restart Ollama to apply the changes.
+- to verify the changes, you can run the `serve` or the `list` command from ollama.
+```shell
+ollama serve
+```
 
 ## 8. Common Issues & Troubleshooting
 

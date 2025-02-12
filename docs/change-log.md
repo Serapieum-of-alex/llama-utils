@@ -10,3 +10,7 @@
 # 0.3.0 (2025-02-05)
 ## models
 - Add support for huggingface llm models `LLMModel`
+
+# 0.*.* (2025-02-*)
+## Storage
+- differentiate between the `document_metadata` and the `node_metadata` in the `Storage` class, to be merged in the future.
