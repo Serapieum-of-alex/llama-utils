@@ -18,7 +18,7 @@ This tutorial will guide you through the installation process on different opera
 ## Installation
 
 For detailed build instructions, refer to the official guide: [Llama.cpp Build Instructions](https://github.com/ggerganov/llama.cpp/blob/master/docs/build.md)
-in the following I will explain the different pre-built binaries that you can download from the llama.cpp github 
+in the following I will explain the different pre-built binaries that you can download from the llama.cpp github
 repository and how to install them on your machine  
 
 ### Windows
@@ -144,31 +144,31 @@ The response will be something like
 
 ```plaintext
 {
-  'id': 'chatcmpl-e8879677-7335-464a-803b-30a15d68c015', 
-  'object': 'chat.completion', 
-  'created': 1739218403, 
-  'model': 'mistral-7b-instruct-v0.2.Q2_K.gguf', 
+  'id': 'chatcmpl-e8879677-7335-464a-803b-30a15d68c015',
+  'object': 'chat.completion',
+  'created': 1739218403,
+  'model': 'mistral-7b-instruct-v0.2.Q2_K.gguf',
   'choices': [
     {
-      'index': 0, 
-      'message': 
+      'index': 0,
+      'message':
         {
-          'role': 'assistant', 
-          'content': ' The size of the sky is not something that can be measured in a way that 
-          is meaningful to us, as it is not a physical object with defined dimensions. 
-          The sky is the expanse above the Earth, and it includes the atmosphere and the outer 
-          space beyond. It goes on forever in all directions, as far as our current understanding 
-          of the universe extends. So, we cannot assign a specific size to the sky. 
-          Instead, we can describe the size of specific parts of the universe, such as the diameter 
+          'role': 'assistant',
+          'content': ' The size of the sky is not something that can be measured in a way that
+          is meaningful to us, as it is not a physical object with defined dimensions.
+          The sky is the expanse above the Earth, and it includes the atmosphere and the outer
+          space beyond. It goes on forever in all directions, as far as our current understanding
+          of the universe extends. So, we cannot assign a specific size to the sky.
+          Instead, we can describe the size of specific parts of the universe, such as the diameter
           of a star or the distance between two galaxies.'
-        }, 
-        'logprobs': None, 
+        },
+        'logprobs': None,
         'finish_reason': 'stop'
     }
-  ], 
+  ],
   'usage': {
-    'prompt_tokens': 13, 
-    'completion_tokens': 112, 
+    'prompt_tokens': 13,
+    'completion_tokens': 112,
     'total_tokens': 125
     }
 }
@@ -176,7 +176,7 @@ The response will be something like
 
 ### Downloading and Using GGUF Models with Llama.from_pretrained
 
-The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them 
+The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them
 without manually downloading the files.
 
 Example:
@@ -186,7 +186,7 @@ from llama_cpp import Llama
 
 # Download and load a GGUF model directly from Hugging Face
 llm = Llama.from_pretrained(
-    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", 
+    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF",
     filename="mistral-7b-instruct-v0.2.Q4_K_M.gguf",
 )
 
@@ -201,44 +201,44 @@ This method simplifies the process by automatically downloading and loading the 
 
 - you can use the `cache_dir` parameter to specify the directory where the model will be downloaded and cached.
 
-- the response will be something like 
+- the response will be something like
 ```plaintext
 {
-    'id': 'chatcmpl-6049f7cd-5e8a-45c0-a69c-e15c1b8842bc', 
-    'object': 'chat.completion', 
-    'created': 1739220646, 
-    'model': 'models--TheBloke--Mistral-7B-Instruct-v0.2-GGUF\\snapshots\\3a6fbf4a41a1d52e415a4958cde6856d34b2db93\\.\\mistral-7b-instruct-v0.2.Q2_K.gguf', 
+    'id': 'chatcmpl-6049f7cd-5e8a-45c0-a69c-e15c1b8842bc',
+    'object': 'chat.completion',
+    'created': 1739220646,
+    'model': 'models--TheBloke--Mistral-7B-Instruct-v0.2-GGUF\\snapshots\\3a6fbf4a41a1d52e415a4958cde6856d34b2db93\\.\\mistral-7b-instruct-v0.2.Q2_K.gguf',
     'choices': [
         {
-            'index': 0, 
-            'message': 
+            'index': 0,
+            'message':
                 {
-                    'role': 'assistant', 
-                    'content': ' A black hole is a region in space where the gravitational pull is so strong that nothing, 
-                        not even light, can escape. The gravity of a black hole is so intense because matter is squeezed 
-                        into a very small space.\n\nBlack holes are formed when a massive star collapses under its own 
-                        gravity at the end of its life. The core collapses in on itself, forming a singularity, 
-                        which is a point of infinite density and zero volume. The singularity is surrounded by an event 
-                        horizon, which is the boundary of the black hole from which no escape is possible.\n\nThe 
-                        intense gravity of a black hole warps the fabric of spacetime around it, causing a significant 
-                        distortion in the paths of nearby stars and planets. This distortion is known as a gravitational 
-                        singularity or a black hole.\n\nThe event horizon of a black hole is not a perfect sphere but 
-                        rather an irregularly shaped surface that is constantly changing as the black hole interacts 
-                        with nearby matter. The event horizon is also not a sharp boundary but rather a gradual 
+                    'role': 'assistant',
+                    'content': ' A black hole is a region in space where the gravitational pull is so strong that nothing,
+                        not even light, can escape. The gravity of a black hole is so intense because matter is squeezed
+                        into a very small space.\n\nBlack holes are formed when a massive star collapses under its own
+                        gravity at the end of its life. The core collapses in on itself, forming a singularity,
+                        which is a point of infinite density and zero volume. The singularity is surrounded by an event
+                        horizon, which is the boundary of the black hole from which no escape is possible.\n\nThe
+                        intense gravity of a black hole warps the fabric of spacetime around it, causing a significant
+                        distortion in the paths of nearby stars and planets. This distortion is known as a gravitational
+                        singularity or a black hole.\n\nThe event horizon of a black hole is not a perfect sphere but
+                        rather an irregularly shaped surface that is constantly changing as the black hole interacts
+                        with nearby matter. The event horizon is also not a sharp boundary but rather a gradual
                         transition from the outside universe to the inside of the black hole.
-                        Black holes are not completely black but rather emit a faint glow due to the energy released 
-                        from the intense gravitational forces at work. This glow is known as Hawking radiation, named 
-                        after the physicist Stephen Hawking, who first proposed the idea.\n\nBlack holes come in 
-                        different sizes, from stellar-mass black holes, which can be as small as a few solar masses, to 
-                        supermassive black holes, which can be millions or billions of solar masses. The supermassive 
+                        Black holes are not completely black but rather emit a faint glow due to the energy released
+                        from the intense gravitational forces at work. This glow is known as Hawking radiation, named
+                        after the physicist Stephen Hawking, who first proposed the idea.\n\nBlack holes come in
+                        different sizes, from stellar-mass black holes, which can be as small as a few solar masses, to
+                        supermassive black holes, which can be millions or billions of solar masses. The supermassive
                         black holes are thought to be at the center of most galaxies, including our own Milky Way.
-                        Black holes are fascinating objects in the universe, and scientists continue to study them to 
+                        Black holes are fascinating objects in the universe, and scientists continue to study them to
                         learn more about the fundamental laws of physics and the nature of spacetime.'
-                }, 
-                'logprobs': None, 
+                },
+                'logprobs': None,
                 'finish_reason': 'stop'
             }
-        ], 
+        ],
         'usage': {'prompt_tokens': 15, 'completion_tokens': 388, 'total_tokens': 403}
     }
 }
@@ -267,7 +267,7 @@ import requests
 # Define the API endpoint
 url = "http://localhost:8000/completion"
 
-# Define the payload 
+# Define the payload
 payload = {
     "model": "mistral-7b-instruct-v0.2.Q4_K_M.gguf",
     "prompt": "How big is the sky?",
@@ -300,7 +300,7 @@ except Exception as e:
 The response will be something like
 
 ```
-Response: 
+Response:
 The sky is not a tangible object and does not have physical dimensions, so it cannot be measured or quantified in the same way that we measure and quantify objects with size or dimensions. The sky is simply the vast expanse of
 
 ```
@@ -316,4 +316,3 @@ curl -X POST "http://localhost:8000/completion" \
 ## Conclusion
 
 This tutorial covered installing, running, and interacting with Llama.cpp on different platforms. You can now integrate Llama models into your applications for local inference and API-based interactions.
-

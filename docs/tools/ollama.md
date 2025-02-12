@@ -433,7 +433,7 @@ Move-Item "$env:USERPROFILE\.ollama" "<your-new-directory>" -Force
 ```powershell
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.ollama" -Target "<your-new-directory>"
 ```
-PowerShell will complain if the old director in your user profile exists, so make sure you move it to the new 
+PowerShell will complain if the old director in your user profile exists, so make sure you move it to the new
 directory as shown above.
 
 - Restart Ollama to apply the changes.
