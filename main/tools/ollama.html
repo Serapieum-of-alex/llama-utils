@@ -16,11 +16,11 @@
         <link rel="prev" href="../api/utils.html">
       
       
-        <link rel="next" href="../change-log.html">
+        <link rel="next" href="llama-cpp.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
     
     
       
@@ -306,6 +306,26 @@
     
   
   LLM Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="notebooks/llama-cpp.html" class="md-tabs__link">
+          
+  
+    
+  
+  Examples
 
         </a>
       </li>
@@ -670,6 +690,8 @@
   
     
     
+      
+        
       
         
       
@@ -1048,11 +1070,35 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#1change-port-number" class="md-nav__link">
+  <a href="#2change-port-number" class="md-nav__link">
     <span class="md-ellipsis">
-      1.Change port number
+      2.Change port number
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2change-cache-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.Change cache directory
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.Change cache directory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-default-ollama-directory-symlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      Change default .ollama directory (Symlink)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1098,6 +1144,102 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="llama-cpp.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Llama.cpp for Local LLM Inference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="notebooks/llama-cpp.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Llama.cpp for Chat Completion
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1441,11 +1583,35 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#1change-port-number" class="md-nav__link">
+  <a href="#2change-port-number" class="md-nav__link">
     <span class="md-ellipsis">
-      1.Change port number
+      2.Change port number
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2change-cache-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.Change cache directory
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.Change cache directory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-default-ollama-directory-symlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      Change default .ollama directory (Symlink)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1535,7 +1701,7 @@
 </code></pre></div>
 <p>This should return the installed version.</p>
 <p align="center">
-  <img src="images/ollama-version.png" alt="Ollama List">
+  <img src="images/ollama/ollama-version.png" alt="Ollama List">
 </p>
 
 <h3 id="macos"><strong>macOS</strong></h3>
@@ -1562,7 +1728,7 @@
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>list
 </code></pre></div>
 <p align="center">
-  <img src="images/ollama-list.png" alt="Ollama List">
+  <img src="images/ollama/ollama-list.png" alt="Ollama List">
 </p>
 
 <h3 id="download-a-model"><strong>Download a Model</strong></h3>
@@ -1572,7 +1738,7 @@ ollama<span class="w"> </span>pull<span class="w"> </span>gemma
 ollama<span class="w"> </span>pull<span class="w"> </span>llama2
 </code></pre></div>
 <p align="center">
-  <img src="images/ollama-pull-gemma.png" alt="Ollama Pull">
+  <img src="images/ollama/ollama-pull-gemma.png" alt="Ollama Pull">
 </p>
 
 <ul>
@@ -1580,14 +1746,14 @@ ollama<span class="w"> </span>pull<span class="w"> </span>llama2
 located in a subdirectory called <code>blobs</code>. The model's manifest is available in the <code>~/.ollama/models/manifests/registry.ollama.ai/library/&lt;model&gt;/latest</code> file.</li>
 </ul>
 <p align="center">
-  <img src="images/ollama-models-blobs.png" alt="Ollama download location" width="600">
+  <img src="images/ollama/ollama-models-blobs.png" alt="Ollama download location" width="600">
 </p>
 
 <h3 id="remove-a-model"><strong>Remove a Model</strong></h3>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>rm<span class="w"> </span>llama3
 </code></pre></div>
 <p align="center">
-  <img src="images/ollama-rm.png" alt="Ollama remove">
+  <img src="images/ollama/ollama-rm.png" alt="Ollama remove">
 </p>
 
 <hr />
@@ -1617,7 +1783,7 @@ ollama<span class="w"> </span>serve
 <span class="nv">time</span><span class="o">=</span><span class="m">2025</span>-02-01T20:05:46.959+01:00<span class="w"> </span><span class="nv">level</span><span class="o">=</span>INFO<span class="w"> </span><span class="nv">source</span><span class="o">=</span>types.go:131<span class="w"> </span><span class="nv">msg</span><span class="o">=</span><span class="s2">&quot;inference compute&quot;</span><span class="w"> </span><span class="nv">id</span><span class="o">=</span>GPU-04f76f9a-be0a-544b-9a6f-8607b8d0a9ab<span class="w"> </span><span class="nv">library</span><span class="o">=</span>cuda<span class="w"> </span><span class="nv">variant</span><span class="o">=</span>v12<span class="w"> </span><span class="nv">compute</span><span class="o">=</span><span class="m">8</span>.6<span class="w"> </span><span class="nv">driver</span><span class="o">=</span><span class="m">12</span>.6<span class="w"> </span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;NVIDIA GeForce RTX 3060 Ti&quot;</span>
 </code></pre></div>
 <p align="center">
-  <img src="images/ollama-serve.png" alt="Ollama Serve">
+  <img src="images/ollama/ollama-serve.png" alt="Ollama Serve">
 </p>
 
 <p>Check if the server is running:</p>
@@ -1656,7 +1822,7 @@ ollama<span class="w"> </span>run<span class="w"> </span>mistral<span class="w">
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>run<span class="w"> </span>mistral
 </code></pre></div>
 <p align="center">
-  <img src="images/ollama-run-terminal.png" alt="Ollama Run">
+  <img src="images/ollama/ollama-run-terminal.png" alt="Ollama Run">
 </p>
 
 <p>to exit type
@@ -1802,7 +1968,7 @@ for Windows use:
 ollama<span class="w"> </span>serve
 </code></pre></div></li>
 </ul>
-<h3 id="1change-port-number">1.<strong>Change port number</strong></h3>
+<h3 id="2change-port-number">2.<strong>Change port number</strong></h3>
 <ul>
 <li>To change the port number, use the <code>OLLAMA_HOST</code> environment variable to specify the new port:
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OLLAMA_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1:8081
@@ -1829,6 +1995,32 @@ C:<span class="se">\U</span>sers<span class="se">\e</span>ng_m&gt;ollama<span cl
 </code></pre></div></li>
 </ul>
 <hr />
+<h3 id="2change-cache-directory">2.<strong>Change cache directory</strong></h3>
+<h4 id="change-default-ollama-directory-symlink">Change default <code>.ollama</code> directory (Symlink)</h4>
+<ul>
+<li>
+<p>To change the cache directory from Windows directory to a directory that exist in a network, you can symlink the <code>~/.
+ollama</code> directory to a different location.</p>
+</li>
+<li>
+<p>First move the <code>.ollama</code> directory to the new location:
+<div class="highlight"><pre><span></span><code><span class="nb">Move-Item</span> <span class="s2">&quot;$env:USERPROFILE\.ollama&quot;</span> <span class="s2">&quot;&lt;your-new-directory&gt;&quot;</span> <span class="n">-Force</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Second, create a symlink to the new location:
+<div class="highlight"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">SymbolicLink</span> <span class="n">-Path</span> <span class="s2">&quot;$env:USERPROFILE\.ollama&quot;</span> <span class="n">-Target</span> <span class="s2">&quot;&lt;your-new-directory&gt;&quot;</span>
+</code></pre></div>
+PowerShell will complain if the old director in your user profile exists, so make sure you move it to the new
+directory as shown above.</p>
+</li>
+<li>
+<p>Restart Ollama to apply the changes.</p>
+</li>
+<li>to verify the changes, you can run the <code>serve</code> or the <code>list</code> command from ollama.
+<div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>serve
+</code></pre></div></li>
+</ul>
 <h2 id="8-common-issues-troubleshooting">8. Common Issues &amp; Troubleshooting</h2>
 <table>
 <thead>
@@ -1943,13 +2135,13 @@ you will gee the following output
         
         
           
-          <a href="../change-log.html" class="md-footer__link md-footer__link--next" aria-label="Next: Change logs">
+          <a href="llama-cpp.html" class="md-footer__link md-footer__link--next" aria-label="Next: Using Llama.cpp for Local LLM Inference">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Change logs
+                Using Llama.cpp for Local LLM Inference
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1986,7 +2178,7 @@ you will gee the following output
     <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.f13b1293.min.js"></script>
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
       
     
   </body>
