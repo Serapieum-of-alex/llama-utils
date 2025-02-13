@@ -188,6 +188,65 @@ def get_hugging_face_embedding(
     return embedding
 
 
+def get_huggingface_llm(**kwargs):
+    """Initializes and returns a HuggingFaceLLM instance with specified parameters.
+
+    Parameters
+    ----------
+    kwargs: dict
+        context_window : int, optional
+            The maximum context window size, by default DEFAULT_CONTEXT_WINDOW.
+        max_new_tokens : int, optional
+            The maximum number of new tokens to generate, by default DEFAULT_NUM_OUTPUTS.
+        generate_kwargs : dict, optional
+            Additional arguments for text generation, by default {"temperature": 0.75, "do_sample": False}.
+        query_wrapper_prompt : str, optional
+            The wrapper prompt for query execution, by default "Answer the following question succinctly and informatively.".
+        tokenizer_name : str, optional
+            The tokenizer model name, by default DEFAULT_HUGGINGFACE_MODEL.
+        model_name : str, optional
+            The model name, by default DEFAULT_HUGGINGFACE_MODEL.
+        device_map : str, optional
+            The device mapping strategy, by default "auto".
+        tokenizer_kwargs : dict, optional
+            Additional tokenizer arguments, by default {"max_length": 2048}.
+        model_kwargs : dict, optional
+            Additional model arguments, by default {"torch_dtype": torch.float16}.
+
+    Returns
+    -------
+    HuggingFaceLLM
+        An instance of the HuggingFaceLLM class.
+    """
+    try:
+        import torch
+        from llama_index.llms.huggingface import HuggingFaceLLM
+    except ImportError:
+        raise ImportError(
+            "Please install the `llama-index-llms-huggingface` package to use the HuggingFaceLLM model."
+        )
+
+    return HuggingFaceLLM(
+        context_window=kwargs.get("context_window", DEFAULT_CONTEXT_WINDOW),
+        max_new_tokens=kwargs.get("max_new_tokens", DEFAULT_NUM_OUTPUTS),
+        generate_kwargs=kwargs.get(
+            "generate_kwargs", {"temperature": 0.75, "do_sample": False}
+        ),
+        query_wrapper_prompt=kwargs.get(
+            "query_wrapper_prompt",
+            "Answer the following question succinctly and informatively.",
+        ),
+        tokenizer_name=kwargs.get("tokenizer_name", DEFAULT_HUGGINGFACE_MODEL),
+        model_name=kwargs.get("model_name", DEFAULT_HUGGINGFACE_MODEL),
+        device_map=kwargs.get("device_map", "auto"),
+        tokenizer_kwargs=kwargs.get("tokenizer_kwargs", {"max_length": 2048}),
+        model_kwargs=kwargs.get(
+            "model_kwargs",
+            {"torch_dtype": torch.float16},
+        ),
+    )
+
+
 class LLMModel:
     r"""Abstraction layer for different LLM providers: AzureOpenAI, Ollama, and HuggingFace.
 
@@ -254,28 +313,7 @@ class LLMModel:
         elif self.model_type == "ollama":
             return get_ollama_llm(**kwargs)
         elif self.model_type == "huggingface":
-            import torch
-            from llama_index.llms.huggingface import HuggingFaceLLM
-
-            return HuggingFaceLLM(
-                context_window=kwargs.get("context_window", DEFAULT_CONTEXT_WINDOW),
-                max_new_tokens=kwargs.get("max_new_tokens", DEFAULT_NUM_OUTPUTS),
-                generate_kwargs=kwargs.get(
-                    "generate_kwargs", {"temperature": 0.75, "do_sample": False}
-                ),
-                query_wrapper_prompt=kwargs.get(
-                    "query_wrapper_prompt",
-                    "Answer the following question succinctly and informatively.",
-                ),
-                tokenizer_name=kwargs.get("tokenizer_name", DEFAULT_HUGGINGFACE_MODEL),
-                model_name=kwargs.get("model_name", DEFAULT_HUGGINGFACE_MODEL),
-                device_map=kwargs.get("device_map", "auto"),
-                tokenizer_kwargs=kwargs.get("tokenizer_kwargs", {"max_length": 2048}),
-                model_kwargs=kwargs.get(
-                    "model_kwargs",
-                    {"torch_dtype": torch.float16},
-                ),
-            )
+            return get_huggingface_llm(**kwargs)
         else:
             raise ValueError(f"Unsupported model type: {self.model_type}")
 
