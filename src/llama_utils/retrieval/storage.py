@@ -343,17 +343,21 @@ class Storage:
         """
         return list(self.docstore.docs.keys())
 
-    def delete_document(self, doc_id: str):
+    def delete_document(self, doc_id: str = None, document_name: str = None):
         """Delete a document from the docstore.
 
         Parameters
         ----------
-        doc_id: str
+        doc_id: str, Optional, Default is None.
             The ID of the document to delete.
+        document_name: str, optional, default is None.
+            The name of the document to delete.
 
-        Returns
-        -------
-        None
+
+        Notes
+        -----
+        - If the `doc_id` is provided, the document with the specified ID will be deleted.
+        - If the `document_name` is provided, all the nodes related to the document with the specified name will be deleted.
 
         Examples
         --------
@@ -361,6 +365,7 @@ class Storage:
         `delete_document` method by providing the `document_id`:
 
         ```python
+        >>> from llama_utils.retrieval.storage import Storage
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> document_metadata = store.document_metadata
         >>> document_id = list(document_metadata().keys())[0]
@@ -377,10 +382,29 @@ class Storage:
         {}
 
         ```
+
+        You can also delete a document by providing the `document_name`:
+        ```python
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> print(store.node_metadata.head()) # doctest: +SKIP
+                       file_name                                            node_id
+        0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+        2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        3  paul_graham_essay.txt  120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5...
+        4  paul_graham_essay.txt  c8587b5b5fc034bb08cd62cf0a082014f00fc09ccd2944...
+        >>> store.delete_document(document_name="paul_graham_essay.txt")
+
+        ```
         """
-        if doc_id not in self.document_metadata().keys():
-            raise ValueError(f"Document with ID {doc_id} not found.")
-        self.docstore.delete_ref_doc(doc_id)
+        if not document_name:
+            if doc_id not in self.document_metadata().keys():
+                raise ValueError(f"Document with ID {doc_id} not found.")
+            self.docstore.delete_ref_doc(doc_id)
+        else:
+            node_ids = self.get_nodes_by_file_name(document_name)
+            for node_id in node_ids:
+                self.delete_node(node_id.node_id)
 
     def delete_node(self, node_id: str):
         """Delete a node from the docstore.

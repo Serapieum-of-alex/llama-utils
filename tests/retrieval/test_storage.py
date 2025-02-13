@@ -201,6 +201,13 @@ class TestDeleteDocument:
             not in paul_graham_essay_storage.document_metadata().keys()
         )
 
+    def test_delete_by_document_name(
+        self, paul_graham_essay_storage: Storage, essay_document_id: str
+    ):
+        essay_document_name = "paul_graham_essay.txt"
+        paul_graham_essay_storage.delete_document(document_name=essay_document_name)
+        assert len(paul_graham_essay_storage.document_metadata().keys()) == 0
+
     def test_node(self, paul_graham_essay_storage: Storage, essay_node_id: str):
         paul_graham_essay_storage.delete_node(essay_node_id)
         assert essay_node_id not in paul_graham_essay_storage.node_id_list()
