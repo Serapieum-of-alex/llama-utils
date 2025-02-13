@@ -1,4 +1,6 @@
 import os
+import shutil
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -78,7 +80,7 @@ class TestStorage:
             Storage(5)
 
     def test_save(self, test_empty_storage: Storage):
-        path = "tests/data/Storage"
+        path = "tests/data/test-save-delete-me"
         test_empty_storage.save(path)
 
         assert os.path.exists(path), "Storage not saved."
@@ -90,6 +92,10 @@ class TestStorage:
             "index_store.json",
         ]
         assert all(elem in os.listdir(path) for elem in docstore_content)
+        try:
+            shutil.rmtree(path)
+        except PermissionError:
+            pass
 
     def test_add_documents(
         self,
@@ -195,6 +201,13 @@ class TestDeleteDocument:
             not in paul_graham_essay_storage.document_metadata().keys()
         )
 
+    def test_delete_by_document_name(
+        self, paul_graham_essay_storage: Storage, essay_document_id: str
+    ):
+        essay_document_name = "paul_graham_essay.txt"
+        paul_graham_essay_storage.delete_document(document_name=essay_document_name)
+        assert len(paul_graham_essay_storage.document_metadata().keys()) == 0
+
     def test_node(self, paul_graham_essay_storage: Storage, essay_node_id: str):
         paul_graham_essay_storage.delete_node(essay_node_id)
         assert essay_node_id not in paul_graham_essay_storage.node_id_list()
@@ -228,13 +241,23 @@ class TestMetaData:
         ]
 
 
-def test_read_documents(data_path: str):
-    docs = Storage.read_documents(data_path)
-    assert len(docs) == 4
-    doc = docs[0]
-    assert doc.excluded_embed_metadata_keys == ["file_name"]
-    assert doc.excluded_embed_metadata_keys == ["file_name"]
-    assert docs[0].doc_id == generate_content_hash(docs[0].text)
+class TestReadDocuments:
+    def test_read_documents(self, data_path: str):
+        docs = Storage.read_documents(data_path)
+        assert len(docs) == 4
+        assert isinstance(docs[0], Document)
+        doc = docs[0]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert docs[0].metadata["content-hash"] == generate_content_hash(docs[0].text)
+
+    def test_split_into_nodes(self, data_path: str):
+        path = Path(data_path)
+        nodes = Storage.read_documents(path, split_into_nodes=True)
+        assert len(nodes) == 4
+        assert isinstance(nodes[0], TextNode)
+        doc = nodes[0]
+        assert doc.excluded_embed_metadata_keys == ["file_name"]
+        assert nodes[0].metadata["content-hash"] == generate_content_hash(nodes[0].text)
 
 
 @patch("llama_index.core.ingestion.IngestionPipeline.run")
