@@ -11,9 +11,12 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.12,<3.13"
 llama-index = "^0.12.12"
 pandas = "^2.2.3"
+
+[tool.poetry.group.parser.dependencies]
+docling = "^2.22.0"
 
 [tool.poetry.group.analysis.dependencies]
 jupyter="*"
@@ -25,6 +28,8 @@ llama-index-llms-ollama = "^0.5.0"
 llama-index-llms-azure-openai = "^0.3.0"
 llama-index-embeddings-azure-openai = "^0.3.0"
 
+[tool.poetry.group.vision.dependencies]
+opencv-python = "^4.11.0.86"
 
 [tool.poetry.group.testing.dependencies]
 pytest = "^8.3.3"
@@ -52,7 +57,6 @@ pre-commit-hooks = "^5.0.0"
 pre-commit-commit-msg-hooks = "^0.1.0"
 flake8-pyproject = "^1.2.3"
 pydata-sphinx-theme = "^0.16.0"
-
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.2"
