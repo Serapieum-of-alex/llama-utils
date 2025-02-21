@@ -1,6 +1,10 @@
 """PDF Text Extraction Utilities."""
 
+import base64
 import re
+from pathlib import Path
+
+from llama_index.core.schema import ImageDocument
 
 
 def extract_figures_data(pdf_text: str):
@@ -87,3 +91,62 @@ def extract_figures_data(pdf_text: str):
         figures.append(figure_entry)
 
     return figures
+
+
+def create_image_document(image_path: str, **kwargs) -> ImageDocument:
+    """Creates an ImageDocument from a local image file.
+
+    Parameters
+    ----------
+    image_path : str
+        The path to the image file.
+    **kwargs
+        Additional keyword arguments to pass to the ImageDocument.
+        caption_text : str, optional
+            The caption text for the image.
+        metadata : dict, optional
+            Any additional metadata to store.
+
+    Returns
+    -------
+    ImageDocument
+        The ImageDocument object.
+
+    Examples
+    --------
+    ```python
+    >>> from llama_utils.retrieval.pdf_reader import create_image_document
+    >>> path = "examples/data/images/calibration.png"
+    >>> caption = "Calibration framework of hydrological models."
+    >>> doc = create_image_document(path, **{"caption_text": caption})
+    >>> print(doc.doc_id)
+    img-calibration.png
+    >>> print(doc.metadata["filename"])
+    calibration.png
+    >>> print(doc.text)
+    figure caption: Calibration framework of hydrological models.
+
+    ```
+    """
+    image_path = Path(image_path)
+    # base64 encoded image
+    with open(image_path, "rb") as f:
+        raw_image_data = f.read()
+        im_base64 = base64.b64encode(raw_image_data).decode("utf-8")
+
+    image_text = ""
+    if "caption_text" in kwargs:
+        caption_text = kwargs["caption_text"]
+        image_text += f"figure caption: {caption_text}\n"
+
+    # Create the ImageDocument.
+    # 'text' is for any search-relevant text (OCR results, caption, etc.).
+    # 'image' will hold the raw image data.
+    doc = ImageDocument(
+        id_=f"img-{image_path.name}",
+        image=im_base64,
+        text=image_text,
+        image_path=str(image_path),
+        metadata={"filename": image_path.name} | kwargs.get("metadata", {}),
+    )
+    return doc
