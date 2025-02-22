@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.core.schema import Document, TextNode
@@ -84,3 +86,8 @@ def essay_document_id() -> str:
 @pytest.fixture()
 def essay_node_id() -> str:
     return "cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7"
+
+
+@pytest.fixture
+def geoscience_pdf() -> Path:
+    return Path("tests/data/pdf/geoscience-paper.pdf")

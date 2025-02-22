@@ -4,7 +4,14 @@ import base64
 import re
 from pathlib import Path
 
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling_core.types.doc import ImageRefMode
 from llama_index.core.schema import ImageDocument
+
+IMAGE_RESOLUTION_SCALE = 2.0
+IMAGE_DIR_SUFFIX = "_artifacts"
 
 
 def extract_figures_data(pdf_text: str):
@@ -150,3 +157,61 @@ def create_image_document(image_path: str, **kwargs) -> ImageDocument:
         metadata={"filename": image_path.name} | kwargs.get("metadata", {}),
     )
     return doc
+
+
+def parse_pdf_with_docling(pdf_path: Path) -> tuple[Path, Path]:
+    """Parse PDF with Docling and save as markdown with image references.
+
+    Parameters
+    ----------
+    pdf_path : Path
+        The path to the PDF file to parse.
+
+    Examples
+    --------
+    ```python
+    >>> from llama_utils.retrieval.pdf_reader import parse_pdf_with_docling
+    >>> pdf_path = Path("examples/data/pdfs/geoscience-paper.pdf")
+    >>> md_path, images_dir = parse_pdf_with_docling(pdf_path) # doctest: +SKIP
+    Markdown file saved to examples/data/pdfs/geoscience-paper.md
+    >>> print(images_dir)
+    examples/data/pdfs/geoscience-paper_artifacts
+    >>> print(list(images_dir.iterdir())) # doctest: +SKIP
+    [PosixPath('examples/data/pdfs/geoscience-paper_artifacts/image_000000_xyz.png')]
+    ```
+
+    Note
+    ----
+    - The markdown file will be saved with the same name as the pdf file but with a `.md` extension.
+    - The markdown file will contain image references to the local files.
+    - The images are saved externally and referenced in the markdown file.
+    - The images are saved in the same directory as the pdf in a subfolder named `<pdf-file-name>_artifacts`.
+    - The images will have names like `image_000000_xyz.png`.
+    """
+    if isinstance(pdf_path, str):
+        pdf_path = Path(pdf_path)
+
+    if not pdf_path.exists():
+        raise FileNotFoundError(f"PDF file not found at {pdf_path}")
+
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.images_scale = IMAGE_RESOLUTION_SCALE
+    pipeline_options.generate_page_images = True
+    pipeline_options.generate_picture_images = True
+
+    doc_converter = DocumentConverter(
+        format_options={
+            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+        }
+    )
+
+    result = doc_converter.convert(pdf_path)
+
+    md_file = pdf_path.with_suffix(".md")
+    result.document.save_as_markdown(md_file, image_mode=ImageRefMode.REFERENCED)
+    print(f"Markdown file saved to {md_file}")
+
+    ims_rdir = md_file.parent / f"{md_file.stem}{IMAGE_DIR_SUFFIX}"
+
+    return md_file, ims_rdir
+
