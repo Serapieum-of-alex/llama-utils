@@ -1,11 +1,13 @@
 import shutil
 from pathlib import Path
+from typing import Dict
 
 from llama_index.core.schema import ImageDocument
 
 from llama_utils.retrieval.pdf_reader import (
     create_image_document,
     extract_figures_data,
+    get_image_docs_from_md,
     parse_pdf_with_docling,
 )
 
@@ -63,3 +65,13 @@ def test_parse_with_docling(geoscience_pdf: Path):
         shutil.rmtree(ims_rdir)
     except PermissionError:
         pass
+
+
+def test_get_image_docs_from_md(geoscience_paper_artifacts: Dict[str, str]):
+
+    md_path = Path(geoscience_paper_artifacts["md_file"])
+    image_docs = get_image_docs_from_md(md_path)
+    assert len(image_docs) == 1
+    assert isinstance(image_docs[0], ImageDocument)
+    images = list(Path(geoscience_paper_artifacts["images_dir"]).iterdir())
+    assert image_docs[0].doc_id == f"img-{images[0].name}"

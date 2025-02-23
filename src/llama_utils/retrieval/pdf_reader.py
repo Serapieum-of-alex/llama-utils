@@ -174,7 +174,7 @@ def parse_pdf_with_docling(pdf_path: Path) -> tuple[Path, Path]:
     >>> pdf_path = Path("examples/data/pdfs/geoscience-paper.pdf")
     >>> md_path, images_dir = parse_pdf_with_docling(pdf_path) # doctest: +SKIP
     Markdown file saved to examples/data/pdfs/geoscience-paper.md
-    >>> print(images_dir)
+    >>> print(images_dir) # doctest: +SKIP
     examples/data/pdfs/geoscience-paper_artifacts
     >>> print(list(images_dir.iterdir())) # doctest: +SKIP
     [PosixPath('examples/data/pdfs/geoscience-paper_artifacts/image_000000_xyz.png')]
@@ -215,3 +215,76 @@ def parse_pdf_with_docling(pdf_path: Path) -> tuple[Path, Path]:
 
     return md_file, ims_rdir
 
+
+def get_image_docs_from_md(md_file: Path) -> list[ImageDocument]:
+    r"""Get ImageDocuments from a Markdown file.
+
+    Parameters
+    ----------
+    md_file : Path
+        The path to the Markdown file.
+
+    Returns
+    -------
+    list of ImageDocument
+        The list of ImageDocument objects.
+
+    Examples
+    --------
+    ```python
+    >>> from llama_utils.retrieval.pdf_reader import get_image_docs_from_md
+    >>> md_file = Path("examples/data/pdfs/geoscience-paper.md")
+    >>> image_docs = get_image_docs_from_md(md_file)
+    >>> print((image_docs)) # doctest: +SKIP
+    [
+        ImageDocument(
+            id_='img-image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png',
+            embedding=None,
+            metadata={
+                'filename': 'image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png'},
+                excluded_embed_metadata_keys=[],
+                excluded_llm_metadata_keys=[],
+                relationships={},
+                metadata_template='{key}: {value}',
+                metadata_separator='\n',
+                text_resource=MediaResource(
+                    embeddings=None,
+                    data=None,
+                    text='figure caption: Two variants of raster based conceptual distributed models (of type 2): ...',
+                    path=None,
+                    url=None,
+                    mimetype=None
+                ),
+                image_resource=MediaResource(
+                    embeddings=None,
+                    data=b'iVBORw0KGgoAAAANSUhEUgAAAtgAAAFSCAIAAABHcj9xAAEAAElEQVR4nOz9B5gcV3YmiF4TJl1571EACt47ggBJ0H...',
+                    text=None,
+                    path=None,
+                    url=None,
+                    mimetype='image/png'
+                ),
+                audio_resource=None,
+                video_resource=None,
+                text_template='{metadata_str}\n\n{content}'
+        )
+    ]
+
+    ```
+    """
+    if not md_file.exists():
+        raise FileNotFoundError(f"Markdown file not found at {md_file}")
+
+    doc_text = md_file.read_text(encoding="utf-8")
+    # read the images from the markdown file
+
+    # extract the figure captions
+    images_data = extract_figures_data(doc_text)
+
+    image_docs = []
+    for im_data in images_data:
+        im_path = md_file.parent / im_data["image_path"]
+        image_document = create_image_document(
+            im_path, caption_text=im_data["caption_text"]
+        )
+        image_docs.append(image_document)
+    return image_docs

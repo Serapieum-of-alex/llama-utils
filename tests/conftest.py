@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 import pytest
 from llama_index.core import StorageContext, VectorStoreIndex
@@ -91,3 +92,12 @@ def essay_node_id() -> str:
 @pytest.fixture
 def geoscience_pdf() -> Path:
     return Path("tests/data/pdf/geoscience-paper.pdf")
+
+
+@pytest.fixture
+def geoscience_paper_artifacts() -> Dict[str, str]:
+    r_dir = "tests/data/pdf/geoscience-paper-parsing-artifacts"
+    return {
+        "md_file": f"{r_dir}/geoscience-paper.md",
+        "images_dir": f"{r_dir}/geoscience-paper_artifacts",
+    }
