@@ -3,10 +3,12 @@
 import base64
 import re
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
 
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
-from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.document_converter import DocumentConverter as Docling_DocConverter
+from docling.document_converter import PdfFormatOption
 from docling_core.types.doc import ImageRefMode
 from llama_index.core.schema import ImageDocument
 
@@ -14,277 +16,322 @@ IMAGE_RESOLUTION_SCALE = 2.0
 IMAGE_DIR_SUFFIX = "_artifacts"
 
 
-def extract_figures_data(pdf_text: str):
-    r"""Extract Figure Data from PDF Text.
-
-    Extract figure data (local path/ caption /figure number) from a PDF text dump,
-    purely via regex. We assume each figure looks like:
-
-        Figure 2. Study area: ...
-        ![Image](paper_artifacts\\image_000000_xyz.png)
-
-    where "Figure 2." or "Figure 12." etc. precedes the caption text,
-    and the actual image reference is on a separate line starting with ![Image]()
+class DocumentConverter:
+    """Handle document conversion, defaults to using docling's DocumentConverter.
 
     Parameters
     ----------
-    pdf_text : str
-        The entire PDF content as plain text.
+    converter : Optional[DocumentConverter], optional
+        Custom document converter instance, by default None, which initializes a default DocumentConverter.
 
-    Returns
+    Methods
     -------
-    list of dict
-        Each dict contains:
+    convert(pdf_path)
+        Converts a PDF file to a Markdown file with extracted images.
+
+    Examples
+    --------
+    ```python
+    >>> converter = DocumentConverter()
+
+    ```
+    """
+
+    def __init__(self, converter: Optional[Docling_DocConverter] = None):
+        """Initialize the DocumentConverter instance."""
+        if converter is None:
+            pipeline_options = PdfPipelineOptions()
+            pipeline_options.images_scale = IMAGE_RESOLUTION_SCALE
+            pipeline_options.generate_page_images = True
+            pipeline_options.generate_picture_images = True
+            self.converter = Docling_DocConverter(
+                format_options={
+                    InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+                }
+            )
+        else:
+            self.converter = converter
+
+    def convert(self, pdf_path: Path) -> Tuple[Path, Path]:
+        """Convert a PDF file to a Markdown file with extracted images as external reference in the file.
+
+        Parameters
+        ----------
+        pdf_path : [Path]
+            Path to the PDF file to be converted.
+
+        Returns
+        -------
+        pdf_path: [Path]
+            Path to the generated Markdown file.
+        images_dir: [Path]
+            Path to the directory containing the extracted images.
+
+        Examples
+        --------
+        ```python
+        >>> from llama_utils.retrieval.pdf_reader import DocumentConverter
+        >>> pdf_path = Path("examples/data/pdfs/geoscience-paper.pdf")
+        >>> converter = DocumentConverter()
+        >>> markdown_file, images_dir = converter.convert(pdf_path)  # doctest: +SKIP
+        >>> print(images_dir) # doctest: +SKIP
+        examples/data/pdfs/geoscience-paper_artifacts
+        >>> print(list(images_dir.iterdir())) # doctest: +SKIP
+        [
+            PosixPath('examples/data/pdfs/geoscience-paper_artifacts/image_000000_xyz.png'),
+            PosixPath('examples/data/pdfs/geoscience-paper_artifacts/image_000001_xyz.png')
+        ]
+
+        ```
+
+        Note
+        ----
+        - The markdown file will be saved with the same name as the pdf file but with a `.md` extension.
+        - The markdown file will contain image references to the local files.
+        - The images are saved externally and referenced in the markdown file.
+        - The images are saved in the same directory as the pdf in a subfolder named `<pdf-file-name>_artifacts`.
+        - The images will have names like `image_000000_xyz.png`.
+        """
+        if isinstance(pdf_path, str):
+            pdf_path = Path(pdf_path)
+
+        if not pdf_path.exists():
+            raise FileNotFoundError(f"PDF file not found at {pdf_path}")
+
+        result = self.converter.convert(pdf_path)
+        md_file = pdf_path.with_suffix(".md")
+        result.document.save_as_markdown(md_file, image_mode=ImageRefMode.REFERENCED)
+        images_rdir = md_file.parent / f"{md_file.stem}{IMAGE_DIR_SUFFIX}"
+        return md_file, images_rdir
+
+
+class PDFReader:
+    """Main class to handle PDF text extraction and image processing.
+
+    Parameters
+    ----------
+    document_converter : Optional[DocumentConverterWrapper], optional
+        A document converter instance to use for parsing PDFs, by default None which uses DocumentConverterWrapper.
+
+    Methods
+    -------
+    extract_figures_data(pdf_text)
+        Extracts figure captions and image references from a PDF text dump.
+
+    create_image_document(image_path, caption_text)
+        Creates an ImageDocument from an image file.
+
+    parse_pdf(pdf_path)
+        Parses the PDF, extracting images and generating markdown output.
+    """
+
+    def __init__(self, document_converter: Optional[DocumentConverter] = None):
+        """Initialize the PDFReader instance."""
+        self.document_converter = document_converter or DocumentConverter()
+
+    @staticmethod
+    def extract_figures_data(pdf_text: str) -> List[Dict[str, str]]:
+        r"""Extract figure captions and image references from a PDF text.
+
+        Extract figure data (local path/ caption /figure number) from a PDF text dump,
+        purely via regex. We assume each figure looks like:
+
+            Figure 2. Study area: ...
+            ![Image](paper_artifacts\\image_000000_xyz.png)
+
+        where "Figure 2." or "Figure 12." etc. precedes the caption text,
+        and the actual image reference is on a separate line starting with ![Image]()
+
+
+        Parameters
+        ----------
+        pdf_text : str
+            The entire PDF content as plain text.
+
+        Returns
+        -------
+        List[Dict[str, str]]
+            A list of dictionaries containing figure numbers, captions, and image paths.
+            Each dict contains:
             {
                 "figure_number": "Figure 2.",
                 "caption_text": "Study area: ...",
                 "image_path": "paper_artifacts\\image_000000_xyz.png"
             }
 
-    Examples
-    --------
-    ```python
-    >>> pdf_text = '''Some introduction text ...\n
-    ...             Figure 2. Study area: The main campus ...
-    ...             "![Image](paper_artifacts\\image_000000_ccc2c343.png)
-    ...
-    ...            "Some other random text ...
-    ...
-    ...             "Figure 3. Another figure's caption.
-    ...             "![Image](paper_artifacts\\image_000001_abc123.png)
-    ...             '''
-    >>> results = extract_figures_data(pdf_text)
-    >>> print(results) # doctest: +SKIP
-    [
-        {
-            'figure_number': 'Figure 2.',
-            'caption_text': 'Study area: The main campus ...',
-            'image_path': 'paper_artifacts\\image_000000_ccc2c343.png'
-        },
-        {
-            'figure_number': 'Figure 3.',
-            'caption_text': "Another figure's caption.",
-            'image_path': 'paper_artifacts\\image_000001_abc123.png'
-        }
-    ]
-    ```
-    """
-    # Regex Explanation:
-    # 1) (Figure\s+\d+\.\s*) captures text like "Figure 2. " or "Figure 10. "
-    # 2) (.*?) captures the figure caption until ...
-    # 3) \n?\!\[Image\]\((.*?)\) looks for an optional newline, then "![Image](",
-    #    then captures the path inside parentheses, then a closing ")"
-    #
-    # The DOTALL flag (re.DOTALL) makes the '.' match newlines, so we can capture
-    # multi-line captions if they exist.
-    pattern = re.compile(
-        r"(Figure\s+\d+\.\s*)(.*?)\n?\!\[Image\]\((.*?)\)", flags=re.DOTALL
-    )
+        Examples
+        --------
+        ```python
+        >>> from llama_utils.retrieval.pdf_reader import PDFReader
+        >>> reader = PDFReader()
+        >>> pdf_text = '''Some introduction text ...\n
+        ...             Figure 2. Study area: The main campus ...
+        ...             "![Image](paper_artifacts\\image_000000_ccc2c343.png)
+        ...
+        ...            "Some other random text ...
+        ...
+        ...             "Figure 3. Another figure's caption.
+        ...             "![Image](paper_artifacts\\image_000001_abc123.png)
+        ...             '''
+        >>> figures_data = reader.extract_figures_data(pdf_text)
+        >>> print(figures_data) # doctest: +SKIP
+        [
+            {
+                'figure_number': 'Figure 2.',
+                'caption_text': 'Study area: The main campus ...',
+                'image_path': 'paper_artifacts\\image_000000_ccc2c343.png'
+            },
+            {
+                'figure_number': 'Figure 3.',
+                'caption_text': "Another figure's caption.",
+                'image_path': 'paper_artifacts\\image_000001_abc123.png'
+            }
+        ]
+        ```
+        """
+        # Regex Explanation:
+        # 1) (Figure\s+\d+\.\s*) captures text like "Figure 2. " or "Figure 10. "
+        # 2) (.*?) captures the figure caption until ...
+        # 3) \n?\!\[Image\]\((.*?)\) looks for an optional newline, then "![Image](",
+        #    then captures the path inside parentheses, then a closing ")"
+        #
+        # The DOTALL flag (re.DOTALL) makes the '.' match newlines, so we can capture
+        # multi-line captions if they exist.
+        pattern = re.compile(
+            r"(Figure\s+\d+\.\s*)(.*?)\n?!\[Image\]\((.*?)\)", re.DOTALL
+        )
+        matches = pattern.findall(pdf_text)
 
-    matches = pattern.findall(pdf_text)
+        return [
+            {
+                "figure_number": match[0].strip(),
+                "caption_text": match[1].strip(),
+                "image_path": match[2].replace("%5C", "/").strip(),
+            }
+            for match in matches
+        ]
 
-    figures = []
-    for match in matches:
-        figure_number_raw = match[0]  # e.g. "Figure 2. "
-        caption_raw = match[1]  # e.g. "Study area: ..."
-        image_path_raw = match[2]  # e.g. "paper_artifacts\image_000000.png"
-        image_path_raw = image_path_raw.replace("%5C", "/")
+    @staticmethod
+    def create_image_document(
+        image_path: str, caption_text: Optional[str] = None, **kwargs
+    ) -> ImageDocument:
+        """Create an ImageDocument from an image file.
 
-        figure_entry = {
-            "figure_number": figure_number_raw.strip(),
-            "caption_text": caption_raw.strip(),
-            "image_path": image_path_raw.strip(),
-        }
-        figures.append(figure_entry)
+        Parameters
+        ----------
+        image_path : str
+            Path to the image file.
+        caption_text : Optional[str], optional, default is None.
+            The caption text associated with the image.
+        **kwargs:
+            Additional keyword arguments to pass to the ImageDocument.
+            metadata : dict, optional
+                Any additional metadata to store.
 
-    return figures
+        Returns
+        -------
+        ImageDocument
+            The ImageDocument object containing the image and metadata.
 
+        Examples
+        --------
+        ```python
+        >>> from llama_utils.retrieval.pdf_reader import PDFReader
+        >>> image_path = "examples/data/images/calibration.png"
+        >>> caption = "Calibration framework of hydrological models."
+        >>> reader = PDFReader()
+        >>> image_doc = reader.create_image_document(image_path, caption)
+        >>> print(image_doc.doc_id)
+        img-calibration.png
+        >>> print(image_doc.metadata["filename"])
+        calibration.png
+        >>> print(image_doc.text)
+        figure caption: Calibration framework of hydrological models.
 
-def create_image_document(image_path: str, **kwargs) -> ImageDocument:
-    """Creates an ImageDocument from a local image file.
+        ```
+        """
+        image_path = Path(image_path)
+        with open(image_path, "rb") as f:
+            im_base64 = base64.b64encode(f.read()).decode("utf-8")
 
-    Parameters
-    ----------
-    image_path : str
-        The path to the image file.
-    **kwargs
-        Additional keyword arguments to pass to the ImageDocument.
-        caption_text : str, optional
-            The caption text for the image.
-        metadata : dict, optional
-            Any additional metadata to store.
+        return ImageDocument(
+            id_=f"img-{image_path.name}",
+            image=im_base64,
+            text=f"figure caption: {caption_text}\n" if caption_text else "",
+            image_path=str(image_path),
+            metadata={"filename": image_path.name} | kwargs.get("metadata", {}),
+        )
 
-    Returns
-    -------
-    ImageDocument
-        The ImageDocument object.
+    def parse_pdf(
+        self, pdf_path: Union[str, Path]
+    ) -> Dict[str, Union[Path, List[ImageDocument]]]:
+        r"""Parse the PDF, extracting images and generating markdown output.
 
-    Examples
-    --------
-    ```python
-    >>> from llama_utils.retrieval.pdf_reader import create_image_document
-    >>> path = "examples/data/images/calibration.png"
-    >>> caption = "Calibration framework of hydrological models."
-    >>> doc = create_image_document(path, **{"caption_text": caption})
-    >>> print(doc.doc_id)
-    img-calibration.png
-    >>> print(doc.metadata["filename"])
-    calibration.png
-    >>> print(doc.text)
-    figure caption: Calibration framework of hydrological models.
+        Parameters
+        ----------
+        pdf_path : Union[str, Path]
+            Path to the PDF file to be processed.
 
-    ```
-    """
-    image_path = Path(image_path)
-    # base64 encoded image
-    with open(image_path, "rb") as f:
-        raw_image_data = f.read()
-        im_base64 = base64.b64encode(raw_image_data).decode("utf-8")
+        Returns
+        -------
+        Dict[str, Union[Path, List[ImageDocument]]]
+            A dictionary containing the markdown file path and a list of extracted ImageDocument objects.
 
-    image_text = ""
-    if "caption_text" in kwargs:
-        caption_text = kwargs["caption_text"]
-        image_text += f"figure caption: {caption_text}\n"
+        Examples
+        --------
+        ```python
+        >>> from llama_utils.retrieval.pdf_reader import PDFReader
+        >>> pdf_path = Path("examples/data/pdfs/geoscience-paper.pdf")
+        >>> reader = PDFReader()
+        >>> result = reader.parse_pdf(pdf_path) # doctest: +SKIP
+        >>> print(result.keys()) # doctest: +SKIP
+        dict_keys(['markdown', 'images'])
+        >>> print(result["markdown"]) # doctest: +SKIP
+        examples/data/pdfs/geoscience-paper.md
+        >>> print(result["images"]) # doctest: +SKIP
+        [
+            ImageDocument(
+                id_='img-image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png',
+                embedding=None,
+                metadata={
+                    'filename': 'image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png'},
+                    excluded_embed_metadata_keys=[],
+                    excluded_llm_metadata_keys=[],
+                    relationships={},
+                    metadata_template='{key}: {value}',
+                    metadata_separator='\n',
+                    text_resource=MediaResource(
+                        embeddings=None,
+                        data=None,
+                        text='figure caption: Two variants of raster based conceptual distributed models (of type 2): ...',
+                        path=None,
+                        url=None,
+                        mimetype=None
+                    ),
+                    image_resource=MediaResource(
+                        embeddings=None,
+                        data=b'iVBORw0KGgoAAAANSUhEUgAAAtgAAAFSCAIAAABHcj9xAAEAAElEQVR4nOz9B5gcV3YmiF4TJl1571EACt47ggBJ0H...',
+                        text=None,
+                        path=None,
+                        url=None,
+                        mimetype='image/png'
+                    ),
+                    audio_resource=None,
+                    video_resource=None,
+                    text_template='{metadata_str}\n\n{content}'
+            )
+        ]
 
-    # Create the ImageDocument.
-    # 'text' is for any search-relevant text (OCR results, caption, etc.).
-    # 'image' will hold the raw image data.
-    doc = ImageDocument(
-        id_=f"img-{image_path.name}",
-        image=im_base64,
-        text=image_text,
-        image_path=str(image_path),
-        metadata={"filename": image_path.name} | kwargs.get("metadata", {}),
-    )
-    return doc
-
-
-def parse_pdf_with_docling(pdf_path: Path) -> tuple[Path, Path]:
-    """Parse PDF with Docling and save as markdown with image references.
-
-    Parameters
-    ----------
-    pdf_path : Path
-        The path to the PDF file to parse.
-
-    Examples
-    --------
-    ```python
-    >>> from llama_utils.retrieval.pdf_reader import parse_pdf_with_docling
-    >>> pdf_path = Path("examples/data/pdfs/geoscience-paper.pdf")
-    >>> md_path, images_dir = parse_pdf_with_docling(pdf_path) # doctest: +SKIP
-    Markdown file saved to examples/data/pdfs/geoscience-paper.md
-    >>> print(images_dir) # doctest: +SKIP
-    examples/data/pdfs/geoscience-paper_artifacts
-    >>> print(list(images_dir.iterdir())) # doctest: +SKIP
-    [PosixPath('examples/data/pdfs/geoscience-paper_artifacts/image_000000_xyz.png')]
-    ```
-
-    Note
-    ----
-    - The markdown file will be saved with the same name as the pdf file but with a `.md` extension.
-    - The markdown file will contain image references to the local files.
-    - The images are saved externally and referenced in the markdown file.
-    - The images are saved in the same directory as the pdf in a subfolder named `<pdf-file-name>_artifacts`.
-    - The images will have names like `image_000000_xyz.png`.
-    """
-    if isinstance(pdf_path, str):
+        ```
+        """
         pdf_path = Path(pdf_path)
-
-    if not pdf_path.exists():
-        raise FileNotFoundError(f"PDF file not found at {pdf_path}")
-
-    pipeline_options = PdfPipelineOptions()
-    pipeline_options.images_scale = IMAGE_RESOLUTION_SCALE
-    pipeline_options.generate_page_images = True
-    pipeline_options.generate_picture_images = True
-
-    doc_converter = DocumentConverter(
-        format_options={
-            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-        }
-    )
-
-    result = doc_converter.convert(pdf_path)
-
-    md_file = pdf_path.with_suffix(".md")
-    result.document.save_as_markdown(md_file, image_mode=ImageRefMode.REFERENCED)
-    print(f"Markdown file saved to {md_file}")
-
-    ims_rdir = md_file.parent / f"{md_file.stem}{IMAGE_DIR_SUFFIX}"
-
-    return md_file, ims_rdir
-
-
-def get_image_docs_from_md(md_file: Path) -> list[ImageDocument]:
-    r"""Get ImageDocuments from a Markdown file.
-
-    Parameters
-    ----------
-    md_file : Path
-        The path to the Markdown file.
-
-    Returns
-    -------
-    list of ImageDocument
-        The list of ImageDocument objects.
-
-    Examples
-    --------
-    ```python
-    >>> from llama_utils.retrieval.pdf_reader import get_image_docs_from_md
-    >>> md_file = Path("examples/data/pdfs/geoscience-paper.md")
-    >>> image_docs = get_image_docs_from_md(md_file)
-    >>> print((image_docs)) # doctest: +SKIP
-    [
-        ImageDocument(
-            id_='img-image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png',
-            embedding=None,
-            metadata={
-                'filename': 'image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4456.png'},
-                excluded_embed_metadata_keys=[],
-                excluded_llm_metadata_keys=[],
-                relationships={},
-                metadata_template='{key}: {value}',
-                metadata_separator='\n',
-                text_resource=MediaResource(
-                    embeddings=None,
-                    data=None,
-                    text='figure caption: Two variants of raster based conceptual distributed models (of type 2): ...',
-                    path=None,
-                    url=None,
-                    mimetype=None
-                ),
-                image_resource=MediaResource(
-                    embeddings=None,
-                    data=b'iVBORw0KGgoAAAANSUhEUgAAAtgAAAFSCAIAAABHcj9xAAEAAElEQVR4nOz9B5gcV3YmiF4TJl1571EACt47ggBJ0H...',
-                    text=None,
-                    path=None,
-                    url=None,
-                    mimetype='image/png'
-                ),
-                audio_resource=None,
-                video_resource=None,
-                text_template='{metadata_str}\n\n{content}'
-        )
-    ]
-
-    ```
-    """
-    if not md_file.exists():
-        raise FileNotFoundError(f"Markdown file not found at {md_file}")
-
-    doc_text = md_file.read_text(encoding="utf-8")
-    # read the images from the markdown file
-
-    # extract the figure captions
-    images_data = extract_figures_data(doc_text)
-
-    image_docs = []
-    for im_data in images_data:
-        im_path = md_file.parent / im_data["image_path"]
-        image_document = create_image_document(
-            im_path, caption_text=im_data["caption_text"]
-        )
-        image_docs.append(image_document)
-    return image_docs
+        md_file, _ = self.document_converter.convert(pdf_path)
+        md_text = md_file.read_text(encoding="utf-8")
+        images_data = self.extract_figures_data(md_text)
+        image_docs = [
+            self.create_image_document(
+                md_file.parent / img["image_path"], img["caption_text"]
+            )
+            for img in images_data
+        ]
+        return {"markdown": md_file, "images": image_docs}

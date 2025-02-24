@@ -2,13 +2,16 @@ from pathlib import Path
 from typing import Dict
 
 import pytest
-from llama_index.core import StorageContext, VectorStoreIndex
+from llama_index.core import Settings, StorageContext, VectorStoreIndex
+from llama_index.core.embeddings.mock_embed_model import MockEmbedding
+from llama_index.core.llms import MockLLM
 from llama_index.core.schema import Document, TextNode
 
 from llama_utils.retrieval.storage import Storage
-from llama_utils.utils.config_loader import ConfigLoader
 
-ConfigLoader()
+# Assign it to global settings (or pass explicitly where needed)
+Settings.embed_model = MockEmbedding(embed_dim=768)
+Settings.llm = MockLLM()
 
 
 @pytest.fixture()

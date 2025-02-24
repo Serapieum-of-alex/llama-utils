@@ -86,6 +86,10 @@ ignore = ["D401", "D413", "D213", "D203"]
 [tool.pytest.ini_options]
 testpaths = "tests"
 norecursedirs = "docs"
+markers = [
+    "e2e: marks tests as end-to-end (deselect with '-m \"e2e\"')",
+    "mock: marks tests as mock (deselect with '-m \"mock\"')",
+]
 
 [build-system]
 requires = ["poetry-core"]

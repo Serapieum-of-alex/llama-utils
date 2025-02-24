@@ -1,77 +1,123 @@
 import shutil
+import unittest
 from pathlib import Path
 from typing import Dict
+from unittest.mock import MagicMock, patch
 
+import pytest
 from llama_index.core.schema import ImageDocument
 
-from llama_utils.retrieval.pdf_reader import (
-    create_image_document,
-    extract_figures_data,
-    get_image_docs_from_md,
-    parse_pdf_with_docling,
-)
+from llama_utils.retrieval.pdf_reader import DocumentConverter, PDFReader
 
 
-def test_extract_figures_data():
-    pdf_text = """Some introduction text ...
+class TestDocumentConverterE2E:
+    """End-to-end tests for DocumentConverterWrapper."""
 
-    Figure 2. Study area: The main campus ...
-    ![Image](paper_artifacts\\image_000000_ccc2c343.png)
+    def test_convert_valid_pdf(self, geoscience_pdf: Path):
+        """Test converting a valid PDF file to Markdown successfully."""
+        wrapper = DocumentConverter()
+        md_file, images_dir = wrapper.convert(geoscience_pdf)
+        assert md_file.exists()
+        assert md_file.suffix == ".md"
+        assert images_dir.exists() and images_dir.is_dir()
+        im_list = list(images_dir.iterdir())
+        assert len(im_list) == 1
+        # clean up
+        md_file.unlink()
+        try:
+            shutil.rmtree(images_dir)
+        except PermissionError:
+            pass
 
-    Some other random text ...
-
-    Figure 3. Another figure's caption.
-    ![Image](paper_artifacts\\image_000001_abc123.png)
-    """
-
-    results = extract_figures_data(pdf_text)
-    assert len(results) == 2
-    assert results[0]["figure_number"] == "Figure 2."
-    assert results[0]["caption_text"] == "Study area: The main campus ..."
-    assert results[0]["image_path"] == "paper_artifacts\\image_000000_ccc2c343.png"
-    assert results[1]["figure_number"] == "Figure 3."
-    assert results[1]["caption_text"] == "Another figure's caption."
-    assert results[1]["image_path"] == "paper_artifacts\\image_000001_abc123.png"
-
-
-def test_create_image_document():
-    """Test create_image_document function."""
-    image_path = Path(
-        "tests/data/docling-parsed-markdown_artifacts/image_000000_ccc2c343942b491ee2456fc1c02f25091363aa6075b1a6d115247ab0096c8d17.png"
-    )
-    caption = "any caption related to the fist figure."
-    metadata = {"any-key": "any-value"}
-    im_document = create_image_document(
-        image_path, **{"caption_text": caption, "metadata": metadata}
-    )
-    assert isinstance(im_document, ImageDocument)
-    assert im_document.doc_id == f"img-{image_path.name}"
-    assert im_document.metadata["filename"] == image_path.name
-    assert im_document.metadata["any-key"] == "any-value"
-    assert im_document.text == f"figure caption: {caption}"
-    assert isinstance(im_document.image, str)
-    assert im_document.id_ == f"img-{image_path.name}"
+    def test_convert_invalid_pdf_path(self):
+        """Test converting an invalid PDF path raises an error."""
+        wrapper = DocumentConverter()
+        pdf_path = Path("tests/nonexistent.pdf")
+        with pytest.raises(FileNotFoundError):
+            wrapper.convert(pdf_path)
 
 
-def test_parse_with_docling(geoscience_pdf: Path):
-    md_file, ims_rdir = parse_pdf_with_docling(geoscience_pdf)
-    assert md_file.exists()
-    assert ims_rdir.exists() and ims_rdir.is_dir()
-    im_list = list(ims_rdir.iterdir())
-    assert len(im_list) == 1
-    # clean up
-    md_file.unlink()
-    try:
-        shutil.rmtree(ims_rdir)
-    except PermissionError:
-        pass
+class TestPDFReaderE2E:
+    """End-to-end tests for PDFReader."""
 
+    @classmethod
+    def setup_class(cls):
+        """Initialize PDFReader for end-to-end tests."""
+        cls.reader = PDFReader()
 
-def test_get_image_docs_from_md(geoscience_paper_artifacts: Dict[str, str]):
+    def test_extract_figures_data(self):
+        """Test extracting figure data from realistic markdown content."""
+        md_text = """Some introduction text ...
 
-    md_path = Path(geoscience_paper_artifacts["md_file"])
-    image_docs = get_image_docs_from_md(md_path)
-    assert len(image_docs) == 1
-    assert isinstance(image_docs[0], ImageDocument)
-    images = list(Path(geoscience_paper_artifacts["images_dir"]).iterdir())
-    assert image_docs[0].doc_id == f"img-{images[0].name}"
+        Figure 2. Study area: The main campus ...
+        ![Image](paper_artifacts\\image_000000_ccc2c343.png)
+
+        Some other random text ...
+
+        Figure 3. Another figure's caption.
+        ![Image](paper_artifacts\\image_000001_abc123.png)
+        """
+
+        expected = [
+            {
+                "figure_number": "Figure 2.",
+                "caption_text": "Study area: The main campus ...",
+                "image_path": "paper_artifacts\\image_000000_ccc2c343.png",
+            },
+            {
+                "figure_number": "Figure 3.",
+                "caption_text": "Another figure's caption.",
+                "image_path": "paper_artifacts\\image_000001_abc123.png",
+            },
+        ]
+        result = self.reader.extract_figures_data(md_text)
+
+        assert result == expected
+
+    def test_create_image_document(self):
+        """Test creating an ImageDocument from a real image file."""
+        image_path = Path(
+            "tests/data/docling-parsed-markdown_artifacts/image_000000_ccc2c343942b491ee2456fc1c02f25091363aa6075b1a6d115247ab0096c8d17.png"
+        )
+        caption = "any caption related to the fist figure."
+        metadata = {"any-key": "any-value"}
+
+        image_doc = self.reader.create_image_document(
+            image_path, caption, metadata=metadata
+        )
+        assert isinstance(image_doc, ImageDocument)
+        assert image_doc.doc_id == f"img-{image_path.name}"
+        assert image_doc.metadata["filename"] == image_path.name
+        assert image_doc.metadata["any-key"] == "any-value"
+        assert image_doc.text == f"figure caption: {caption}"
+        assert isinstance(image_doc.image, str)
+        assert image_doc.id_ == f"img-{image_path.name}"
+
+    def test_parse_pdf(
+        self, geoscience_pdf: Path, geoscience_paper_artifacts: Dict[str, str]
+    ):
+        """Test parsing a real PDF file to generate markdown and image documents."""
+
+        result = self.reader.parse_pdf(geoscience_pdf)
+
+        image_docs = result["images"]
+        assert len(image_docs) == 1
+        assert isinstance(image_docs[0], ImageDocument)
+        assert image_docs[0].doc_id.startswith(f"img-")
+        assert (
+            Path(geoscience_paper_artifacts["md_file"]).name == result["markdown"].name
+        )
+        # clean
+        md_file = result["markdown"]
+        md_file.unlink()
+        try:
+            images_dir = md_file.parent / f"{md_file.stem}_artifacts"
+            shutil.rmtree(images_dir)
+        except PermissionError:
+            pass
+
+    def test_parse_pdf_invalid_file(self):
+        """Test parsing an invalid PDF file raises an error."""
+        pdf_path = "tests/invalid.pdf"
+        with pytest.raises(FileNotFoundError):
+            self.reader.parse_pdf(pdf_path)
