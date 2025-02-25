@@ -5,6 +5,7 @@ from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
+from docling.document_converter import DocumentConverter as docling_doc_converter
 from llama_index.core.schema import ImageDocument
 
 from llama_utils.retrieval.pdf_reader import DocumentConverter, PDFReader
@@ -103,7 +104,7 @@ class TestPDFReaderE2E:
         image_docs = result["images"]
         assert len(image_docs) == 1
         assert isinstance(image_docs[0], ImageDocument)
-        assert image_docs[0].doc_id.startswith(f"img-")
+        assert image_docs[0].doc_id.startswith("img-")
         assert (
             Path(geoscience_paper_artifacts["md_file"]).name == result["markdown"].name
         )
@@ -121,3 +122,31 @@ class TestPDFReaderE2E:
         pdf_path = "tests/invalid.pdf"
         with pytest.raises(FileNotFoundError):
             self.reader.parse_pdf(pdf_path)
+
+
+class TestDocumentConverterMock(unittest.TestCase):
+
+    def test_constructor(self):
+        """
+        test the constructor of the DocumentConvert
+        """
+        converter = DocumentConverter()
+        assert isinstance(converter.converter, docling_doc_converter)
+
+    @patch("llama_utils.retrieval.pdf_reader.DocumentConverter")
+    def test_convert(self, mock_converter):
+        """
+        mock the converter and test the convert method
+        """
+        mock_converter = mock_converter.return_value
+        mock_document = MagicMock()
+        mock_converter.convert.return_value = mock_document
+
+        wrapper = DocumentConverter(mock_converter)
+        pdf_path = Path("test.pdf")
+        with patch("pathlib.Path.exists", return_value=True):
+            md_file, images_dir = wrapper.convert(pdf_path)
+
+        self.assertEqual(md_file, pdf_path.with_suffix(".md"))
+        self.assertEqual(str(images_dir), f"{pdf_path.stem}_artifacts")
+        mock_document.document.save_as_markdown.assert_called_once()
