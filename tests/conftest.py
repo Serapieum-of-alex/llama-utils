@@ -9,7 +9,6 @@ from llama_index.core.schema import Document, TextNode
 
 from llama_utils.retrieval.storage import Storage
 
-# Assign it to global settings (or pass explicitly where needed)
 Settings.embed_model = MockEmbedding(embed_dim=768)
 Settings.llm = MockLLM()
 
