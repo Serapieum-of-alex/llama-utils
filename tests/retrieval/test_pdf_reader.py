@@ -150,3 +150,33 @@ class TestDocumentConverterMock(unittest.TestCase):
         self.assertEqual(md_file, pdf_path.with_suffix(".md"))
         self.assertEqual(str(images_dir), f"{pdf_path.stem}_artifacts")
         mock_document.document.save_as_markdown.assert_called_once()
+
+
+class TestPDFReader(unittest.TestCase):
+
+    def setUp(self):
+        self.reader = PDFReader()
+
+    @patch(
+        "builtins.open", new_callable=unittest.mock.mock_open, read_data=b"image data"
+    )
+    def test_create_image_document(self, mock_open):
+        image_doc = self.reader.create_image_document("image.png", "Test Caption")
+        self.assertIsInstance(image_doc, ImageDocument)
+        self.assertEqual(image_doc.text, "figure caption: Test Caption")
+
+    @patch.object(DocumentConverter, "convert")
+    @patch(
+        "builtins.open", new_callable=unittest.mock.mock_open, read_data=b"image data"
+    )
+    @patch(
+        "pathlib.Path.read_text",
+        return_value="Figure 1. Caption\n![Image](image.png)",
+    )
+    def test_parse_pdf(self, mock_read, mock_open, mock_convert):
+        mock_convert.return_value = (Path("test.md"), "")
+        result = self.reader.parse_pdf("test.pdf")
+        self.assertIn("markdown", result)
+        self.assertIn("images", result)
+        self.assertEqual(len(result["images"]), 1)
+        self.assertEqual(result["images"][0].text, "figure caption: Caption")
