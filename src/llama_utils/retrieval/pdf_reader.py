@@ -11,9 +11,46 @@ from docling.document_converter import DocumentConverter as Docling_DocConverter
 from docling.document_converter import PdfFormatOption
 from docling_core.types.doc import ImageRefMode
 from llama_index.core.schema import ImageDocument
+from pydantic import BaseModel, Field
 
 IMAGE_RESOLUTION_SCALE = 2.0
 IMAGE_DIR_SUFFIX = "_artifacts"
+
+
+class FigureData(BaseModel):
+    """Model for extracted figure data."""
+
+    figure_number: str = Field(..., description="Figure number and label.")
+    caption_text: str = Field(..., description="Caption describing the figure.")
+    image_path: Path = Field(..., description="Path to the extracted image file.")
+    metadata: Dict[str, str] = Field(
+        {}, description="Additional metadata for the figure."
+    )
+
+
+class ImageDocConfig(BaseModel):
+    """Configuration for image document processing."""
+
+    resolution_scale: float = Field(
+        2.0, description="Scale factor for image resolution."
+    )
+    image_dir_suffix: str = Field(
+        "_artifacts", description="Suffix for image directory."
+    )
+
+
+class DocumentConversionConfig(BaseModel):
+    """Configuration for document conversion."""
+
+    image_resolution_scale: float = Field(
+        2.0, description="Scale factor for image resolution."
+    )
+    enable_page_images: bool = Field(
+        True, description="Enable extraction of full page images."
+    )
+    enable_picture_images: bool = Field(
+        True, description="Enable extraction of embedded figures."
+    )
 
 
 class DocumentConverter:
@@ -37,13 +74,18 @@ class DocumentConverter:
     ```
     """
 
-    def __init__(self, converter: Optional[Docling_DocConverter] = None):
+    def __init__(
+        self,
+        converter: Optional[Docling_DocConverter] = None,
+        config: DocumentConversionConfig = None,
+    ):
         """Initialize the DocumentConverter instance."""
+        self.config = config or DocumentConversionConfig()
         if converter is None:
             pipeline_options = PdfPipelineOptions()
-            pipeline_options.images_scale = IMAGE_RESOLUTION_SCALE
-            pipeline_options.generate_page_images = True
-            pipeline_options.generate_picture_images = True
+            pipeline_options.images_scale = self.config.image_resolution_scale
+            pipeline_options.generate_page_images = self.config.enable_page_images
+            pipeline_options.generate_picture_images = self.config.enable_picture_images
             self.converter = Docling_DocConverter(
                 format_options={
                     InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
@@ -125,12 +167,17 @@ class PDFReader:
         Parses the PDF, extracting images and generating markdown output.
     """
 
-    def __init__(self, document_converter: Optional[DocumentConverter] = None):
+    def __init__(
+        self,
+        document_converter: Optional[DocumentConverter] = None,
+        image_config: ImageDocConfig = None,
+    ):
         """Initialize the PDFReader instance."""
         self.document_converter = document_converter or DocumentConverter()
+        self.image_config = image_config or ImageDocConfig()
 
     @staticmethod
-    def extract_figures_data(pdf_text: str) -> List[Dict[str, str]]:
+    def extract_figures_data(pdf_text: str) -> List[FigureData]:
         r"""Extract figure captions and image references from a PDF text.
 
         Extract figure data (local path/ caption /figure number) from a PDF text dump,
@@ -176,16 +223,16 @@ class PDFReader:
         >>> figures_data = reader.extract_figures_data(pdf_text)
         >>> print(figures_data) # doctest: +SKIP
         [
-            {
-                'figure_number': 'Figure 2.',
-                'caption_text': 'Study area: The main campus ...',
-                'image_path': 'paper_artifacts\\image_000000_ccc2c343.png'
-            },
-            {
-                'figure_number': 'Figure 3.',
-                'caption_text': "Another figure's caption.",
-                'image_path': 'paper_artifacts\\image_000001_abc123.png'
-            }
+            FigureData(
+                figure_number='Figure 2.',
+                caption_text='Study area: The main campus ...',
+                image_path='paper_artifacts\\image_000000_ccc2c343.png'
+            ),
+            FigureData(
+                figure_number='Figure 3.',
+                caption_text="Another figure's caption.",
+                image_path='paper_artifacts\\image_000001_abc123.png'
+            )
         ]
         ```
         """
@@ -203,11 +250,11 @@ class PDFReader:
         matches = pattern.findall(pdf_text)
 
         return [
-            {
-                "figure_number": match[0].strip(),
-                "caption_text": match[1].strip(),
-                "image_path": match[2].replace("%5C", "/").strip(),
-            }
+            FigureData(
+                figure_number=match[0].strip(),
+                caption_text=match[1].strip(),
+                image_path=match[2].replace("%5C", "/").strip(),
+            )
             for match in matches
         ]
 
@@ -330,7 +377,7 @@ class PDFReader:
         images_data = self.extract_figures_data(md_text)
         image_docs = [
             self.create_image_document(
-                md_file.parent / img["image_path"], img["caption_text"]
+                md_file.parent / img.image_path, img.caption_text
             )
             for img in images_data
         ]

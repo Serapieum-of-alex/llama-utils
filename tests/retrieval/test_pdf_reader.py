@@ -8,7 +8,7 @@ import pytest
 from docling.document_converter import DocumentConverter as docling_doc_converter
 from llama_index.core.schema import ImageDocument
 
-from llama_utils.retrieval.pdf_reader import DocumentConverter, PDFReader
+from llama_utils.retrieval.pdf_reader import DocumentConverter, FigureData, PDFReader
 
 
 class TestDocumentConverterE2E:
@@ -60,16 +60,16 @@ class TestPDFReaderE2E:
         """
 
         expected = [
-            {
-                "figure_number": "Figure 2.",
-                "caption_text": "Study area: The main campus ...",
-                "image_path": "paper_artifacts\\image_000000_ccc2c343.png",
-            },
-            {
-                "figure_number": "Figure 3.",
-                "caption_text": "Another figure's caption.",
-                "image_path": "paper_artifacts\\image_000001_abc123.png",
-            },
+            FigureData(
+                figure_number="Figure 2.",
+                caption_text="Study area: The main campus ...",
+                image_path="paper_artifacts\\image_000000_ccc2c343.png",
+            ),
+            FigureData(
+                figure_number="Figure 3.",
+                caption_text="Another figure's caption.",
+                image_path="paper_artifacts\\image_000001_abc123.png",
+            ),
         ]
         result = self.reader.extract_figures_data(md_text)
 
