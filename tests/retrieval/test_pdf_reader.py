@@ -11,6 +11,28 @@ from llama_index.core.schema import ImageDocument
 from llama_utils.retrieval.pdf_reader import DocumentConverter, FigureData, PDFReader
 
 
+class TestFigureData:
+    def test_create_instance(self):
+        """
+        test the creation of the FigureData instance
+        """
+        image_path = Path("tests/data/images/image_000000_0bb3.png")
+        figure_data = FigureData(
+            figure_number="Figure 1", caption_text="Caption", image_path=image_path
+        )
+        assert figure_data.figure_number == "Figure 1"
+        assert figure_data.caption_text == "Caption"
+        assert figure_data.image_path == image_path
+        str_string = f"Figure 1 - Caption ({str(image_path)})"
+        assert figure_data.__str__() == str_string
+        assert figure_data.to_dict() == {
+            "figure_number": "Figure 1",
+            "caption_text": "Caption",
+            "image_path": f"{str(image_path)}",
+        }
+        assert isinstance(figure_data.read_image_base64(), str)
+
+
 class TestDocumentConverterE2E:
     """End-to-end tests for DocumentConverterWrapper."""
 
@@ -48,44 +70,51 @@ class TestPDFReaderE2E:
 
     def test_extract_figures_data(self):
         """Test extracting figure data from realistic markdown content."""
-        md_text = """Some introduction text ...
+        image_1 = "geoscience-paper_artifacts\\image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
+        image_2 = "geoscience-paper_artifacts\\image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
+
+        md_text = f"""Some introduction text ...
 
         Figure 2. Study area: The main campus ...
-        ![Image](paper_artifacts\\image_000000_ccc2c343.png)
+        ![Image]({image_1})
 
         Some other random text ...
 
         Figure 3. Another figure's caption.
-        ![Image](paper_artifacts\\image_000001_abc123.png)
+        ![Image]({image_2})
         """
+
+        r_dir = Path("tests/data/pdf/geoscience-paper-parsing-artifacts")
 
         expected = [
             FigureData(
                 figure_number="Figure 2.",
                 caption_text="Study area: The main campus ...",
-                image_path="paper_artifacts\\image_000000_ccc2c343.png",
+                image_path=r_dir / image_1,
             ),
             FigureData(
                 figure_number="Figure 3.",
                 caption_text="Another figure's caption.",
-                image_path="paper_artifacts\\image_000001_abc123.png",
+                image_path=r_dir / image_2,
             ),
         ]
-        result = self.reader.extract_figures_data(md_text)
+        result = self.reader.extract_figures_data(md_text, root_dir=r_dir)
 
         assert result == expected
 
     def test_create_image_document(self):
         """Test creating an ImageDocument from a real image file."""
-        image_path = Path(
-            "tests/data/docling-parsed-markdown_artifacts/image_000000_ccc2c343942b491ee2456fc1c02f25091363aa6075b1a6d115247ab0096c8d17.png"
-        )
+        image_path = Path("tests/data/images/image_000000_0bb3.png")
         caption = "any caption related to the fist figure."
         metadata = {"any-key": "any-value"}
-
-        image_doc = self.reader.create_image_document(
-            image_path, caption, metadata=metadata
+        figure_data = FigureData(
+            figure_number="Figure 1.",
+            caption_text=caption,
+            image_path=image_path,
+            metadata=metadata,
         )
+
+        image_doc = self.reader.create_image_document(figure_data)
         assert isinstance(image_doc, ImageDocument)
         assert image_doc.doc_id == f"img-{image_path.name}"
         assert image_doc.metadata["filename"] == image_path.name
@@ -98,7 +127,6 @@ class TestPDFReaderE2E:
         self, geoscience_pdf: Path, geoscience_paper_artifacts: Dict[str, str]
     ):
         """Test parsing a real PDF file to generate markdown and image documents."""
-
         result = self.reader.parse_pdf(geoscience_pdf)
 
         image_docs = result["images"]
@@ -152,7 +180,7 @@ class TestDocumentConverterMock(unittest.TestCase):
         mock_document.document.save_as_markdown.assert_called_once()
 
 
-class TestPDFReader(unittest.TestCase):
+class TestPDFReaderMock(unittest.TestCase):
 
     def setUp(self):
         self.reader = PDFReader()
@@ -161,7 +189,13 @@ class TestPDFReader(unittest.TestCase):
         "builtins.open", new_callable=unittest.mock.mock_open, read_data=b"image data"
     )
     def test_create_image_document(self, mock_open):
-        image_doc = self.reader.create_image_document("image.png", "Test Caption")
+        with patch.object(Path, "exists", return_value=True):
+            image_data = FigureData(
+                figure_number="Figure 1",
+                image_path="image.png",
+                caption_text="Test Caption",
+            )
+            image_doc = self.reader.create_image_document(image_data)
         self.assertIsInstance(image_doc, ImageDocument)
         self.assertEqual(image_doc.text, "figure caption: Test Caption")
 
@@ -175,7 +209,8 @@ class TestPDFReader(unittest.TestCase):
     )
     def test_parse_pdf(self, mock_read, mock_open, mock_convert):
         mock_convert.return_value = (Path("test.md"), "")
-        result = self.reader.parse_pdf("test.pdf")
+        with patch.object(Path, "exists", return_value=True):
+            result = self.reader.parse_pdf("test.pdf")
         self.assertIn("markdown", result)
         self.assertIn("images", result)
         self.assertEqual(len(result["images"]), 1)
