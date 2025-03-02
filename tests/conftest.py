@@ -1,11 +1,14 @@
+from pathlib import Path
+from typing import Dict
+
 import pytest
-from llama_index.core import StorageContext, VectorStoreIndex
+from llama_index.core import Settings, VectorStoreIndex
+from llama_index.core.embeddings.mock_embed_model import MockEmbedding
+from llama_index.core.llms import MockLLM
 from llama_index.core.schema import Document, TextNode
 
-from llama_utils.retrieval.storage import Storage
-from llama_utils.utils.config_loader import ConfigLoader
-
-ConfigLoader()
+Settings.embed_model = MockEmbedding(embed_dim=768)
+Settings.llm = MockLLM()
 
 
 @pytest.fixture()
@@ -62,18 +65,8 @@ def storage_path() -> str:
 
 
 @pytest.fixture()
-def storage_docstore(storage_path: str) -> StorageContext:
-    return StorageContext.from_defaults(persist_dir="tests/data/docstore")
-
-
-@pytest.fixture()
 def paul_grahm_essay_storage():
     return "tests/data/paul-graham-essay-storage"
-
-
-@pytest.fixture(scope="function")
-def paul_graham_essay_storage(paul_grahm_essay_storage: str) -> Storage:
-    return Storage.load(paul_grahm_essay_storage)
 
 
 @pytest.fixture()
@@ -84,3 +77,17 @@ def essay_document_id() -> str:
 @pytest.fixture()
 def essay_node_id() -> str:
     return "cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7d83a76956bf22765b7"
+
+
+@pytest.fixture
+def geoscience_pdf() -> Path:
+    return Path("tests/data/pdf/geoscience-paper.pdf")
+
+
+@pytest.fixture
+def geoscience_paper_artifacts() -> Dict[str, str]:
+    r_dir = "tests/data/pdf/geoscience-paper-parsing-artifacts"
+    return {
+        "md_file": f"{r_dir}/geoscience-paper.md",
+        "images_dir": f"{r_dir}/geoscience-paper_artifacts",
+    }

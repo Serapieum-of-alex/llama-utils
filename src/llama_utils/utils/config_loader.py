@@ -7,8 +7,6 @@ from llama_index.core.node_parser import SentenceSplitter
 
 from llama_utils.utils.models import get_hugging_face_embedding, get_ollama_llm
 
-TEXT_SPLITTER = SentenceSplitter(chunk_size=1024, chunk_overlap=20)
-
 
 class ConfigLoader:
     """A class or function to load configuration."""
@@ -26,6 +24,18 @@ class ConfigLoader:
             llm model to use.
         embedding: Any, optional, default is BAAI/bge-base-en-v1.5
             Embedding model to use.
+
+        Examples
+        --------
+        ```python
+        >>> from llama_utils.utils.config_loader import ConfigLoader
+        >>> config = ConfigLoader() # doctest: +SKIP
+        >>> print(config.embedding) # doctest: +SKIP
+        model_name='BAAI/bge-base-en-v1.5' embed_batch_size=10 callback_manager=<llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40> num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None
+        >>> print(config.llm.model) # doctest: +SKIP
+        llama3
+
+        ```
         """
         if llm is None:
             llm = get_ollama_llm()
@@ -34,7 +44,7 @@ class ConfigLoader:
 
         Settings.embed_model = embedding
         Settings.llm = llm
-        Settings.text_splitter = TEXT_SPLITTER
+        Settings.text_splitter = SentenceSplitter(chunk_size=1024, chunk_overlap=20)
         self._settings = Settings
         self._embedding = embedding
         self._llm = llm

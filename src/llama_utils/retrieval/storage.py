@@ -13,7 +13,7 @@ from llama_index.core.extractors import (
     TitleExtractor,
 )
 from llama_index.core.ingestion import IngestionPipeline
-from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.core.node_parser import SentenceSplitter, TokenTextSplitter
 from llama_index.core.schema import BaseNode, Document, TextNode
 from llama_index.core.storage.docstore import BaseDocumentStore, SimpleDocumentStore
 from llama_index.core.storage.docstore.types import RefDocInfo
@@ -343,17 +343,21 @@ class Storage:
         """
         return list(self.docstore.docs.keys())
 
-    def delete_document(self, doc_id: str):
+    def delete_document(self, doc_id: str = None, document_name: str = None):
         """Delete a document from the docstore.
 
         Parameters
         ----------
-        doc_id: str
+        doc_id: str, Optional, Default is None.
             The ID of the document to delete.
+        document_name: str, optional, default is None.
+            The name of the document to delete.
 
-        Returns
-        -------
-        None
+
+        Notes
+        -----
+        - If the `doc_id` is provided, the document with the specified ID will be deleted.
+        - If the `document_name` is provided, all the nodes related to the document with the specified name will be deleted.
 
         Examples
         --------
@@ -361,6 +365,7 @@ class Storage:
         `delete_document` method by providing the `document_id`:
 
         ```python
+        >>> from llama_utils.retrieval.storage import Storage
         >>> store = Storage.load("examples/paul-graham-essay-storage")
         >>> document_metadata = store.document_metadata
         >>> document_id = list(document_metadata().keys())[0]
@@ -377,10 +382,29 @@ class Storage:
         {}
 
         ```
+
+        You can also delete a document by providing the `document_name`:
+        ```python
+        >>> store = Storage.load("examples/paul-graham-essay-storage")
+        >>> print(store.node_metadata.head()) # doctest: +SKIP
+                       file_name                                            node_id
+        0  paul_graham_essay.txt  cadde590b82362fc7a5f8ce0751c5b30b11c0f81369df7...
+        1  paul_graham_essay.txt  0567f3a9756983e1d040ec332255db94521ed5dc1b03fc...
+        2  paul_graham_essay.txt  d5542515414f1bf30f6c21f0796af8bde4c513f2e72a2d...
+        3  paul_graham_essay.txt  120b69658a6c69ab8de3167b5ed0db77941a2b487e94d5...
+        4  paul_graham_essay.txt  c8587b5b5fc034bb08cd62cf0a082014f00fc09ccd2944...
+        >>> store.delete_document(document_name="paul_graham_essay.txt")
+
+        ```
         """
-        if doc_id not in self.document_metadata().keys():
-            raise ValueError(f"Document with ID {doc_id} not found.")
-        self.docstore.delete_ref_doc(doc_id)
+        if not document_name:
+            if doc_id not in self.document_metadata().keys():
+                raise ValueError(f"Document with ID {doc_id} not found.")
+            self.docstore.delete_ref_doc(doc_id)
+        else:
+            node_ids = self.get_nodes_by_file_name(document_name)
+            for node_id in node_ids:
+                self.delete_node(node_id.node_id)
 
     def delete_node(self, node_id: str):
         """Delete a node from the docstore.
@@ -499,13 +523,16 @@ class Storage:
 
     @staticmethod
     def read_documents(
-        path: str,
-        show_progres: bool = False,
+        path: Union[str, Path],
+        split_into_nodes: bool = False,
+        chunk_size: int = 1024,
+        chunk_overlap: int = 100,
+        show_progress: bool = False,
         num_workers: int = None,
         recursive: bool = False,
         **kwargs,
     ) -> List[Union[Document, TextNode]]:
-        r"""Read documents from a directory.
+        r"""Read documents from a directory and optionally splits them into TextNodes.
 
         the `read_documents` method reads documents from a directory and returns a list of documents.
         the `doc_id` is sha256 hash number generated based on the document's text content.
@@ -513,8 +540,19 @@ class Storage:
         Parameters
         ----------
         path: str
-            path to the directory containing the documents.
-        show_progres: bool, optional, default is False.
+            path to the directory containing the documents. or a single file path.
+        split_into_nodes : bool, optional
+            If True, splits documents into smaller TextNodes (default: False).
+        chunk_size : int, optional, default is 1024
+            The size of each text chunk. The `chunk_size` Defines the size of each split chunk (in characters).
+            - Larger values preserve more context but increase memory usage.
+            - Smaller values improve retrieval specificity but may lose context.
+        chunk_overlap : int, optional, default is 100.
+            The overlap size between chunks. The `chunk_overlap` ensures adjacent chunks have overlapping content to
+            preserve context.
+            - Higher overlap improves retrieval coherence but increases redundancy.
+            - Lower overlap minimizes redundancy but might break context.
+        show_progress: bool, optional, default is False.
             True to show progress bar.
         num_workers: int, optional, default is None.
             The number of workers to use for loading the data.
@@ -531,10 +569,29 @@ class Storage:
         FileNotFoundError
             If the directory is not found.
 
+        Notes
+        -----
+        The best values for `chunk_size` and `chunk_overlap` depend on the type of documents and retrieval needs.
+
+        | **Use Case**                                              | **Recommended `chunk_size`** | **Recommended `chunk_overlap`** |
+        |-----------------------------------------------------------|------------------------------|---------------------------------|
+        | **Short documents (FAQs, structured text, emails)**       | `256 - 512`                  | `50`                           |
+        | **General-purpose (news articles, reports, blog posts)**  | `512 - 1024`                 | `50 - 100`                     |
+        | **Long documents (PDFs, research papers, books)**         | `1024 - 2048`                | `100 - 200`                    |
+        | **Dense technical/scientific papers**                     | `1500 - 2500`                | `200 - 300`                    |
+        | **Conversational AI (chat context memory)**               | `512 - 1024`                 | `50 - 150`                     |
+        | **Legal/contract documents (precise context retention)**  | `2048 - 4096`                | `200 - 400`                    |
+
+        Best Practices:
+        - For most cases, `chunk_size=1024` and `chunk_overlap=100` work well.
+        - If working with FAQs, decrease `chunk_size` to `512`.
+        - If preserving long-form LLM context, use `2048+` with higher overlap.
+
         Examples
         --------
         You can read documents from a directory as follows:
         ```python
+        >>> from llama_utils.retrieval.storage import Storage
         >>> data_path = "examples/data/essay"
         >>> docs = Storage.read_documents(data_path)
         >>> print(docs) # doctest: +SKIP
@@ -557,30 +614,60 @@ class Storage:
                 mimetype='text/plain',
                 start_char_idx=None,
                 end_char_idx=None,
-                text_template='{metadata_str}\n\n{content}',
+        4        text_template='{metadata_str}\n\n{content}',
                 metadata_template='{key}: {value}',
                 metadata_seperator='\n'
             )
         ]
         ```
+
+        You can also use the `split_into_nodes` parameter to split the documents into smaller nodes:
+
+        ```python
+        >>> docs = Storage.read_documents(data_path, split_into_nodes=True)
+        >>> print(len(docs))
+        20
+        >>> print(docs[0]) # doctest: +SKIP
+        Node ID: bfdf48ff-3c2b-49a8-ae25-7a837158d2dc
+        Text: What I Worked On    February 2021    Before college the two main
+        things I worked on, outside of school, were writing and programming. I
+        didn't write essays. I wrote what beginning writers were supposed to
+        write then, and probably still are: short stories. My stories were
+        awful. They had hardly any plot, just characters with strong feelings,
+        whic...
+        ```
         """
-        if not Path(path).exists():
+        if isinstance(path, str):
+            path = Path(path)
+
+        if not path.exists():
             raise FileNotFoundError(f"Directory not found: {path}")
 
-        reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
+        if path.is_file():
+            reader = SimpleDirectoryReader(input_files=[path])
+        else:
+            reader = SimpleDirectoryReader(path, recursive=recursive, **kwargs)
+
         documents = reader.load_data(
-            show_progress=show_progres, num_workers=num_workers, **kwargs
+            show_progress=show_progress, num_workers=num_workers, **kwargs
         )
 
+        if split_into_nodes:
+            # Split documents into nodes.
+            splitter = SentenceSplitter(
+                chunk_size=chunk_size, chunk_overlap=chunk_overlap
+            )
+            documents = splitter.get_nodes_from_documents(documents)
+
         for doc in documents:
-            # exclude the file name from the llm metadata in order to avoid affecting the llm by weird file names
+            # exclude the file name from the llm metadata to avoid affecting the llm by weird file names
             doc.excluded_llm_metadata_keys = ["file_name"]
-            # exclude the file name from the embeddings metadata in order to avoid affecting the llm by weird file names
+            # exclude the file name from the embeddings' metadata to avoid affecting the llm by weird file names
             doc.excluded_embed_metadata_keys = ["file_name"]
             # Generate a hash based on the document's text content
             content_hash = generate_content_hash(doc.text)
             # Assign the hash as the doc_id
-            doc.doc_id = content_hash
+            doc.metadata["content-hash"] = content_hash
 
         return documents
 

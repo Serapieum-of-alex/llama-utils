@@ -91,6 +91,7 @@ nav:
   - API Reference:
       - api/index_manager.md
       - api/storage.md
+      - api/pdf_reader.md
       - api/utils.md
   - LLM Tools:
       - tools/ollama.md

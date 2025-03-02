@@ -11,9 +11,13 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.12,<3.13"
 llama-index = "^0.12.12"
 pandas = "^2.2.3"
+pydantic = "^2.10.6"
+
+[tool.poetry.group.parser.dependencies]
+docling = "^2.22.0"
 
 [tool.poetry.group.analysis.dependencies]
 jupyter="*"
@@ -24,7 +28,6 @@ llama-index-llms-huggingface = "^0.4.2"
 llama-index-llms-ollama = "^0.5.0"
 llama-index-llms-azure-openai = "^0.3.0"
 llama-index-embeddings-azure-openai = "^0.3.0"
-
 
 [tool.poetry.group.testing.dependencies]
 pytest = "^8.3.3"
@@ -85,6 +88,10 @@ ignore = ["D401", "D413", "D213", "D203"]
 [tool.pytest.ini_options]
 testpaths = "tests"
 norecursedirs = "docs"
+markers = [
+    "e2e: marks tests as end-to-end (deselect with '-m \"e2e\"')",
+    "mock: marks tests as mock (deselect with '-m \"mock\"')",
+]
 
 [build-system]
 requires = ["poetry-core"]
