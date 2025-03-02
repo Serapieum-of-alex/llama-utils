@@ -70,8 +70,8 @@ class TestPDFReaderE2E:
 
     def test_extract_figures_data(self):
         """Test extracting figure data from realistic markdown content."""
-        image_1 = "geoscience-paper_artifacts\\image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
-        image_2 = "geoscience-paper_artifacts\\image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
+        image_1 = "image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
+        image_2 = "image_000000_0bb3fab8c73dc60d39d1aefd87fcffa8d95aa7ed8f67ac920355a00c50bb4457.png"
 
         md_text = f"""Some introduction text ...
 
