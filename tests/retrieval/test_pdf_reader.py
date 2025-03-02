@@ -8,16 +8,16 @@ import pytest
 from docling.document_converter import DocumentConverter as docling_doc_converter
 from llama_index.core.schema import ImageDocument
 
-from llama_utils.retrieval.pdf_reader import DocumentConverter, FigureData, PDFReader
+from llama_utils.retrieval.pdf_reader import DocumentConverter, Image, PDFReader
 
 
 class TestFigureData:
     def test_create_instance(self):
         """
-        test the creation of the FigureData instance
+        test the creation of the Image instance
         """
         image_path = Path("tests/data/images/image_000000_0bb3.png")
-        figure_data = FigureData(
+        figure_data = Image(
             figure_number="Figure 1", caption_text="Caption", image_path=image_path
         )
         assert figure_data.figure_number == "Figure 1"
@@ -87,12 +87,12 @@ class TestPDFReaderE2E:
         r_dir = Path("tests/data/pdf/geoscience-paper-parsing-artifacts")
 
         expected = [
-            FigureData(
+            Image(
                 figure_number="Figure 2.",
                 caption_text="Study area: The main campus ...",
                 image_path=r_dir / image_1,
             ),
-            FigureData(
+            Image(
                 figure_number="Figure 3.",
                 caption_text="Another figure's caption.",
                 image_path=r_dir / image_2,
@@ -107,7 +107,7 @@ class TestPDFReaderE2E:
         image_path = Path("tests/data/images/image_000000_0bb3.png")
         caption = "any caption related to the fist figure."
         metadata = {"any-key": "any-value"}
-        figure_data = FigureData(
+        figure_data = Image(
             figure_number="Figure 1.",
             caption_text=caption,
             image_path=image_path,
@@ -190,7 +190,7 @@ class TestPDFReaderMock(unittest.TestCase):
     )
     def test_create_image_document(self, mock_open):
         with patch.object(Path, "exists", return_value=True):
-            image_data = FigureData(
+            image_data = Image(
                 figure_number="Figure 1",
                 image_path="image.png",
                 caption_text="Test Caption",

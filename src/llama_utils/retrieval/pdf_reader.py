@@ -18,7 +18,7 @@ IMAGE_DIR_SUFFIX = "_artifacts"
 
 
 __all__ = [
-    "FigureData",
+    "Image",
     "ImageDocConfig",
     "DocumentConversionConfig",
     "DocumentConverter",
@@ -26,7 +26,7 @@ __all__ = [
 ]
 
 
-class FigureData(BaseModel):
+class Image(BaseModel):
     r"""Model for extracted figure data.
 
     Parameters
@@ -46,10 +46,10 @@ class FigureData(BaseModel):
     Examples
     --------
     ```python
-    >>> from llama_utils.retrieval.pdf_reader import FigureData
+    >>> from llama_utils.retrieval.pdf_reader import Image
     >>> from pathlib import Path
     >>> im_path = Path("examples/data/images/image_000000_0bb3.png")
-    >>> figure_data = FigureData(
+    >>> figure_data = Image(
     ...     figure_number="Figure 1.", caption_text="Sample caption", image_path=im_path
     ... )
     >>> print(figure_data)
@@ -265,7 +265,7 @@ class PDFReader:
         self.image_config = image_config or ImageDocConfig()
 
     @staticmethod
-    def extract_figures_data(pdf_text: str, root_dir: Path) -> List[FigureData]:
+    def extract_figures_data(pdf_text: str, root_dir: Path) -> List[Image]:
         r"""Extract figure captions and image references from a PDF text.
 
         Extract figure data (local path/ caption /figure number) from a PDF text dump,
@@ -287,7 +287,7 @@ class PDFReader:
 
         Returns
         -------
-        List[FigureData]
+        List[Image]
             A list of `FigureData` class containing figure numbers, captions, and image paths.
             Each element in the list:
             FigureData(
@@ -342,7 +342,7 @@ class PDFReader:
         matches = pattern.findall(pdf_text)
 
         return [
-            FigureData(
+            Image(
                 figure_number=match[0].strip(),
                 caption_text=match[1].strip(),
                 image_path=root_dir / match[2].replace("%5C", "/").strip(),
@@ -351,17 +351,13 @@ class PDFReader:
         ]
 
     @staticmethod
-    def create_image_document(image_data: FigureData, **kwargs) -> ImageDocument:
+    def create_image_document(image_data: Image) -> ImageDocument:
         """Create an ImageDocument from an image file.
 
         Parameters
         ----------
-        image_data : FigureData
+        image_data : Image
             FigureData object containing the image path and caption text.
-        **kwargs:
-            Additional keyword arguments to pass to the ImageDocument.
-            metadata : dict, optional
-                Any additional metadata to store.
 
         Returns
         -------
@@ -371,10 +367,10 @@ class PDFReader:
         Examples
         --------
         ```python
-        >>> from llama_utils.retrieval.pdf_reader import PDFReader, FigureData
+        >>> from llama_utils.retrieval.pdf_reader import PDFReader, Image
         >>> image_path = "examples/data/images/calibration.png"
         >>> caption = "Calibration framework of hydrological models."
-        >>> figure_data = FigureData(figure_number="Figure 1.", caption_text=caption, image_path=image_path)
+        >>> figure_data = Image(figure_number="Figure 1.", caption_text=caption, image_path=image_path)
         >>> reader = PDFReader()
         >>> image_doc = reader.create_image_document(figure_data)
         >>> print(image_doc.doc_id)
