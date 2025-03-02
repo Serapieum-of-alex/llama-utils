@@ -14,19 +14,22 @@ from llama_utils.utils.models import get_hugging_face_embedding
 class CustomIndex:
     """A Custom class for creating indexes using Llama."""
 
-    def __init__(self, index: VectorStoreIndex):
+    def __init__(self, index: VectorStoreIndex, embedding_model=None):
         """Initialize the CustomIndex object.
 
         Parameters
         ----------
         index: VectorStoreIndex
             The index object.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
+
         """
         if not isinstance(index, VectorStoreIndex):
             raise ValueError("The index should be an instance of VectorStoreIndex")
         self._id = index.index_id
         self._index = index
-        self._embedding_model = get_hugging_face_embedding()
+        self._embedding_model = embedding_model or get_hugging_face_embedding()
 
     def __str__(self):
         """String representation of the CustomIndex object."""
