@@ -17,6 +17,16 @@ from llama_utils.retrieval.storage import Storage
 from llama_utils.utils.helper_functions import generate_content_hash
 
 
+@pytest.fixture()
+def storage_docstore(storage_path: str) -> StorageContext:
+    return StorageContext.from_defaults(persist_dir=storage_path)
+
+
+@pytest.fixture(scope="function")
+def paul_graham_essay_storage(paul_grahm_essay_storage: str) -> Storage:
+    return Storage.load(paul_grahm_essay_storage)
+
+
 def test_create_simple_storage_context():
     storage_context = Storage._create_simple_storage_context()
     assert isinstance(storage_context, StorageContext), "Storage context not created."
@@ -38,10 +48,7 @@ class TestStorage:
     @pytest.fixture
     def test_empty_storage(self) -> Storage:
         store = Storage.create()
-        assert store is not None, "Storage not created."
-        assert (
-            isinstance(store.store, StorageContext) is not None
-        ), "Storage context not created."
+        assert isinstance(store.store, StorageContext), "Storage context not created."
         assert isinstance(store.node_metadata, pd.DataFrame)
         assert store.document_metadata() == {}
         metadata_df = store.document_metadata(as_dataframe=True)
@@ -62,8 +69,6 @@ class TestStorage:
         assert isinstance(storage, StorageContext)
         assert isinstance(storage.docstore, SimpleDocumentStore)
         assert isinstance(store.node_metadata, pd.DataFrame)
-        metadata_dict = store.document_metadata()
-        metadata_df = store.document_metadata(as_dataframe=True)
         assert store.node_metadata.shape[0] == 4
         assert len(storage.docstore.docs) == 4
 

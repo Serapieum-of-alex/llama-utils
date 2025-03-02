@@ -2,12 +2,10 @@ from pathlib import Path
 from typing import Dict
 
 import pytest
-from llama_index.core import Settings, StorageContext, VectorStoreIndex
+from llama_index.core import Settings, VectorStoreIndex
 from llama_index.core.embeddings.mock_embed_model import MockEmbedding
 from llama_index.core.llms import MockLLM
 from llama_index.core.schema import Document, TextNode
-
-from llama_utils.retrieval.storage import Storage
 
 Settings.embed_model = MockEmbedding(embed_dim=768)
 Settings.llm = MockLLM()
@@ -67,18 +65,8 @@ def storage_path() -> str:
 
 
 @pytest.fixture()
-def storage_docstore(storage_path: str) -> StorageContext:
-    return StorageContext.from_defaults(persist_dir=storage_path)
-
-
-@pytest.fixture()
 def paul_grahm_essay_storage():
     return "tests/data/paul-graham-essay-storage"
-
-
-@pytest.fixture(scope="function")
-def paul_graham_essay_storage(paul_grahm_essay_storage: str) -> Storage:
-    return Storage.load(paul_grahm_essay_storage)
 
 
 @pytest.fixture()
