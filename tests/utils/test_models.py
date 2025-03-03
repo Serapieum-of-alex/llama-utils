@@ -15,12 +15,24 @@ from llama_utils.utils.models import (
 
 
 def test_get_ollama_llm():
-    llm = get_ollama_llm()
-    assert isinstance(llm, Ollama)
-    assert llm.context_window == 3900
-    assert llm.model == "llama3"
-    assert llm.request_timeout == 360.0
-    assert llm.temperature == 0.75
+    with patch("llama_index.llms.ollama.Ollama") as mock_ollama:
+        instance = MagicMock()
+        mock_ollama.return_value = instance
+
+        llm = get_ollama_llm()
+        assert llm == instance
+        mock_ollama.assert_called_once_with(
+            model="llama3",
+            base_url="http://localhost:11434",
+            temperature=0.75,
+            context_window=DEFAULT_CONTEXT_WINDOW,
+            request_timeout=360.0,
+            prompt_key="prompt",
+            json_mode=False,
+            additional_kwargs={},
+            is_function_calling_model=True,
+            keep_alive=None,
+        )
 
 
 def test_azure_open_ai():
