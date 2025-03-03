@@ -121,7 +121,10 @@ class CustomIndex:
 
     @classmethod
     def create_from_documents(
-        cls, document: List[Union[Document, str]], generate_id: bool = True
+        cls,
+        document: List[Union[Document, str]],
+        generate_id: bool = True,
+        embedding_model=None,
     ) -> "CustomIndex":
         """Create a new index from a document.
 
@@ -131,6 +134,8 @@ class CustomIndex:
             The document to create the index from.
         generate_id: bool, optional, default is False.
             True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
 
         Returns
         -------
@@ -153,16 +158,20 @@ class CustomIndex:
                 doc.node_id = generate_content_hash(doc.text)
 
         index = VectorStoreIndex.from_documents(docs)
-        return cls(index)
+        return cls(index, embedding_model=embedding_model)
 
     @classmethod
-    def create_from_nodes(cls, nodes: List[TextNode]) -> "CustomIndex":
+    def create_from_nodes(
+        cls, nodes: List[TextNode], embedding_model=None
+    ) -> "CustomIndex":
         """Create a new index from a node.
 
         Parameters
         ----------
         nodes: List[TextNode]
             The nodes to create the index from.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
 
         Returns
         -------
@@ -186,7 +195,7 @@ class CustomIndex:
         As you see the added node is not a document, so the number of documents is 0.
         """
         index = VectorStoreIndex(nodes)
-        return cls(index)
+        return cls(index, embedding_model=embedding_model)
 
     def add_documents(self, documents: List[Document], generate_id: bool = True):
         """Add documents to the index.
