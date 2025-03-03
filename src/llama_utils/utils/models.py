@@ -154,7 +154,11 @@ def get_hugging_face_embedding(
     model_name: str, optional, default is "BAAI/bge-base-en-v1.5"
         Name of the hugging face embedding model.
     cache_folder: str, optional, default is None
-        Folder to cache the model.
+        Folder to cache the model. If not provided the function will search for
+        - `LLAMA_INDEX_CACHE_DIR` in your environment variables.
+        - `~/tmp/llama_index` if your OS is Linux.
+        - `~/Library/Caches/llama_index` if your OS is MacOS.
+        - `~/AppData/Local/llama_index` if your OS is Windows.
 
     Returns
     -------
