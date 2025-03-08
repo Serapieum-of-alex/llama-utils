@@ -145,13 +145,13 @@ def get_ollama_llm(
 
 
 def get_hugging_face_embedding(
-    model_name: str = "BAAI/bge-base-en-v1.5", cache_folder: str = None
+    model_name: str = "BAAI/bge-small-en-v1.5", cache_folder: str = None
 ):
     """Get the hugging face embedding model.
 
     Parameters
     ----------
-    model_name: str, optional, default is "BAAI/bge-base-en-v1.5"
+    model_name: str, optional, default is "BAAI/bge-small-en-v1.5"
         Name of the hugging face embedding model.
     cache_folder: str, optional, default is None
         Folder to cache the model. If not provided the function will search for
@@ -175,7 +175,7 @@ def get_hugging_face_embedding(
     >>> from llama_utils.utils.models import get_hugging_face_embedding
     >>> embedding = get_hugging_face_embedding()
     >>> print(embedding.model_name)
-    BAAI/bge-base-en-v1.5
+    BAAI/bge-small-en-v1.5
     >>> print(embedding.max_length)
     512
     >>> print(embedding.embed_batch_size)
