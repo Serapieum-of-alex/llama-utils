@@ -2548,7 +2548,7 @@
 
 
 <h3 id="llama_utils.utils.models.get_hugging_face_embedding" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_hugging_face_embedding</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;BAAI/bge-base-en-v1.5&#39;</span><span class="p">,</span> <span class="n">cache_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">get_hugging_face_embedding</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;BAAI/bge-small-en-v1.5&#39;</span><span class="p">,</span> <span class="n">cache_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2582,7 +2582,7 @@
               </div>
             </td>
             <td>
-                  <code>&#39;BAAI/bge-base-en-v1.5&#39;</code>
+                  <code>&#39;BAAI/bge-small-en-v1.5&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -2659,7 +2659,7 @@
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">llama_utils.utils.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_hugging_face_embedding</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">embedding</span> <span class="o">=</span> <span class="n">get_hugging_face_embedding</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
-<span class="go">BAAI/bge-base-en-v1.5</span>
+<span class="go">BAAI/bge-small-en-v1.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
 <span class="go">512</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">embed_batch_size</span><span class="p">)</span>
@@ -2714,13 +2714,13 @@
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_hugging_face_embedding</span><span class="p">(</span>
-    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BAAI/bge-base-en-v1.5&quot;</span><span class="p">,</span> <span class="n">cache_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BAAI/bge-small-en-v1.5&quot;</span><span class="p">,</span> <span class="n">cache_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the hugging face embedding model.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    model_name: str, optional, default is &quot;BAAI/bge-base-en-v1.5&quot;</span>
+<span class="sd">    model_name: str, optional, default is &quot;BAAI/bge-small-en-v1.5&quot;</span>
 <span class="sd">        Name of the hugging face embedding model.</span>
 <span class="sd">    cache_folder: str, optional, default is None</span>
 <span class="sd">        Folder to cache the model. If not provided the function will search for</span>
@@ -2744,7 +2744,7 @@
 <span class="sd">    &gt;&gt;&gt; from llama_utils.utils.models import get_hugging_face_embedding</span>
 <span class="sd">    &gt;&gt;&gt; embedding = get_hugging_face_embedding()</span>
 <span class="sd">    &gt;&gt;&gt; print(embedding.model_name)</span>
-<span class="sd">    BAAI/bge-base-en-v1.5</span>
+<span class="sd">    BAAI/bge-small-en-v1.5</span>
 <span class="sd">    &gt;&gt;&gt; print(embedding.max_length)</span>
 <span class="sd">    512</span>
 <span class="sd">    &gt;&gt;&gt; print(embedding.embed_batch_size)</span>
@@ -3516,7 +3516,7 @@ model_kwargs : dict, optional
 <span class="sd">        ----------</span>
 <span class="sd">        llm: Any, optional, default is llama3</span>
 <span class="sd">            llm model to use.</span>
-<span class="sd">        embedding: Any, optional, default is BAAI/bge-base-en-v1.5</span>
+<span class="sd">        embedding: Any, optional, default is BAAI/bge-small-en-v1.5</span>
 <span class="sd">            Embedding model to use.</span>
 
 <span class="sd">        Examples</span>
@@ -3525,7 +3525,7 @@ model_kwargs : dict, optional
 <span class="sd">        &gt;&gt;&gt; from llama_utils.utils.config_loader import ConfigLoader</span>
 <span class="sd">        &gt;&gt;&gt; config = ConfigLoader() # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; print(config.embedding) # doctest: +SKIP</span>
-<span class="sd">        model_name=&#39;BAAI/bge-base-en-v1.5&#39; embed_batch_size=10 callback_manager=&lt;llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40&gt; num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None</span>
+<span class="sd">        model_name=&#39;BAAI/bge-small-en-v1.5&#39; embed_batch_size=10 callback_manager=&lt;llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40&gt; num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None</span>
 <span class="sd">        &gt;&gt;&gt; print(config.llm.model) # doctest: +SKIP</span>
 <span class="sd">        llama3</span>
 
@@ -3712,7 +3712,7 @@ model_kwargs : dict, optional
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">llama_utils.utils.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigLoader</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">()</span> <span class="c1"># doctest: +SKIP</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">embedding</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
-<span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;BAAI/bge-base-en-v1.5&#39;</span> <span class="n">embed_batch_size</span><span class="o">=</span><span class="mi">10</span> <span class="n">callback_manager</span><span class="o">=&lt;</span><span class="n">llama_index</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">CallbackManager</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x000002919C16BD40</span><span class="o">&gt;</span> <span class="n">num_workers</span><span class="o">=</span><span class="kc">None</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span> <span class="n">query_instruction</span><span class="o">=</span><span class="kc">None</span> <span class="n">text_instruction</span><span class="o">=</span><span class="kc">None</span> <span class="n">cache_folder</span><span class="o">=</span><span class="kc">None</span>
+<span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;BAAI/bge-small-en-v1.5&#39;</span> <span class="n">embed_batch_size</span><span class="o">=</span><span class="mi">10</span> <span class="n">callback_manager</span><span class="o">=&lt;</span><span class="n">llama_index</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">CallbackManager</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x000002919C16BD40</span><span class="o">&gt;</span> <span class="n">num_workers</span><span class="o">=</span><span class="kc">None</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span> <span class="n">query_instruction</span><span class="o">=</span><span class="kc">None</span> <span class="n">text_instruction</span><span class="o">=</span><span class="kc">None</span> <span class="n">cache_folder</span><span class="o">=</span><span class="kc">None</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="c1"># doctest: +SKIP</span>
 <span class="n">llama3</span>
 </code></pre></div>
@@ -3766,7 +3766,7 @@ model_kwargs : dict, optional
 <span class="sd">    ----------</span>
 <span class="sd">    llm: Any, optional, default is llama3</span>
 <span class="sd">        llm model to use.</span>
-<span class="sd">    embedding: Any, optional, default is BAAI/bge-base-en-v1.5</span>
+<span class="sd">    embedding: Any, optional, default is BAAI/bge-small-en-v1.5</span>
 <span class="sd">        Embedding model to use.</span>
 
 <span class="sd">    Examples</span>
@@ -3775,7 +3775,7 @@ model_kwargs : dict, optional
 <span class="sd">    &gt;&gt;&gt; from llama_utils.utils.config_loader import ConfigLoader</span>
 <span class="sd">    &gt;&gt;&gt; config = ConfigLoader() # doctest: +SKIP</span>
 <span class="sd">    &gt;&gt;&gt; print(config.embedding) # doctest: +SKIP</span>
-<span class="sd">    model_name=&#39;BAAI/bge-base-en-v1.5&#39; embed_batch_size=10 callback_manager=&lt;llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40&gt; num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None</span>
+<span class="sd">    model_name=&#39;BAAI/bge-small-en-v1.5&#39; embed_batch_size=10 callback_manager=&lt;llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40&gt; num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None</span>
 <span class="sd">    &gt;&gt;&gt; print(config.llm.model) # doctest: +SKIP</span>
 <span class="sd">    llama3</span>
 
