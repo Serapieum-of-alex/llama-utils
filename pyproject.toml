@@ -73,6 +73,7 @@ norecursedirs = "docs"
 markers = [
     "e2e: marks tests as end-to-end (deselect with '-m \"e2e\"')",
     "mock: marks tests as mock (deselect with '-m \"mock\"')",
+    "optional-package: marks tests as optional-package (deselect with '-m \"optional-package\"')",
 ]
 
 [build-system]
