@@ -109,7 +109,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: pytest -vvv --cov=src/llama_utils --cov-report term-missing
+        entry: pytest -vvv -m "not optional_package" --cov=src/llama_utils --cov-report term-missing
         language: system
         pass_filenames: false
         always_run: true

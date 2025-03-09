@@ -71,9 +71,9 @@ ignore = ["D401", "D413", "D213", "D203"]
 testpaths = "tests"
 norecursedirs = "docs"
 markers = [
-    "e2e: marks tests as end-to-end (deselect with '-m \"e2e\"')",
-    "mock: marks tests as mock (deselect with '-m \"mock\"')",
-    "optional-package: marks tests as optional-package (deselect with '-m \"optional-package\"')",
+    "e2e: marks tests as end-to-end (deselect with '-m \"not e2e\"')",
+    "mock: marks tests as mock (deselect with '-m \"not mock\"')",
+    "optional_package: marks tests as optional-package (deselect with '-m \"not optional_package\"')",
 ]
 
 [build-system]
