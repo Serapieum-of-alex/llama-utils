@@ -22,7 +22,7 @@ class ConfigLoader:
         ----------
         llm: Any, optional, default is llama3
             llm model to use.
-        embedding: Any, optional, default is BAAI/bge-base-en-v1.5
+        embedding: Any, optional, default is BAAI/bge-small-en-v1.5
             Embedding model to use.
 
         Examples
@@ -31,7 +31,7 @@ class ConfigLoader:
         >>> from llama_utils.utils.config_loader import ConfigLoader
         >>> config = ConfigLoader() # doctest: +SKIP
         >>> print(config.embedding) # doctest: +SKIP
-        model_name='BAAI/bge-base-en-v1.5' embed_batch_size=10 callback_manager=<llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40> num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None
+        model_name='BAAI/bge-small-en-v1.5' embed_batch_size=10 callback_manager=<llama_index.core.callbacks.base.CallbackManager object at 0x000002919C16BD40> num_workers=None max_length=512 normalize=True query_instruction=None text_instruction=None cache_folder=None
         >>> print(config.llm.model) # doctest: +SKIP
         llama3
 

@@ -14,19 +14,21 @@ from llama_utils.utils.models import get_hugging_face_embedding
 class CustomIndex:
     """A Custom class for creating indexes using Llama."""
 
-    def __init__(self, index: VectorStoreIndex):
+    def __init__(self, index: VectorStoreIndex, embedding_model=None):
         """Initialize the CustomIndex object.
 
         Parameters
         ----------
         index: VectorStoreIndex
             The index object.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
         """
         if not isinstance(index, VectorStoreIndex):
             raise ValueError("The index should be an instance of VectorStoreIndex")
         self._id = index.index_id
         self._index = index
-        self._embedding_model = get_hugging_face_embedding()
+        self._embedding_model = embedding_model or get_hugging_face_embedding()
 
     def __str__(self):
         """String representation of the CustomIndex object."""
@@ -60,9 +62,13 @@ class CustomIndex:
         --------
         ```python
         >>> from llama_utils.utils.config_loader import ConfigLoader
-        >>> config_loader = ConfigLoader()
+        >>> from llama_utils.utils.models import get_hugging_face_embedding
+        >>> embedding_model = get_hugging_face_embedding(model_name="BAAI/bge-small-en-v1.5")
+        >>> config_loader = ConfigLoader(embedding=embedding_model)
+        >>> from llama_index.core.schema import TextNode
+        >>> from llama_utils.indexing.custom_index import CustomIndex
         >>> text_node = TextNode(text="text")
-        >>> index = CustomIndex.create_from_nodes([text_node])
+        >>> index = CustomIndex.create_from_nodes([text_node], embedding_model=embedding_model)
         >>> metadata = index.metadata
         >>> type(metadata)
         <class 'llama_index.core.data_structs.data_structs.IndexDict'>
@@ -118,7 +124,10 @@ class CustomIndex:
 
     @classmethod
     def create_from_documents(
-        cls, document: List[Union[Document, str]], generate_id: bool = True
+        cls,
+        document: List[Union[Document, str]],
+        generate_id: bool = True,
+        embedding_model=None,
     ) -> "CustomIndex":
         """Create a new index from a document.
 
@@ -128,6 +137,8 @@ class CustomIndex:
             The document to create the index from.
         generate_id: bool, optional, default is False.
             True if you want to generate a sha256 hash number as a doc_id based on the content of the nodes.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
 
         Returns
         -------
@@ -137,6 +148,7 @@ class CustomIndex:
         Examples
         --------
         ```python
+        >>> from llama_index.core.schema import Document
         >>> doc = Document(text="text")
         >>> index = CustomIndex.create_from_documents([doc]) # doctest: +SKIP
         >>> type(index) # doctest: +SKIP
@@ -150,16 +162,20 @@ class CustomIndex:
                 doc.node_id = generate_content_hash(doc.text)
 
         index = VectorStoreIndex.from_documents(docs)
-        return cls(index)
+        return cls(index, embedding_model=embedding_model)
 
     @classmethod
-    def create_from_nodes(cls, nodes: List[TextNode]) -> "CustomIndex":
+    def create_from_nodes(
+        cls, nodes: List[TextNode], embedding_model=None
+    ) -> "CustomIndex":
         """Create a new index from a node.
 
         Parameters
         ----------
         nodes: List[TextNode]
             The nodes to create the index from.
+        embedding_model: Optional, default is None.
+            The embedding model to use to create the embeddings in the index.
 
         Returns
         -------
@@ -170,10 +186,12 @@ class CustomIndex:
         --------
         To create a new index you have to define the embedding model
         ```python
-        >>> from llama_utils.utils.config_loader import ConfigLoader
-        >>> configs = ConfigLoader()
-        >>> text_node = TextNode(text="text")
-        >>> index = CustomIndex.create_from_nodes([text_node])
+        >>> from llama_index.core.schema import TextNode
+        >>> from llama_utils.indexing.custom_index import CustomIndex
+        >>> from llama_index.core.embeddings.mock_embed_model import MockEmbedding
+        >>> embedding_model = MockEmbedding(embed_dim=768)
+        >>> text_node = TextNode(text="text") # doctest: +SKIP
+        >>> index = CustomIndex.create_from_nodes([text_node], embedding_model=embedding_model) # doctest: +SKIP
         >>> print(index) # doctest: +SKIP
         <BLANKLINE>
                 Index ID: 8d57e294-fd17-43c9-9dec-a12aa7ea0751
@@ -183,7 +201,7 @@ class CustomIndex:
         As you see the added node is not a document, so the number of documents is 0.
         """
         index = VectorStoreIndex(nodes)
-        return cls(index)
+        return cls(index, embedding_model=embedding_model)
 
     def add_documents(self, documents: List[Document], generate_id: bool = True):
         """Add documents to the index.
@@ -207,13 +225,13 @@ class CustomIndex:
         Set the ConfigLoader to define the embedding model that you want to use to create the embeddings in the index:
         ```python
         >>> from llama_utils.utils.config_loader import ConfigLoader
-        >>> configs = ConfigLoader()
+        >>> configs = ConfigLoader() # doctest: +SKIP
 
         ```
         Create a new index from a document:
         ```python
         >>> doc = Document(text="text", id_="doc 1")
-        >>> index = CustomIndex.create_from_documents([doc])
+        >>> index = CustomIndex.create_from_documents([doc])  # doctest: +SKIP
         >>> print(index) # doctest: +SKIP
         <BLANKLINE>
                 Index ID: 91dd8a18-3ab5-41ca-b8de-998077b9235c
@@ -222,19 +240,19 @@ class CustomIndex:
         ```
         Add a new document to the index:
         ```python
-        >>> doc2 = Document(text="text2", id_="doc 2")
+        >>> doc2 = Document(text="text2", id_="doc 2")  # doctest: +SKIP
 
         ```
         The `add_documents` method has the `genereate_id` parameter, which is set to True by default to generate a
         sha256 hash number as a doc_id based on the content of the nodes:
         ```python
-        >>> index.add_documents([doc2])
+        >>> index.add_documents([doc2])  # doctest: +SKIP
         >>> print(index.doc_ids) # doctest: +SKIP
         ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'fd848ca35a6281600b5da598c7cb4d5df561e0ee63ee7cec0e98e6049996f3ff']
         ```
         If you want to keep the same doc_id, you can set the `generate_id` parameter to False:
         ```python
-        >>> index.add_documents([doc2], generate_id=False)
+        >>> index.add_documents([doc2], generate_id=False)  # doctest: +SKIP
         >>> print(index.doc_ids) # doctest: +SKIP
         ['982d9e3eb996f559e633f4d194def3761d909f5a3b647d1a851fead67c32c9d1', 'doc 2']
         ```
