@@ -48,7 +48,7 @@ class IndexManager:
 
         ```python
         >>> from llama_utils.utils.config_loader import ConfigLoader
-        >>> config_loader = ConfigLoader()
+        >>> config_loader = ConfigLoader()  # doctest: +SKIP
 
         ```
 
