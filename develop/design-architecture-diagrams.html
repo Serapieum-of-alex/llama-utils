@@ -320,7 +320,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="tools/notebooks/llama-cpp.html" class="md-tabs__link">
+        <a href="examples/retrieval/build-storage.html" class="md-tabs__link">
           
   
     
@@ -973,6 +973,8 @@
       
         
       
+        
+      
     
     
       
@@ -1006,6 +1008,28 @@
             Examples
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/retrieval/build-storage.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building a Storage from Text File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1213,8 +1237,8 @@
 
 
 
-<h1 id="design-and-architecture-diagrams">Design and Architecture Diagrams</h1>
-<h2 id="1-class-diagram">1. Class Diagram</h2>
+<h1 id="design-and-architecture-diagrams"><a class="toclink" href="#design-and-architecture-diagrams">Design and Architecture Diagrams</a><a class="headerlink" href="#design-and-architecture-diagrams" title="Permanent link">#</a></h1>
+<h2 id="1-class-diagram"><a class="toclink" href="#1-class-diagram">1. Class Diagram</a><a class="headerlink" href="#1-class-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>classDiagram
     class IndexManager {
         +List~str~ ids
@@ -1276,13 +1300,13 @@
     ConfigLoader --&gt; HuggingFaceEmbedding
     Logger --&gt; logging
     StorageNotFoundError --&gt; Exception</code></pre>
-<h3 id="visibility-symbols-in-mermaid-class-diagrams">Visibility Symbols in Mermaid Class Diagrams</h3>
+<h3 id="visibility-symbols-in-mermaid-class-diagrams"><a class="toclink" href="#visibility-symbols-in-mermaid-class-diagrams">Visibility Symbols in Mermaid Class Diagrams</a><a class="headerlink" href="#visibility-symbols-in-mermaid-class-diagrams" title="Permanent link">#</a></h3>
 <ul>
 <li><code>+</code> : <strong>Public</strong> – The member is accessible from outside the class.</li>
 <li><code>-</code> : <strong>Private</strong> – The member is accessible only within the class.</li>
 <li><code>#</code> : <strong>Protected</strong> – The member is accessible within the class and its subclasses.</li>
 </ul>
-<h2 id="2-module-dependency-diagram">2. Module Dependency Diagram</h2>
+<h2 id="2-module-dependency-diagram"><a class="toclink" href="#2-module-dependency-diagram">2. Module Dependency Diagram</a><a class="headerlink" href="#2-module-dependency-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TD
     IndexManager --&gt;|Imports| CustomIndex
     IndexManager --&gt;|Imports| Storage
@@ -1296,7 +1320,7 @@
     ConfigLoader --&gt;|Uses| HuggingFaceEmbedding
     ConfigLoader --&gt;|Uses| OllamaLLM
     Logger --&gt;|Depends| logging</code></pre>
-<h2 id="3-sequence-diagram">3. Sequence Diagram</h2>
+<h2 id="3-sequence-diagram"><a class="toclink" href="#3-sequence-diagram">3. Sequence Diagram</a><a class="headerlink" href="#3-sequence-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     actor User
     participant IndexManager
@@ -1307,7 +1331,7 @@
     Storage -&gt;&gt; IndexManager: Return data
     IndexManager -&gt;&gt; CustomIndex: Create CustomIndex
     CustomIndex -&gt;&gt; IndexManager: Return index object</code></pre>
-<h2 id="4-component-diagram">4. Component Diagram</h2>
+<h2 id="4-component-diagram"><a class="toclink" href="#4-component-diagram">4. Component Diagram</a><a class="headerlink" href="#4-component-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TD
     subgraph Application
         IndexManager
@@ -1322,7 +1346,7 @@
     IndexManager --&gt;|Uses| Storage
     Storage --&gt;|Stores| DocumentStore
     VisionModel --&gt;|API| AzureOpenAI</code></pre>
-<h2 id="5-deployment-diagram">5. Deployment Diagram</h2>
+<h2 id="5-deployment-diagram"><a class="toclink" href="#5-deployment-diagram">5. Deployment Diagram</a><a class="headerlink" href="#5-deployment-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TD
     user[User System]
     app[Python Application]
@@ -1331,30 +1355,30 @@
     user --&gt; app
     app --&gt; storage
     app --&gt; azure</code></pre>
-<h2 id="6data-flow-diagram">6.Data Flow Diagram</h2>
+<h2 id="6data-flow-diagram"><a class="toclink" href="#6data-flow-diagram">6.Data Flow Diagram</a><a class="headerlink" href="#6data-flow-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph LR
     Input[User Input] --&gt; Process[IndexManager]
     Process --&gt; StorageSystem[Storage]
     StorageSystem --&gt; Output[Retrieved Data]</code></pre>
-<h2 id="7deployment-diagram">7.Deployment Diagram</h2>
+<h2 id="7deployment-diagram"><a class="toclink" href="#7deployment-diagram">7.Deployment Diagram</a><a class="headerlink" href="#7deployment-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TD
     User --&gt;|Requests| PythonApp[Python Application]
     PythonApp --&gt;|Reads/Writes| Storage[Local/Cloud Storage]
     PythonApp --&gt;|Interacts| Azure[Azure OpenAI Services]</code></pre>
-<h2 id="8state-diagram">8.State Diagram</h2>
+<h2 id="8state-diagram"><a class="toclink" href="#8state-diagram">8.State Diagram</a><a class="headerlink" href="#8state-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; Initialized
     Initialized --&gt; LoadingIndexes
     LoadingIndexes --&gt; IndexReady: Success
     LoadingIndexes --&gt; [*]: Failure
     IndexReady --&gt; [*]</code></pre>
-<h2 id="9activity-diagram">9.Activity Diagram</h2>
+<h2 id="9activity-diagram"><a class="toclink" href="#9activity-diagram">9.Activity Diagram</a><a class="headerlink" href="#9activity-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>flowchart TD
     Start --&gt; LoadIndexes
     LoadIndexes --&gt; ProcessData
     ProcessData --&gt; GenerateEmbeddings
     GenerateEmbeddings --&gt; End</code></pre>
-<h2 id="10package-diagram">10.Package Diagram</h2>
+<h2 id="10package-diagram"><a class="toclink" href="#10package-diagram">10.Package Diagram</a><a class="headerlink" href="#10package-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TB
     Package[llama-utils]
     Package --&gt; SubPackage1[Indexing]
@@ -1363,7 +1387,7 @@
     SubPackage1 --&gt; Module2[custom_index.py]
     SubPackage3 --&gt; Module5[storage.py]
     SubPackage3 --&gt; Module6[config_loader.py]</code></pre>
-<h2 id="11network-diagram">11.Network Diagram</h2>
+<h2 id="11network-diagram"><a class="toclink" href="#11network-diagram">11.Network Diagram</a><a class="headerlink" href="#11network-diagram" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TD
     Client --&gt; API[REST API]
     API --&gt; Storage[Data Storage]

@@ -320,7 +320,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="notebooks/llama-cpp.html" class="md-tabs__link">
+        <a href="../examples/retrieval/build-storage.html" class="md-tabs__link">
           
   
     
@@ -1213,6 +1213,8 @@
       
         
       
+        
+      
     
     
       
@@ -1246,6 +1248,28 @@
             Examples
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/retrieval/build-storage.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building a Storage from Text File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1693,7 +1717,7 @@
 
 
 
-<h1 id="running-a-local-llm-using-ollama">Running a Local LLM using Ollama</h1>
+<h1 id="running-a-local-llm-using-ollama"><a class="toclink" href="#running-a-local-llm-using-ollama">Running a Local LLM using Ollama</a><a class="headerlink" href="#running-a-local-llm-using-ollama" title="Permanent link">#</a></h1>
 <ul>
 <li>Ollama is a tool for running large language models (LLMs) locally on your machine. It allows you to download, run,
   and interact with various LLMs without relying on cloud-based APIs.</li>
@@ -1705,8 +1729,8 @@
 - GPU Acceleration – Uses CUDA (NVIDIA) or Metal (Mac) for faster performance.
 - API Interface – Exposes a simple HTTP API for easy integration with applications.
 - CLI-Based Interaction – Allows running inference from the command line.</p>
-<h2 id="1-installation-of-ollama">1. Installation of Ollama</h2>
-<h3 id="windows"><strong>Windows</strong></h3>
+<h2 id="1-installation-of-ollama"><a class="toclink" href="#1-installation-of-ollama">1. Installation of Ollama</a><a class="headerlink" href="#1-installation-of-ollama" title="Permanent link">#</a></h2>
+<h3 id="windows"><a class="toclink" href="#windows"><strong>Windows</strong></a><a class="headerlink" href="#windows" title="Permanent link">#</a></h3>
 <ol>
 <li><strong>Download the Installer</strong>
    Visit <a href="https://ollama.com">Ollama's website</a> and download the Windows installer.</li>
@@ -1728,7 +1752,7 @@
   <img src="images/ollama/ollama-version.png" alt="Ollama List">
 </p>
 
-<h3 id="macos"><strong>macOS</strong></h3>
+<h3 id="macos"><a class="toclink" href="#macos"><strong>macOS</strong></a><a class="headerlink" href="#macos" title="Permanent link">#</a></h3>
 <ol>
 <li><strong>Install via Homebrew</strong></li>
 </ol>
@@ -1737,7 +1761,7 @@
 2. <strong>Verify Installation</strong></p>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>--version
 </code></pre></div>
-<h3 id="linux"><strong>Linux</strong></h3>
+<h3 id="linux"><a class="toclink" href="#linux"><strong>Linux</strong></a><a class="headerlink" href="#linux" title="Permanent link">#</a></h3>
 <ol>
 <li><strong>Install via Curl</strong></li>
 </ol>
@@ -1747,15 +1771,15 @@
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>--version
 </code></pre></div>
 <hr />
-<h2 id="2-downloading-and-managing-models">2. Downloading and Managing Models</h2>
-<h3 id="list-available-models"><strong>List Available Models</strong></h3>
+<h2 id="2-downloading-and-managing-models"><a class="toclink" href="#2-downloading-and-managing-models">2. Downloading and Managing Models</a><a class="headerlink" href="#2-downloading-and-managing-models" title="Permanent link">#</a></h2>
+<h3 id="list-available-models"><a class="toclink" href="#list-available-models"><strong>List Available Models</strong></a><a class="headerlink" href="#list-available-models" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>list
 </code></pre></div>
 <p align="center">
   <img src="images/ollama/ollama-list.png" alt="Ollama List">
 </p>
 
-<h3 id="download-a-model"><strong>Download a Model</strong></h3>
+<h3 id="download-a-model"><a class="toclink" href="#download-a-model"><strong>Download a Model</strong></a><a class="headerlink" href="#download-a-model" title="Permanent link">#</a></h3>
 <p>First, you can check the available models at https://ollama.com/library and run the following command to download a model:</p>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>pull<span class="w"> </span>mistral
 ollama<span class="w"> </span>pull<span class="w"> </span>gemma
@@ -1773,7 +1797,7 @@ located in a subdirectory called <code>blobs</code>. The model's manifest is ava
   <img src="images/ollama/ollama-models-blobs.png" alt="Ollama download location" width="600">
 </p>
 
-<h3 id="remove-a-model"><strong>Remove a Model</strong></h3>
+<h3 id="remove-a-model"><a class="toclink" href="#remove-a-model"><strong>Remove a Model</strong></a><a class="headerlink" href="#remove-a-model" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>rm<span class="w"> </span>llama3
 </code></pre></div>
 <p align="center">
@@ -1781,8 +1805,8 @@ located in a subdirectory called <code>blobs</code>. The model's manifest is ava
 </p>
 
 <hr />
-<h2 id="3-running-ollama-locally">3. Running Ollama Locally</h2>
-<h3 id="start-the-ollama-server"><strong>Start the Ollama Server</strong></h3>
+<h2 id="3-running-ollama-locally"><a class="toclink" href="#3-running-ollama-locally">3. Running Ollama Locally</a><a class="headerlink" href="#3-running-ollama-locally" title="Permanent link">#</a></h2>
+<h3 id="start-the-ollama-server"><a class="toclink" href="#start-the-ollama-server"><strong>Start the Ollama Server</strong></a><a class="headerlink" href="#start-the-ollama-server" title="Permanent link">#</a></h3>
 <p>Run:</p>
 <p><div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>serve
 </code></pre></div>
@@ -1820,7 +1844,7 @@ ollama<span class="w"> </span>serve
 <div class="highlight"><pre><span></span><code>tasklist<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span>/i<span class="w"> </span><span class="s2">&quot;ollama&quot;</span>
 ollama.exe<span class="w">                   </span><span class="m">18460</span><span class="w"> </span>Console<span class="w">                    </span><span class="m">1</span><span class="w">     </span><span class="m">48</span>,644<span class="w"> </span>K
 </code></pre></div></p>
-<h3 id="configure-gpu-acceleration"><strong>Configure GPU Acceleration</strong></h3>
+<h3 id="configure-gpu-acceleration"><a class="toclink" href="#configure-gpu-acceleration"><strong>Configure GPU Acceleration</strong></a><a class="headerlink" href="#configure-gpu-acceleration" title="Permanent link">#</a></h3>
 <p>If your system supports CUDA, Ollama will use the GPU automatically. You can check GPU usage via:</p>
 <div class="highlight"><pre><span></span><code>nvidia-smi
 </code></pre></div>
@@ -1831,7 +1855,7 @@ for Windows use:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="w"> </span><span class="nv">OLLAMA_USE_CPU</span><span class="o">=</span><span class="m">1</span>
 ollama<span class="w"> </span>run<span class="w"> </span>mistral<span class="w">  </span>
 </code></pre></div>
-<h3 id="troubleshooting"><strong>Troubleshooting</strong></h3>
+<h3 id="troubleshooting"><a class="toclink" href="#troubleshooting"><strong>Troubleshooting</strong></a><a class="headerlink" href="#troubleshooting" title="Permanent link">#</a></h3>
 <ul>
 <li>If <code>ollama</code> commands are not found, restart your shell or check your <code>$PATH</code>:
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="nv">$PATH</span>
@@ -1841,8 +1865,8 @@ ollama<span class="w"> </span>run<span class="w"> </span>mistral<span class="w">
 </code></pre></div></li>
 </ul>
 <hr />
-<h2 id="4-interacting-with-ollama-via-cli">4. Interacting with Ollama via CLI</h2>
-<h3 id="basic-inference"><strong>Basic Inference</strong></h3>
+<h2 id="4-interacting-with-ollama-via-cli"><a class="toclink" href="#4-interacting-with-ollama-via-cli">4. Interacting with Ollama via CLI</a><a class="headerlink" href="#4-interacting-with-ollama-via-cli" title="Permanent link">#</a></h2>
+<h3 id="basic-inference"><a class="toclink" href="#basic-inference"><strong>Basic Inference</strong></a><a class="headerlink" href="#basic-inference" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>run<span class="w"> </span>mistral
 </code></pre></div>
 <p align="center">
@@ -1859,12 +1883,12 @@ ollama<span class="w"> </span>run<span class="w"> </span>mistral<span class="w">
 <div class="highlight"><pre><span></span><code>Paris is the capital of France.
 </code></pre></div>
 <hr />
-<h2 id="5-using-ollama-as-an-api">5. Using Ollama as an API</h2>
-<h3 id="starting-the-api"><strong>Starting the API</strong></h3>
+<h2 id="5-using-ollama-as-an-api"><a class="toclink" href="#5-using-ollama-as-an-api">5. Using Ollama as an API</a><a class="headerlink" href="#5-using-ollama-as-an-api" title="Permanent link">#</a></h2>
+<h3 id="starting-the-api"><a class="toclink" href="#starting-the-api"><strong>Starting the API</strong></a><a class="headerlink" href="#starting-the-api" title="Permanent link">#</a></h3>
 <p>Run:</p>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>serve
 </code></pre></div>
-<h3 id="1making-a-request-via-curl">1.<strong>Making a Request via <code>curl</code></strong></h3>
+<h3 id="1making-a-request-via-curl"><a class="toclink" href="#1making-a-request-via-curl">1.<strong>Making a Request via <code>curl</code></strong></a><a class="headerlink" href="#1making-a-request-via-curl" title="Permanent link">#</a></h3>
 <p><div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
 <span class="s1">  &quot;model&quot;: &quot;mistral&quot;,</span>
 <span class="s1">  &quot;prompt&quot;: &quot;Tell me a joke&quot;</span>
@@ -1921,7 +1945,7 @@ for command terminal in Windows use:
 <span class="o">{</span><span class="s2">&quot;model&quot;</span>:<span class="s2">&quot;mistral&quot;</span>,<span class="s2">&quot;created_at&quot;</span>:<span class="s2">&quot;2025-02-01T21:01:26.5142572Z&quot;</span>,<span class="s2">&quot;response&quot;</span>:<span class="s2">&quot;.&quot;</span>,<span class="s2">&quot;done&quot;</span>:false<span class="o">}</span>
 <span class="o">{</span><span class="s2">&quot;model&quot;</span>:<span class="s2">&quot;mistral&quot;</span>,<span class="s2">&quot;created_at&quot;</span>:<span class="s2">&quot;2025-02-01T21:01:26.5306917Z&quot;</span>,<span class="s2">&quot;response&quot;</span>:<span class="s2">&quot;&quot;</span>,<span class="s2">&quot;done&quot;</span>:true,<span class="s2">&quot;done_reason&quot;</span>:<span class="s2">&quot;stop&quot;</span>,<span class="s2">&quot;context&quot;</span>:<span class="o">[</span><span class="m">3</span>,29473,16027,1296,1032,3253,2407,1452,16875,4,1027,4719,15541,23859,1093,12509,29499,1427,1040,22136,1066,3590,1245,1639,9789,29493,8160,1639,6942,29493,1072,5684,1639,5165,3586,1124,1137,5936,29491,1619,1117,3419,1158,6367,5936,29493,1392,1070,1040,1851,8202,1070,16875,29491<span class="o">]</span>,<span class="s2">&quot;total_duration&quot;</span>:4969300700,<span class="s2">&quot;load_duration&quot;</span>:3858876600,<span class="s2">&quot;prompt_eval_count&quot;</span>:12,<span class="s2">&quot;prompt_eval_duration&quot;</span>:470000000,<span class="s2">&quot;eval_count&quot;</span>:44,<span class="s2">&quot;eval_duration&quot;</span>:630000000<span class="o">}</span>
 </code></pre></div>
-<h4 id="options"><strong>Options</strong></h4>
+<h4 id="options"><a class="toclink" href="#options"><strong>Options</strong></a><a class="headerlink" href="#options" title="Permanent link">#</a></h4>
 <ul>
 <li><code>model</code>: The LLM model to use (e.g., <code>mistral</code>, <code>gemma</code>, <code>llama2</code>).</li>
 <li><code>prompt</code>: The input text or query for the model.</li>
@@ -1947,10 +1971,10 @@ for command terminal in Windows use:
 <li><code>return_error</code>: Whether to return the error in the response (default: <code>false</code>).</li>
 <li><code>return_error_message</code>: Whether to return the error message in the response (default: <code>false</code>).</li>
 <li>
-<h2 id="return_error_traceback-whether-to-return-the-error-traceback-in-the-response-default-false"><code>return_error_traceback</code>: Whether to return the error traceback in the response (default: <code>false</code>).</h2>
+<h2 id="return_error_traceback-whether-to-return-the-error-traceback-in-the-response-default-false"><a class="toclink" href="#return_error_traceback-whether-to-return-the-error-traceback-in-the-response-default-false"><code>return_error_traceback</code>: Whether to return the error traceback in the response (default: <code>false</code>).</a><a class="headerlink" href="#return_error_traceback-whether-to-return-the-error-traceback-in-the-response-default-false" title="Permanent link">#</a></h2>
 </li>
 </ul>
-<h3 id="2using-python-requests">2.<strong>Using Python (<code>requests</code>)</strong></h3>
+<h3 id="2using-python-requests"><a class="toclink" href="#2using-python-requests">2.<strong>Using Python (<code>requests</code>)</strong></a><a class="headerlink" href="#2using-python-requests" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:11434/api/generate&quot;</span>
@@ -1960,26 +1984,26 @@ for command terminal in Windows use:
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
 </code></pre></div>
 <hr />
-<h2 id="6-integrating-ollama-with-llama-index">6. Integrating Ollama with <code>llama-index</code></h2>
-<h3 id="install-dependencies"><strong>Install Dependencies</strong></h3>
+<h2 id="6-integrating-ollama-with-llama-index"><a class="toclink" href="#6-integrating-ollama-with-llama-index">6. Integrating Ollama with <code>llama-index</code></a><a class="headerlink" href="#6-integrating-ollama-with-llama-index" title="Permanent link">#</a></h2>
+<h3 id="install-dependencies"><a class="toclink" href="#install-dependencies"><strong>Install Dependencies</strong></a><a class="headerlink" href="#install-dependencies" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>llama-index-llms-ollama
 </code></pre></div>
-<h3 id="configuring-llama-index"><strong>Configuring <code>llama-index</code></strong></h3>
+<h3 id="configuring-llama-index"><a class="toclink" href="#configuring-llama-index"><strong>Configuring <code>llama-index</code></strong></a><a class="headerlink" href="#configuring-llama-index" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.llms.ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ollama</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Settings</span>
 
 <span class="n">llm</span> <span class="o">=</span> <span class="n">Ollama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;mistral&quot;</span><span class="p">)</span>
 <span class="n">Settings</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm</span>
 </code></pre></div>
-<h3 id="querying-ollama-via-llama-index"><strong>Querying Ollama via <code>llama-index</code></strong></h3>
+<h3 id="querying-ollama-via-llama-index"><a class="toclink" href="#querying-ollama-via-llama-index"><strong>Querying Ollama via <code>llama-index</code></strong></a><a class="headerlink" href="#querying-ollama-via-llama-index" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="s2">&quot;What is the capital of the Netherlands?&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>The capital city of the Netherlands is Amsterdam. However, it&#39;s important to note that The Hague (Den Haag) serves as the seat of government, hosting several key institutions such as the Dutch Parliament and the Supreme Court. Amsterdam, on the other hand, is known for its vibrant culture and economic significance.
 </code></pre></div>
 <hr />
-<h2 id="7-performance-optimization">7. Performance Optimization</h2>
-<h3 id="1gpu-acceleration">1.<strong>GPU Acceleration</strong></h3>
+<h2 id="7-performance-optimization"><a class="toclink" href="#7-performance-optimization">7. Performance Optimization</a><a class="headerlink" href="#7-performance-optimization" title="Permanent link">#</a></h2>
+<h3 id="1gpu-acceleration"><a class="toclink" href="#1gpu-acceleration">1.<strong>GPU Acceleration</strong></a><a class="headerlink" href="#1gpu-acceleration" title="Permanent link">#</a></h3>
 <ul>
 <li>Ensure you have CUDA installed:
 <div class="highlight"><pre><span></span><code>nvidia-smi
@@ -1992,7 +2016,7 @@ for Windows use:
 ollama<span class="w"> </span>serve
 </code></pre></div></li>
 </ul>
-<h3 id="2change-port-number">2.<strong>Change port number</strong></h3>
+<h3 id="2change-port-number"><a class="toclink" href="#2change-port-number">2.<strong>Change port number</strong></a><a class="headerlink" href="#2change-port-number" title="Permanent link">#</a></h3>
 <ul>
 <li>To change the port number, use the <code>OLLAMA_HOST</code> environment variable to specify the new port:
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OLLAMA_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1:8081
@@ -2019,8 +2043,8 @@ C:<span class="se">\U</span>sers<span class="se">\e</span>ng_m&gt;ollama<span cl
 </code></pre></div></li>
 </ul>
 <hr />
-<h3 id="2change-cache-directory">2.<strong>Change cache directory</strong></h3>
-<h4 id="change-default-ollama-directory-symlink">Change default <code>.ollama</code> directory (Symlink)</h4>
+<h3 id="2change-cache-directory"><a class="toclink" href="#2change-cache-directory">2.<strong>Change cache directory</strong></a><a class="headerlink" href="#2change-cache-directory" title="Permanent link">#</a></h3>
+<h4 id="change-default-ollama-directory-symlink"><a class="toclink" href="#change-default-ollama-directory-symlink">Change default <code>.ollama</code> directory (Symlink)</a><a class="headerlink" href="#change-default-ollama-directory-symlink" title="Permanent link">#</a></h4>
 <ul>
 <li>
 <p>To change the cache directory from Windows directory to a directory that exist in a network, you can symlink the <code>~/.
@@ -2045,7 +2069,7 @@ directory as shown above.</p>
 <div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>serve
 </code></pre></div></li>
 </ul>
-<h2 id="8-common-issues-troubleshooting">8. Common Issues &amp; Troubleshooting</h2>
+<h2 id="8-common-issues-troubleshooting"><a class="toclink" href="#8-common-issues-troubleshooting">8. Common Issues &amp; Troubleshooting</a><a class="headerlink" href="#8-common-issues-troubleshooting" title="Permanent link">#</a></h2>
 <table>
 <thead>
 <tr>
@@ -2070,8 +2094,8 @@ directory as shown above.</p>
 </table>
 <hr />
 <p>This guide provides everything needed to run Ollama locally and integrate it with <code>llama-index</code>. Let me know if you need further customization! 🚀</p>
-<h2 id="9errors">9.Errors</h2>
-<h3 id="1address-not-permitted">1.address not permitted</h3>
+<h2 id="9errors"><a class="toclink" href="#9errors">9.Errors</a><a class="headerlink" href="#9errors" title="Permanent link">#</a></h2>
+<h3 id="1address-not-permitted"><a class="toclink" href="#1address-not-permitted">1.address not permitted</a><a class="headerlink" href="#1address-not-permitted" title="Permanent link">#</a></h3>
 <p>You might face the following error when you run the <code>ollama serve</code> command
 <div class="highlight"><pre><span></span><code>Error:<span class="w"> </span>listen<span class="w"> </span>tcp<span class="w"> </span><span class="m">127</span>.0.0.1:11434:<span class="w"> </span>bind:<span class="w"> </span>Only<span class="w"> </span>one<span class="w"> </span>usage<span class="w"> </span>of<span class="w"> </span>each<span class="w"> </span>socket<span class="w"> </span>address<span class="w"> </span><span class="o">(</span>protocol/network<span class="w"> </span>address/port<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>normally<span class="w"> </span>permitted.
 </code></pre></div>

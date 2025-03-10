@@ -318,7 +318,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="tools/notebooks/llama-cpp.html" class="md-tabs__link">
+        <a href="examples/retrieval/build-storage.html" class="md-tabs__link">
           
   
     
@@ -821,6 +821,8 @@
       
         
       
+        
+      
     
     
       
@@ -854,6 +856,28 @@
             Examples
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/retrieval/build-storage.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building a Storage from Text File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -939,7 +963,7 @@
 
 
 
-<h1 id="llama-utils">llama-utils</h1>
+<h1 id="llama-utils"><a class="toclink" href="#llama-utils">llama-utils</a><a class="headerlink" href="#llama-utils" title="Permanent link">#</a></h1>
 <p>LlamaIndex utility package</p>
 <p><a href="https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml"><img alt="Deploy MkDocs" src="https://github.com/Serapieum-of-alex/llama-utils/actions/workflows/github-pages-mkdocs.yml/badge.svg" /></a>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/llama-utils" />
@@ -950,7 +974,7 @@
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/serapieum-of-alex/llama-utils" />
 <img alt="Codecov" src="https://img.shields.io/codecov/c/github/serapieum-of-alex/llama-utils" />
 <a href="https://www.codacy.com/gh/Serapieum-of-alex/llama-utils/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Serapieum-of-alex/llama-utils&amp;utm_campaign=Badge_Grade"><img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/5e3aa4d0acc843d1a91caf33545ecf03" /></a></p>
-<h1 id="current-release-info">Current release info</h1>
+<h1 id="current-release-info"><a class="toclink" href="#current-release-info">Current release info</a><a class="headerlink" href="#current-release-info" title="Permanent link">#</a></h1>
 <table>
 <thead>
 <tr>
@@ -969,15 +993,15 @@
 </tr>
 </tbody>
 </table>
-<h1 id="llama-utils-large-language-model-utility-package">llama-utils - Large Language Model Utility Package</h1>
+<h1 id="llama-utils-large-language-model-utility-package"><a class="toclink" href="#llama-utils-large-language-model-utility-package">llama-utils - Large Language Model Utility Package</a><a class="headerlink" href="#llama-utils-large-language-model-utility-package" title="Permanent link">#</a></h1>
 <p><strong>llama-utils</strong> is a large language model utility package</p>
 <p><a href="https://serapieum-of-alex.github.io/llama-utils/latest/">Full Documentation</a>
 <a href="https://github.com/conda-forge/llama-utils-feedstock/">Conda-forge feedstock</a></p>
-<h2 id="main-features">Main Features</h2>
+<h2 id="main-features"><a class="toclink" href="#main-features">Main Features</a><a class="headerlink" href="#main-features" title="Permanent link">#</a></h2>
 <ul>
 <li>llama-index</li>
 </ul>
-<h2 id="package-overview">Package Overview</h2>
+<h2 id="package-overview"><a class="toclink" href="#package-overview">Package Overview</a><a class="headerlink" href="#package-overview" title="Permanent link">#</a></h2>
 <pre class="mermaid"><code>graph TB
     Package[llama-utils]
     Package --&gt; SubPackage1[Indexing]
@@ -987,22 +1011,22 @@
     SubPackage3 --&gt; Module5[storage.py]
     SubPackage3 --&gt; Module6[config_loader.py]</code></pre>
 <p>complete overview of the design and architecture <a href="/docs/design_architecture_diagrams.md">here</a></p>
-<h1 id="installing-llama-utils">Installing llama-utils</h1>
+<h1 id="installing-llama-utils"><a class="toclink" href="#installing-llama-utils">Installing llama-utils</a><a class="headerlink" href="#installing-llama-utils" title="Permanent link">#</a></h1>
 <p>Installing <code>llama-utils</code> from the <code>conda-forge</code> channel can be achieved by:</p>
 <div class="highlight"><pre><span></span><code>conda install -c conda-forge llama-utils=0.2.0
 </code></pre></div>
 <p>It is possible to list all the versions of <code>llama-utils</code> available on your platform with:</p>
 <div class="highlight"><pre><span></span><code>conda search llama-utils --channel conda-forge
 </code></pre></div>
-<h2 id="install-from-github">Install from GitHub</h2>
+<h2 id="install-from-github"><a class="toclink" href="#install-from-github">Install from GitHub</a><a class="headerlink" href="#install-from-github" title="Permanent link">#</a></h2>
 <p>to install the last development to time, you can install the library from GitHub</p>
 <div class="highlight"><pre><span></span><code>pip install git+https://github.com/Serapieum-of-alex/llama-utils
 </code></pre></div>
-<h2 id="pip">pip</h2>
+<h2 id="pip"><a class="toclink" href="#pip">pip</a><a class="headerlink" href="#pip" title="Permanent link">#</a></h2>
 <p>to install the last release, you can easily use pip</p>
 <div class="highlight"><pre><span></span><code>pip install llama-utils==0.2.0
 </code></pre></div>
-<h1 id="quick-start">Quick start</h1>
+<h1 id="quick-start"><a class="toclink" href="#quick-start">Quick start</a><a class="headerlink" href="#quick-start" title="Permanent link">#</a></h1>
 <ul>
 <li>First download ollama from here <a href="https://ollama.com/download">ollama</a> and install it.</li>
 <li>Then run the following command to pull the <code>llama3</code> model

@@ -16,7 +16,7 @@
         <link rel="prev" href="ollama.html">
       
       
-        <link rel="next" href="notebooks/llama-cpp.html">
+        <link rel="next" href="../examples/retrieval/build-storage.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -320,7 +320,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="notebooks/llama-cpp.html" class="md-tabs__link">
+        <a href="../examples/retrieval/build-storage.html" class="md-tabs__link">
           
   
     
@@ -1117,6 +1117,8 @@
       
         
       
+        
+      
     
     
       
@@ -1150,6 +1152,28 @@
             Examples
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/retrieval/build-storage.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building a Storage from Text File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1501,10 +1525,10 @@
 
 
 
-<h1 id="using-llamacpp-for-local-llm-inference">Using Llama.cpp for Local LLM Inference</h1>
-<h2 id="introduction">Introduction</h2>
+<h1 id="using-llamacpp-for-local-llm-inference"><a class="toclink" href="#using-llamacpp-for-local-llm-inference">Using Llama.cpp for Local LLM Inference</a><a class="headerlink" href="#using-llamacpp-for-local-llm-inference" title="Permanent link">#</a></h1>
+<h2 id="introduction"><a class="toclink" href="#introduction">Introduction</a><a class="headerlink" href="#introduction" title="Permanent link">#</a></h2>
 <p>Llama.cpp is a powerful and efficient inference framework for running LLaMA models locally on your machine. Unlike other tools such as Ollama, LM Studio, and similar LLM-serving solutions, Llama.cpp is designed to provide high-performance, low-resource inference while offering flexibility for different hardware architectures.</p>
-<h3 id="how-llamacpp-compares-to-other-tools">How Llama.cpp Compares to Other Tools</h3>
+<h3 id="how-llamacpp-compares-to-other-tools"><a class="toclink" href="#how-llamacpp-compares-to-other-tools">How Llama.cpp Compares to Other Tools</a><a class="headerlink" href="#how-llamacpp-compares-to-other-tools" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Llama.cpp vs. Ollama</strong>: Ollama provides a more user-friendly experience with built-in model management, whereas Llama.cpp gives you full control over your models and hardware acceleration.</li>
 <li><strong>Llama.cpp vs. LM Studio</strong>: LM Studio offers a GUI for managing models, whereas Llama.cpp is focused on CLI and scripting automation for advanced users.</li>
@@ -1516,12 +1540,12 @@
 </li>
 </ul>
 <p>This tutorial will guide you through the installation process on different operating systems and show you how to interact with LLMs using Python and HTTP requests.</p>
-<h2 id="installation">Installation</h2>
+<h2 id="installation"><a class="toclink" href="#installation">Installation</a><a class="headerlink" href="#installation" title="Permanent link">#</a></h2>
 <p>For detailed build instructions, refer to the official guide: <a href="https://github.com/ggerganov/llama.cpp/blob/master/docs/build.md">Llama.cpp Build Instructions</a>
 in the following I will explain the different pre-built binaries that you can download from the llama.cpp github
 repository and how to install them on your machine  </p>
-<h3 id="windows">Windows</h3>
-<h4 id="choosing-the-right-binary">Choosing the Right Binary</h4>
+<h3 id="windows"><a class="toclink" href="#windows">Windows</a><a class="headerlink" href="#windows" title="Permanent link">#</a></h3>
+<h4 id="choosing-the-right-binary"><a class="toclink" href="#choosing-the-right-binary">Choosing the Right Binary</a><a class="headerlink" href="#choosing-the-right-binary" title="Permanent link">#</a></h4>
 <p>If you are downloading the pre-built binaries from the Llama.cpp releases page, choose the correct one based on your CPU and GPU capabilities:</p>
 <ul>
 <li><strong><code>llama-b4671-bin-win-avx-x64.zip</code></strong>: For CPUs with basic AVX support (Intel Sandy Bridge and later, AMD Bulldozer and later).</li>
@@ -1534,28 +1558,28 @@ repository and how to install them on your machine  </p>
   <img src="images/llama-cpp/llama-cpp-release.png" alt="llama cpp release" title="llama cpp release" width="600">
 </p>
 
-<h2 id="linux-and-macos">Linux and MacOS</h2>
+<h2 id="linux-and-macos"><a class="toclink" href="#linux-and-macos">Linux and MacOS</a><a class="headerlink" href="#linux-and-macos" title="Permanent link">#</a></h2>
 <p>For Linux, download <code>llama-b4671-bin-ubuntu-x64.zip</code>, and for macOS, use <code>llama-b4671-bin-macos-x64.zip</code> or <code>llama-b4671-bin-macos-arm64.zip</code>. Extract them to a directory and add that directory to your system's environment variables to run the executables from any location.</p>
 <p>you can also use the following installation using curl on linux
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://ollama.com/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
 </code></pre></div></p>
 <p>After Downloading the right files, unzip the files and add the extracted directory to your system's environment variables to run the executables from any location.</p>
-<h2 id="understanding-gguf-ggml-hugging-face-and-lora-formats">Understanding GGUF, GGML, Hugging Face, and LoRA Formats</h2>
-<h3 id="what-is-gguf">What is GGUF?</h3>
+<h2 id="understanding-gguf-ggml-hugging-face-and-lora-formats"><a class="toclink" href="#understanding-gguf-ggml-hugging-face-and-lora-formats">Understanding GGUF, GGML, Hugging Face, and LoRA Formats</a><a class="headerlink" href="#understanding-gguf-ggml-hugging-face-and-lora-formats" title="Permanent link">#</a></h2>
+<h3 id="what-is-gguf"><a class="toclink" href="#what-is-gguf">What is GGUF?</a><a class="headerlink" href="#what-is-gguf" title="Permanent link">#</a></h3>
 <p>GGUF (Generalized GGML Unified Format) is an optimized file format designed for running large language models efficiently using Llama.cpp and other frameworks. It improves compatibility and performance by standardizing how model weights and metadata are stored, allowing for efficient inference on different hardware architectures.</p>
-<h3 id="what-is-ggml">What is GGML?</h3>
+<h3 id="what-is-ggml"><a class="toclink" href="#what-is-ggml">What is GGML?</a><a class="headerlink" href="#what-is-ggml" title="Permanent link">#</a></h3>
 <p>GGML (Generalized Gradient Model Language) is an earlier format used for LLM inference that supports quantized models, making them more memory-efficient. However, GGUF has largely replaced GGML due to its enhanced features and improved performance.</p>
-<h3 id="converting-ggml-to-gguf">Converting GGML to GGUF</h3>
+<h3 id="converting-ggml-to-gguf"><a class="toclink" href="#converting-ggml-to-gguf">Converting GGML to GGUF</a><a class="headerlink" href="#converting-ggml-to-gguf" title="Permanent link">#</a></h3>
 <p>If you have a GGML model and need to use it with Llama.cpp, you can convert it to GGUF using a conversion script.</p>
 <p>Example command:</p>
 <p><div class="highlight"><pre><span></span><code>python<span class="w"> </span>convert_llama_ggml_to_gguf.py<span class="w"> </span>--input<span class="w"> </span>model.ggml<span class="w"> </span>--output<span class="w"> </span>model.gguf
 </code></pre></div>
 The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github repository in the main directory.</p>
-<h3 id="hugging-face-format">Hugging Face Format</h3>
+<h3 id="hugging-face-format"><a class="toclink" href="#hugging-face-format">Hugging Face Format</a><a class="headerlink" href="#hugging-face-format" title="Permanent link">#</a></h3>
 <p>Hugging Face models are typically stored in PyTorch (<code>.bin</code> or <code>.safetensors</code>) format. These models can be converted into GGUF format using conversion scripts like <code>convert_hf_to_gguf.py</code>.</p>
-<h3 id="lora-format">LoRA Format</h3>
+<h3 id="lora-format"><a class="toclink" href="#lora-format">LoRA Format</a><a class="headerlink" href="#lora-format" title="Permanent link">#</a></h3>
 <p>LoRA (Low-Rank Adaptation) is a fine-tuning technique used to efficiently adapt large language models to specific tasks. LoRA adapters store only the fine-tuned weight differences rather than modifying the entire model. To use LoRA with Llama.cpp, you may need to merge LoRA weights with a base model before conversion to GGUF using <code>convert_lora_to_gguf.py</code>.</p>
-<h2 id="downloading-gguf-model-files-from-hugging-face">Downloading GGUF Model Files from Hugging Face</h2>
+<h2 id="downloading-gguf-model-files-from-hugging-face"><a class="toclink" href="#downloading-gguf-model-files-from-hugging-face">Downloading GGUF Model Files from Hugging Face</a><a class="headerlink" href="#downloading-gguf-model-files-from-hugging-face" title="Permanent link">#</a></h2>
 <p>You can download GGUF model files from Hugging Face and use them with Llama.cpp. Follow these steps:</p>
 <ol>
 <li>
@@ -1568,7 +1592,7 @@ The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github reposito
 <p><strong>Move the File</strong>: Place the downloaded or converted GGUF model into your <code>models/</code> directory.</p>
 </li>
 </ol>
-<h2 id="run-a-model">Run a model:</h2>
+<h2 id="run-a-model"><a class="toclink" href="#run-a-model">Run a model:</a><a class="headerlink" href="#run-a-model" title="Permanent link">#</a></h2>
 <p>Now we can use the command llama-cli that is one of the executables that we have downloaded, you can check all the flags that can be used with the llama-cli command to trigger the llm model using the gguf file.</p>
 <div class="highlight"><pre><span></span><code>llama-cli<span class="w"> </span>-m<span class="w"> </span>your-model.gguf
 </code></pre></div>
@@ -1580,8 +1604,8 @@ The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github reposito
   <img src="images/llama-cpp/llama-cli-help-examples.png" alt="llama-cli help examples">
 </p>
 
-<h3 id="interacting-with-llamacpp-in-python">Interacting with Llama.cpp in Python</h3>
-<h4 id="overview-of-llama-cpp-python">Overview of <code>llama-cpp-python</code></h4>
+<h3 id="interacting-with-llamacpp-in-python"><a class="toclink" href="#interacting-with-llamacpp-in-python">Interacting with Llama.cpp in Python</a><a class="headerlink" href="#interacting-with-llamacpp-in-python" title="Permanent link">#</a></h3>
+<h4 id="overview-of-llama-cpp-python"><a class="toclink" href="#overview-of-llama-cpp-python">Overview of <code>llama-cpp-python</code></a><a class="headerlink" href="#overview-of-llama-cpp-python" title="Permanent link">#</a></h4>
 <p>The <code>llama-cpp-python</code> package provides Python bindings for Llama.cpp, allowing users to:</p>
 <ul>
 <li>Load and run LLaMA models within Python applications.</li>
@@ -1590,11 +1614,11 @@ The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github reposito
 <li>Run models efficiently on both CPU and GPU (if CUDA is enabled).</li>
 <li>Host models as an API server for easy integration into applications.</li>
 </ul>
-<h4 id="installing-required-packages">Installing Required Packages</h4>
+<h4 id="installing-required-packages"><a class="toclink" href="#installing-required-packages">Installing Required Packages</a><a class="headerlink" href="#installing-required-packages" title="Permanent link">#</a></h4>
 <p>You can use <code>llama-cpp-python</code>, which provides Python bindings for llama.cpp:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>llama-cpp-python
 </code></pre></div>
-<h4 id="running-inference-in-python">Running Inference in Python</h4>
+<h4 id="running-inference-in-python"><a class="toclink" href="#running-inference-in-python">Running Inference in Python</a><a class="headerlink" href="#running-inference-in-python" title="Permanent link">#</a></h4>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">llama_cpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Llama</span>
 
 <span class="n">llm</span> <span class="o">=</span> <span class="n">Llama</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;mistral-7b-instruct-v0.2.Q2_K.gguf&quot;</span><span class="p">)</span>
@@ -1638,7 +1662,7 @@ The convert_llama_ggml_to_gguf.py script exists in the llama.cpp github reposito
     }
 }
 </code></pre></div>
-<h3 id="downloading-and-using-gguf-models-with-llamafrom_pretrained">Downloading and Using GGUF Models with Llama.from_pretrained</h3>
+<h3 id="downloading-and-using-gguf-models-with-llamafrom_pretrained"><a class="toclink" href="#downloading-and-using-gguf-models-with-llamafrom_pretrained">Downloading and Using GGUF Models with Llama.from_pretrained</a><a class="headerlink" href="#downloading-and-using-gguf-models-with-llamafrom_pretrained" title="Permanent link">#</a></h3>
 <p>The Llama.from_pretrained method allows users to directly download GGUF models from Hugging Face and use them
 without manually downloading the files.</p>
 <p>Example:</p>
@@ -1706,9 +1730,9 @@ This method simplifies the process by automatically downloading and loading the 
 </code></pre></div></p>
 </li>
 </ul>
-<h2 id="running-llamacpp-as-a-server">Running Llama.cpp as a Server</h2>
+<h2 id="running-llamacpp-as-a-server"><a class="toclink" href="#running-llamacpp-as-a-server">Running Llama.cpp as a Server</a><a class="headerlink" href="#running-llamacpp-as-a-server" title="Permanent link">#</a></h2>
 <p>You can run <code>llama.cpp</code> as a server and interact with it via API calls.</p>
-<h3 id="start-the-server">Start the Server</h3>
+<h3 id="start-the-server"><a class="toclink" href="#start-the-server">Start the Server</a><a class="headerlink" href="#start-the-server" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>llama-server<span class="w"> </span>-m<span class="w"> </span>mistral-7b-instruct-v0.2.Q2_K.gguf
 </code></pre></div>
 <p>launching the model as a server in your terminal will give the following response.</p>
@@ -1716,7 +1740,7 @@ This method simplifies the process by automatically downloading and loading the 
   <img src="images/llama-cpp/server.png" alt="llama-server">
 </p>
 
-<h3 id="send-requests-using-python">Send Requests Using Python</h3>
+<h3 id="send-requests-using-python"><a class="toclink" href="#send-requests-using-python">Send Requests Using Python</a><a class="headerlink" href="#send-requests-using-python" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="c1"># Define the API endpoint</span>
@@ -1755,12 +1779,12 @@ This method simplifies the process by automatically downloading and loading the 
 <div class="highlight"><pre><span></span><code>Response:
 The sky is not a tangible object and does not have physical dimensions, so it cannot be measured or quantified in the same way that we measure and quantify objects with size or dimensions. The sky is simply the vast expanse of
 </code></pre></div>
-<h3 id="send-requests-from-terminal-linuxmacos-or-powershell-windows">Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)</h3>
+<h3 id="send-requests-from-terminal-linuxmacos-or-powershell-windows"><a class="toclink" href="#send-requests-from-terminal-linuxmacos-or-powershell-windows">Send Requests from Terminal (Linux/macOS) or PowerShell (Windows)</a><a class="headerlink" href="#send-requests-from-terminal-linuxmacos-or-powershell-windows" title="Permanent link">#</a></h3>
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:8000/completion&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;prompt&quot;: &quot;Tell me a fun fact.&quot;, &quot;max_tokens&quot;: 50}&#39;</span>
 </code></pre></div>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion"><a class="toclink" href="#conclusion">Conclusion</a><a class="headerlink" href="#conclusion" title="Permanent link">#</a></h2>
 <p>This tutorial covered installing, running, and interacting with Llama.cpp on different platforms. You can now integrate Llama models into your applications for local inference and API-based interactions.</p>
 
 
@@ -1814,13 +1838,13 @@ The sky is not a tangible object and does not have physical dimensions, so it ca
         
         
           
-          <a href="notebooks/llama-cpp.html" class="md-footer__link md-footer__link--next" aria-label="Next: Using Llama.cpp for Chat Completion">
+          <a href="../examples/retrieval/build-storage.html" class="md-footer__link md-footer__link--next" aria-label="Next: Building a Storage from Text File">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Using Llama.cpp for Chat Completion
+                Building a Storage from Text File
               </div>
             </div>
             <div class="md-footer__button md-icon">
