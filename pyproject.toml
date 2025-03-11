@@ -36,25 +36,7 @@ pytest-xdist = "^3.6.1"
 xdoctest = {extras = ["colors"], version = "^1.1.0"}
 typeguard = "^4.3.0"
 nbval = "^0.11.0"
-
-[poetry.group.dev.dependencies]
-flake8 = "^7.1.1"
 coverage = {extras = ["toml"], version = "^7.6.1"}
-safety = "^3.2.9"
-mypy = "^1.11.2"
-pre-commit = "^4.0.1"
-black = "^24.8.0"
-flake8-bandit = "^4.1.1"
-flake8-bugbear = "^24.10.31"
-flake8-docstrings = "^1.6.0"
-flake8-rst-docstrings = "^0.3.0"
-pep8-naming = "^0.14.1"
-darglint = "^1.8.1"
-reorder-python-imports = "^3.8.2"
-pre-commit-hooks = "^5.0.0"
-pre-commit-commit-msg-hooks = "^0.1.0"
-flake8-pyproject = "^1.2.3"
-pydata-sphinx-theme = "^0.16.0"
 
 
 [tool.poetry.group.docs.dependencies]
@@ -89,8 +71,9 @@ ignore = ["D401", "D413", "D213", "D203"]
 testpaths = "tests"
 norecursedirs = "docs"
 markers = [
-    "e2e: marks tests as end-to-end (deselect with '-m \"e2e\"')",
-    "mock: marks tests as mock (deselect with '-m \"mock\"')",
+    "e2e: marks tests as end-to-end (deselect with '-m \"not e2e\"')",
+    "mock: marks tests as mock (deselect with '-m \"not mock\"')",
+    "optional_package: marks tests as optional-package (deselect with '-m \"not optional_package\"')",
 ]
 
 [build-system]

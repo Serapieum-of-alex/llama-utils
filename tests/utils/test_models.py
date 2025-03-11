@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.llms.ollama import Ollama
 
 from llama_utils.utils.models import (
     DEFAULT_CONTEXT_WINDOW,
@@ -14,6 +13,7 @@ from llama_utils.utils.models import (
 )
 
 
+@pytest.mark.mock
 def test_get_ollama_llm():
     with patch("llama_index.llms.ollama.Ollama") as mock_ollama:
         instance = MagicMock()
@@ -35,6 +35,7 @@ def test_get_ollama_llm():
         )
 
 
+@pytest.mark.optional_package
 def test_azure_open_ai():
     with pytest.warns(
         UserWarning, match="Azure OpenAI environment variables are not set."
@@ -45,6 +46,7 @@ def test_azure_open_ai():
         assert llm.engine == "4o"
 
 
+@pytest.mark.optional_package
 def test_embedding():
     model = get_hugging_face_embedding(model_name="BAAI/bge-small-en-v1.5")
     assert isinstance(model, HuggingFaceEmbedding)
@@ -54,6 +56,8 @@ def test_embedding():
 
 
 class TestGetOllamaLLM(unittest.TestCase):
+
+    @pytest.mark.mock
     @patch("llama_index.llms.ollama.Ollama")
     def test_get_ollama_llm_defaults(self, mock_ollama):
         """Test get_ollama_llm with default parameters."""
@@ -78,6 +82,8 @@ class TestGetOllamaLLM(unittest.TestCase):
 
 
 class TestLLMModel(unittest.TestCase):
+
+    @pytest.mark.mock
     @patch("llama_utils.utils.models.azure_open_ai")
     def test_initialize_azure_model(self, mock_azure_open_ai):
         """Test LLMModel initialization with Azure OpenAI."""
@@ -89,6 +95,7 @@ class TestLLMModel(unittest.TestCase):
         mock_azure_open_ai.assert_called_once_with(model_id="gpt-4o", engine="4o")
         self.assertEqual(model.base_model, mock_instance)
 
+    @pytest.mark.mock
     @patch("llama_utils.utils.models.get_ollama_llm")
     def test_initialize_ollama_model(self, mock_get_ollama_llm):
         """Test LLMModel initialization with Ollama."""
@@ -104,6 +111,7 @@ class TestLLMModel(unittest.TestCase):
         )
         self.assertEqual(model.base_model, mock_instance)
 
+    @pytest.mark.mock
     @patch("llama_index.llms.huggingface.HuggingFaceLLM")
     def test_initialize_huggingface_model(self, mock_huggingface_llm):
         """Test LLMModel initialization with HuggingFace."""
@@ -115,6 +123,7 @@ class TestLLMModel(unittest.TestCase):
         mock_huggingface_llm.assert_called_once()
         self.assertEqual(model.base_model, mock_instance)
 
+    @pytest.mark.mock
     @patch("llama_utils.utils.models.get_ollama_llm")
     def test_generate_response_ollama(self, mock_get_ollama_llm):
         """Test LLMModel generate_response with Ollama."""
@@ -128,6 +137,7 @@ class TestLLMModel(unittest.TestCase):
         mock_instance.complete.assert_called_once_with("Test prompt")
         self.assertEqual(response, "Mocked response")
 
+    @pytest.mark.mock
     @patch("llama_utils.utils.models.azure_open_ai")
     def test_generate_response_azure(self, mock_azure_open_ai):
         """Test LLMModel generate_response with Azure OpenAI."""

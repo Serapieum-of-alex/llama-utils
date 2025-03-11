@@ -77,11 +77,17 @@ plugins:
 markdown_extensions:
   - admonition
   - pymdownx.highlight
+  - pymdownx.tabbed
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - toc:
+      permalink: "#"
+      toc_depth: 1-4
+      anchorlink: true
+
 nav:
   - Home: index.md
   - Installation:
@@ -97,6 +103,7 @@ nav:
       - tools/ollama.md
       - tools/llama-cpp.md
   - Examples:
+      - examples/retrieval/build-storage.ipynb
       - tools/notebooks/llama-cpp.ipynb
   - Change logs: change-log.md
 
