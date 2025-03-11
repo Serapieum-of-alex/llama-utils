@@ -121,7 +121,7 @@ repos:
         entry: pytest --nbval
         language: system
         files: \.ipynb$
-        exclude: ^docs/.*\.ipynb$
+        exclude: ^docs/tools.*\.ipynb$
 
   - repo: local
     hooks:
