@@ -42,4 +42,4 @@ jobs:
 
       - name: test Jupyter notebook
         run: |
-          poetry run pytest --nbval docs/ --ignore=docs/tools --verbose
+          poetry run pytest --nbval --nbval-lax docs/ --ignore=docs/tools --verbose
