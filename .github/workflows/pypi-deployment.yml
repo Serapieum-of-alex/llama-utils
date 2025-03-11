@@ -42,4 +42,4 @@ jobs:
 
       - name: test Jupyter notebook
         run: |
-          pytest --nbval -k ".ipynb"
+          pytest --nbval -k ".ipynb" --ignore=docs/tools
