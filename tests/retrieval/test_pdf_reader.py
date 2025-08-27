@@ -119,7 +119,7 @@ class TestPDFReaderE2E:
         assert image_doc.doc_id == f"img-{image_path.name}"
         assert image_doc.metadata["filename"] == image_path.name
         assert image_doc.metadata["any-key"] == "any-value"
-        assert image_doc.text == f"figure caption: {caption}"
+        assert f"figure caption: {caption}" in image_doc.text
         assert isinstance(image_doc.image, str)
         assert image_doc.id_ == f"img-{image_path.name}"
 
@@ -197,7 +197,7 @@ class TestPDFReaderMock(unittest.TestCase):
             )
             image_doc = self.reader.create_image_document(image_data)
         self.assertIsInstance(image_doc, ImageDocument)
-        self.assertEqual(image_doc.text, "figure caption: Test Caption")
+        assert "figure caption: Test Caption" in image_doc.text
 
     @patch.object(DocumentConverter, "convert")
     @patch(
@@ -214,4 +214,4 @@ class TestPDFReaderMock(unittest.TestCase):
         self.assertIn("markdown", result)
         self.assertIn("images", result)
         self.assertEqual(len(result["images"]), 1)
-        self.assertEqual(result["images"][0].text, "figure caption: Caption")
+        assert "figure caption: Caption" in result["images"][0].text

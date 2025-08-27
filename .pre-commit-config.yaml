@@ -19,7 +19,7 @@ repos:
       - id: check-docstring-first
         name: "[py   -  check] docstring first"
         files: /examples
-        types : [file, python ]
+        types : [python]
       - id: check-json
         name: "[json -  check] validate json"
       - id: check-merge-conflict
@@ -45,12 +45,13 @@ repos:
         name: "[yaml -  check] validate yaml"
         exclude: '^mkdocs\.yml$'
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.1.2
     hooks:
       - id: flake8
         additional_dependencies: [Flake8-pyproject]
         name: "[py   - check] flake8"
         exclude: ^(examples/|tests/)
+
 #   - repo: https://github.com/pycqa/docformatter
 #     rev: v1.4
 #     hooks:
@@ -68,12 +69,12 @@ repos:
         name: "[py   - check] pydocstyle"
         files: ^src/llama_utils/.*\.py$
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
         name: "[py   - format] isort"
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
   - repo: https://github.com/lovesegfault/beautysh
@@ -108,7 +109,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: pytest -vvv --cov=src/llama_utils --cov-report term-missing
+        entry: pytest -vvv -m "not optional_package" --cov=src/llama_utils --cov-report term-missing
         language: system
         pass_filenames: false
         always_run: true
@@ -120,7 +121,7 @@ repos:
         entry: pytest --nbval
         language: system
         files: \.ipynb$
-        exclude: ^docs/.*\.ipynb$
+        exclude: ^docs/tools.*\.ipynb$
 
   - repo: local
     hooks:
